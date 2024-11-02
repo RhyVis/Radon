@@ -1,0 +1,20 @@
+﻿name: Trigger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCHER_TOKEN }}
+          repository: RhyVis/RadonBuild
+          event-type: build_trigger
+          client-payload: '{"sha": "${{ steps.short-sha.outputs.sha }}"}'
