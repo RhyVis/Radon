@@ -1,0 +1,16 @@
+﻿### IDE ###
+.idea/
+
+### User ###
+*.user
+
+### C# ###
+bin/
+obj/
+appsettings.json
+appsettings.Development.json
+
+### Test ###
+*.http
+/Release/
+wwwroot/
