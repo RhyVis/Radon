@@ -24,7 +24,7 @@ const handleAside = () => (store.asideVisible = !store.asideVisible);
         <div>
           <t-space :size="4">
             <span class="r-ct-hd-content-tt1">Radon</span>
-            <i class="r-ct-hd-content-tt tw-font-thin">Gen3.0</i>
+            <i class="r-ct-hd-content-tt tw-font-thin">Gen3</i>
           </t-space>
         </div>
         <div v-if="dev">
@@ -55,7 +55,7 @@ const handleAside = () => (store.asideVisible = !store.asideVisible);
   margin: 0;
   .r-no-select();
   .r-ct-hd-content-tt1 {
-    .r-font-chain();
+    .r-pub-font-chain();
   }
   .r-ct-hd-content-tt {
     font-size: smaller;

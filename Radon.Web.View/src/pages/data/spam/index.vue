@@ -7,8 +7,10 @@ import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import SelectSimple from "@/components/select/SelectSimple.vue";
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import type { TextEntry } from "@/lib/type/typeEntry";
+import useClipboard from "vue-clipboard3";
 
 const store = useSpamStore();
+const { toClipboard } = useClipboard();
 
 const query = reactive({
   type: "sn",
@@ -32,7 +34,7 @@ const columns = ref<TableProps["columns"]>([
     width: 60,
     cell: (_, { row }) => {
       return (
-        <div class="r-sp-column-tag">
+        <div class="r-sp-column-tag" onClick={() => handleCopy(row.text)}>
           <t-tag shape="round" variant="outline">
             {row.id}
           </t-tag>
@@ -44,7 +46,13 @@ const columns = ref<TableProps["columns"]>([
     colKey: "text",
     title: "内容",
     cell: (_, { row }) => {
-      return <t-text copyable="true">{row.text}</t-text>;
+      return (
+        <t-space direction="vertical" size={2}>
+          {(row.text as string).split(/[\n\r]|\r\n|\\r\\n/).map((t, i) => (
+            <t-text key={i}>{t}</t-text>
+          ))}
+        </t-space>
+      );
     },
   },
 ]);
@@ -71,6 +79,15 @@ const changeTab = (key: string | number) => {
   }
 };
 
+const handleCopy = (s: string) => {
+  try {
+    toClipboard(s.replace(/[\n\r]|\r\n|\\r\\n/, ""));
+    MessagePlugin.success("复制成功");
+  } catch (e) {
+    console.error(e);
+    MessagePlugin.error("复制失败");
+  }
+};
 const handleSpam = async () => {
   resultLoading.value = true;
   try {

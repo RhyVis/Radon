@@ -189,7 +189,7 @@ onMounted(() => {
   }
   .r-ct-sd-tt {
     font-size: larger;
-    .r-font-chain();
+    .r-pub-font-chain();
     .r-no-select();
   }
 }
