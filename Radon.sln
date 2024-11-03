@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radon.Core", "Radon.Core\Ra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radon.Reckon", "Radon.Reckon\Radon.Reckon.csproj", "{2B0A482F-4B77-4469-B8CC-5D79920D3AC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radon.App", "Radon.App\Radon.App.csproj", "{0A1AFD1F-D6D2-492A-94B1-A1436D3F4AB6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +36,5 @@ Global
 		{2B0A482F-4B77-4469-B8CC-5D79920D3AC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B0A482F-4B77-4469-B8CC-5D79920D3AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B0A482F-4B77-4469-B8CC-5D79920D3AC5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A1AFD1F-D6D2-492A-94B1-A1436D3F4AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A1AFD1F-D6D2-492A-94B1-A1436D3F4AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A1AFD1F-D6D2-492A-94B1-A1436D3F4AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A1AFD1F-D6D2-492A-94B1-A1436D3F4AB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
