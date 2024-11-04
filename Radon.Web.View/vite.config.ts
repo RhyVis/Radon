@@ -54,12 +54,24 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,ico,png,jpg,svg,ttf,otf,woff,woff2}"],
+        globPatterns: ["**/*.{html,wasm,js,css,ico,png,jpg,svg,ttf,otf,woff,woff2}"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/api\//, /^\/dev_local/],
         runtimeCaching: [
-          { handler: "NetworkOnly", urlPattern: /^\/api\// },
-          { handler: "NetworkOnly", urlPattern: /^\/dev_local/ },
+          { urlPattern: /^\/api\//, handler: "NetworkOnly" },
+          { urlPattern: /^\/dev_local/, handler: "NetworkOnly" },
+          { urlPattern: "/index.html", handler: "NetworkFirst" },
+          {
+            urlPattern: /\.(?:ttf|otf|woff|woff2)$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "font-cache",
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+              },
+            },
+          },
         ],
       },
     }),

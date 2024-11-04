@@ -53,13 +53,14 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    fetch(window.location.host, { cache: "no-store" })
-      .then(response => response.text())
-      .then(html => {
-        document.open();
-        document.write(html);
-        document.close();
-      });
+    //    fetch(window.location.host, { cache: "no-store" })
+    //      .then(response => response.text())
+    //      .then(html => {
+    //        document.open();
+    //        document.write(html);
+    //        document.close();
+    //      });
+    window.location.reload();
   }
   showDialog.value = false;
 };
