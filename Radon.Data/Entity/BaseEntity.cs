@@ -1,6 +1,6 @@
 ﻿using FreeSql.DataAnnotations;
 
-namespace Radon.Data.Entity.Base;
+namespace Radon.Data.Entity;
 
 /// <summary>
 /// Base entity for all entities, including nothing.

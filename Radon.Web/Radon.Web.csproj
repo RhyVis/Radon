@@ -10,7 +10,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Radon.Common\Radon.Common.csproj" />
       <ProjectReference Include="..\Radon.Core\Radon.Core.csproj" />
-      <ProjectReference Include="..\Radon.Reckon\Radon.Reckon.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="nlog.config">
+      <Content Update="nlog.config5">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Update="appsettings.json">

@@ -8,6 +8,6 @@ namespace Radon.Web.Controller;
 public class ApiRootController : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     public IActionResult Get() => Ok(new { AppSettings.Get().Name, AppSettings.Get().Version });
 }

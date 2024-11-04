@@ -1,6 +1,6 @@
-﻿using Radon.Data.Entity.Base;
+﻿using Radon.Data.Entity;
 
-namespace Radon.Data.Repository.Base;
+namespace Radon.Data.Repository;
 
 public abstract class BaseIdRepository<E, K>(IFreeSql fsql) : BaseRepository<E, K>(fsql)
     where E : BaseIdEntity

@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Radon.Common\Radon.Common.csproj" />
       <ProjectReference Include="..\Radon.Data\Radon.Data.csproj" />
+      <ProjectReference Include="..\Radon.Security\Radon.Security.csproj" />
     </ItemGroup>
 
     <ItemGroup>

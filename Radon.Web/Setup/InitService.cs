@@ -3,11 +3,15 @@ using System.Text.Json;
 using FreeRedis;
 using FreeSql;
 using FreeSql.Internal;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using NLog;
+using NSwag;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
 using Radon.Core.Model.Base;
-using Radon.Data.Entity.Base;
+using Radon.Data.Entity;
+using Radon.Security.Model;
 using Scrutor;
 
 namespace Radon.Web.Setup;
@@ -25,6 +29,8 @@ public static class InitService
         typeof(BaseEntity).Assembly,
         // Radon.Core
         typeof(BaseApiReq<>).Assembly,
+        // Radon.Security
+        typeof(Passport).Assembly,
         // Radon.Web
         typeof(Init).Assembly,
     };
@@ -43,6 +49,7 @@ public static class InitService
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
+        builder.Services.AppendAuthentication();
         builder.Services.AppendMiscService();
 
         return builder;
@@ -66,7 +73,7 @@ public static class InitService
             scan.FromAssemblies(RADON_ASSEMBLIES)
                 .AddClasses(classes =>
                     classes
-                        .InNamespaces("Radon.Data.Repository")
+                        .InNamespaces("Radon")
                         .Where(type =>
                             type.Name.EndsWith("Repository")
                             && !type.Name.StartsWith("Base")
@@ -130,6 +137,28 @@ public static class InitService
         );
     }
 
+    private static void AppendAuthentication(this IServiceCollection services)
+    {
+        _logger.Debug("Register Authentication Service");
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                var conf = AppSettings.Get().Security.Jwt;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = conf.Issuer,
+                    ValidAudience = conf.Audience,
+                    IssuerSigningKey = conf.SigningCredentials.Key,
+                };
+            });
+    }
+
     private static void AppendMiscService(this IServiceCollection services)
     {
         _logger.Debug("Register Other Service");
@@ -138,6 +167,17 @@ public static class InitService
         services.AddOpenApiDocument(opt =>
         {
             opt.Title = "Radon API";
+            opt.AddSecurity(
+                "JWT",
+                new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = "Input your JWT token",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Type = OpenApiSecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                }
+            );
         });
     }
 }

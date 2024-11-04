@@ -1,7 +1,7 @@
 ﻿using Radon.Common.Core.Extension;
 using Radon.Common.Enums;
+using Radon.Core.Data.Entity;
 using Radon.Core.Model.Base;
-using Radon.Data.Entity.Core;
 
 namespace Radon.Core.Model.Response;
 

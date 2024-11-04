@@ -1,7 +1,7 @@
 ﻿using FreeSql.DataAnnotations;
-using Radon.Data.Entity.Base;
+using Radon.Data.Entity;
 
-namespace Radon.Data.Entity.Core;
+namespace Radon.Core.Data.Entity;
 
 [Table(Name = "storage_text")]
 public class EntryTextStorage : BaseEntity

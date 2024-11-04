@@ -16,11 +16,12 @@ public static class InitApplication
     {
         app.SetupInitializer();
 
-        app.UseAuthorization();
-
         app.UseStaticFiles();
         app.UseRouting();
         app.MapControllers();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         if (app.Environment.IsDevelopment())
         {
@@ -56,9 +57,9 @@ public static class InitApplication
                 service.InitAsync().GetAwaiter().GetResult();
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            _logger.Error(e, "Initializer Error on Startup");
+            _logger.Error(ex, "Initializer Error on Startup");
         }
         finally
         {
