@@ -25,15 +25,20 @@ public static class InitApplication
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseOpenApi(options =>
-            {
-                options.Path = "/api/openapi/radon.json";
-                options.DocumentName = "radon";
-            });
-            app.MapScalarApiReference();
         }
 
-        app.MapFallbackToFile("index.html");
+        app.UseOpenApi(opt =>
+        {
+            opt.Path = "/api/openapi/{documentName}.json";
+        });
+        app.MapScalarApiReference(opt =>
+        {
+            opt.Title = "Radon API";
+            opt.EndpointPathPrefix = "/api/scalar/{documentName}";
+            opt.OpenApiRoutePattern = "/api/openapi/{documentName}.json";
+        });
+
+        app.MapFallbackToFile("/index.html");
 
         return app;
     }

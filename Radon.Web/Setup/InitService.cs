@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using FreeRedis;
 using FreeSql;
 using FreeSql.Internal;
 using NLog;
@@ -34,6 +35,7 @@ public static class InitService
     public static WebApplicationBuilder SetupService(this WebApplicationBuilder builder)
     {
         builder.Services.SetupSql();
+        builder.Services.SetupRedis();
         builder.Services.RegisterService();
         builder
             .Services.AddControllers()
@@ -41,16 +43,6 @@ public static class InitService
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
-        builder.Services.AddEndpointsApiExplorer();
-        if (builder.Environment.IsDevelopment())
-        {
-            builder.Services.AddOpenApiDocument(configure =>
-            {
-                configure.DocumentName = "radon";
-                configure.Title = "Radon API";
-                configure.Version = "1.0";
-            });
-        }
         builder.Services.AppendMiscService();
 
         return builder;
@@ -60,7 +52,7 @@ public static class InitService
     {
         _logger.Debug("Register FreeSql");
         var fsql = new FreeSqlBuilder()
-            .UseConnectionString(DataType.PostgreSQL, AppSettings.Get().SQL.ConnectionString)
+            .UseConnectionString(DataType.PostgreSQL, AppSettings.Get().Data.SQLConnectionString)
             .UseMonitorCommand(cmd =>
                 _logger.Info($"Sql：{cmd.CommandText.ReplaceLineEndings(" ")}")
             )
@@ -84,6 +76,13 @@ public static class InitService
                 .AsSelf()
                 .WithScopedLifetime()
         );
+    }
+
+    private static void SetupRedis(this IServiceCollection services)
+    {
+        services.AddSingleton<IRedisClient>(_ => new RedisClient(
+            AppSettings.Get().Data.RedisConnectionString
+        ));
     }
 
     private static void RegisterService(this IServiceCollection services)
@@ -135,5 +134,10 @@ public static class InitService
     {
         _logger.Debug("Register Other Service");
         services.AddHttpClient();
+        services.AddEndpointsApiExplorer();
+        services.AddOpenApiDocument(opt =>
+        {
+            opt.Title = "Radon API";
+        });
     }
 }

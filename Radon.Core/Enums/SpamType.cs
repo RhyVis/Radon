@@ -16,10 +16,10 @@ public enum SpamType
     [Description("麻辣")]
     ML = 3,
 
-    [Description("超级喷子")]
+    [Description("普通喷子")]
     SN = 4,
 
-    [Description("普通喷子")]
+    [Description("超级喷子")]
     SX = 5,
 
     [Description("反二")]

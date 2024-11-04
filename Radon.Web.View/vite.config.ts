@@ -22,6 +22,12 @@ export default defineConfig({
     VitePWA({
       injectRegister: "auto",
       registerType: "autoUpdate",
+      includeAssets: [
+        "/favicon.ico",
+        "/android-chrome-192x192.png",
+        "/android-chrome-512x512.png",
+        "/apple-touch-icon.png",
+      ],
       manifest: {
         name: "Radon",
         short_name: "Rn",
@@ -45,6 +51,15 @@ export default defineConfig({
             sizes: "180x180",
             type: "image/png",
           },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,ico,png,jpg,svg,ttf,otf,woff,woff2}"],
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//, /^\/dev_local/],
+        runtimeCaching: [
+          { handler: "NetworkOnly", urlPattern: /^\/api\// },
+          { handler: "NetworkOnly", urlPattern: /^\/dev_local/ },
         ],
       },
     }),
