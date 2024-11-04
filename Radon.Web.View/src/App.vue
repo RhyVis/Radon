@@ -5,11 +5,15 @@ import ContentHeader from "@/layout/basic/BaseLayoutHeader.vue";
 import BaseLayout from "@/layout/frame/BaseLayout.vue";
 import { loadFonts } from "@/lib/util/fontLoader";
 import { useGlobalStore } from "@/store/global";
+import { useTitle } from "@vueuse/core";
 import { MessagePlugin } from "tdesign-vue-next";
-import { onMounted } from "vue";
-import { RouterView } from "vue-router";
+import { onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { RouterView, useRouter } from "vue-router";
 
 const global = useGlobalStore();
+const router = useRouter();
+const i18n = useI18n();
 
 window.onload = () => {
   document.addEventListener("touchstart", function (event) {
@@ -44,6 +48,7 @@ window.onresize = () => {
 };
 
 onMounted(() => {
+  i18n.locale.value = global.locale;
   try {
     if (!global.fontLoaded) {
       loadFonts().then(() => (global.fontLoaded = true));
@@ -53,6 +58,22 @@ onMounted(() => {
     MessagePlugin.error("字体加载失败");
   }
 });
+
+watch(
+  () => router.currentRoute.value.path,
+  () => {
+    const title = router.currentRoute.value.meta.title as string;
+    if (title) {
+      useTitle(title);
+    }
+  },
+);
+watch(
+  () => global.locale,
+  () => {
+    i18n.locale.value = global.locale;
+  },
+);
 </script>
 
 <template>

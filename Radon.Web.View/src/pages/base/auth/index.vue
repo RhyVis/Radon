@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { useAuthStore } from "@/store/comps/auth";
+import { useAuthStore } from "@/pages/base/auth/scripts/store"
 import { ArrowUpDown2Icon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { ref } from "vue";

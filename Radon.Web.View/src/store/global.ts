@@ -5,8 +5,9 @@ export const useGlobalStore = defineStore("global", {
     asideVisible: false,
     authShow: false,
     fontLoaded: false,
+    locale: "zh-CN",
   }),
   persist: {
-    pick: ["authPassed"],
+    pick: ["authPassed", "locale"],
   },
 });

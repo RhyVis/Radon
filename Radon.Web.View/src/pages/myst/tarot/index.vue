@@ -5,7 +5,7 @@ import type { Card, CardDisplay, DeckInfo, DeckInfoInterface, DeckInfoSelect } f
 import { apiGet, apiPost } from "@/lib/util/apiMethods";
 import TarotDesc from "@/pages/myst/tarot/comps/TarotDesc.vue";
 import TarotMain from "@/pages/myst/tarot/comps/TarotMain.vue";
-import { useTarotStore } from "@/store/comps/tarot";
+import { useTarotStore } from "@/pages/myst/tarot/scripts/store";
 import { CardIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, onMounted, reactive, type Ref, ref } from "vue";

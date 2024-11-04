@@ -5,7 +5,7 @@ import ButtonRead from "@/components/btn/ButtonRead.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { apiPost } from "@/lib/util/apiMethods";
 import type { SaveEntry } from "@/pages/data/save/scripts/entryType";
-import { useSaveStore } from "@/store/comps/save";
+import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { onMounted, reactive, ref } from "vue";

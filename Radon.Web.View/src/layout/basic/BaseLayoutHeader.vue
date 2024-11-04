@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ProjectIcon from "@/assets/icon.svg";
+import SelLocale from "@/components/select/SelLocale.vue";
 import { useGlobalStore } from "@/store/global";
 import { MenuFoldIcon, MenuUnfoldIcon } from "tdesign-icons-vue-next";
 import { computed } from "vue";
@@ -33,8 +34,9 @@ const handleAside = () => (store.asideVisible = !store.asideVisible);
       </t-space>
     </div>
     <template #operations>
-      <t-space class="r-ct-hd-operations">
-        <t-button shape="circle" theme="default" @click="handleAside">
+      <t-space class="r-ct-hd-operations" :size="8">
+        <SelLocale />
+        <t-button theme="default" variant="outline" shape="circle" @click="handleAside">
           <template #icon>
             <MenuUnfoldIcon v-if="asideVisible" />
             <MenuFoldIcon v-else />
@@ -56,6 +58,7 @@ const handleAside = () => (store.asideVisible = !store.asideVisible);
   .r-no-select();
   .r-ct-hd-content-tt1 {
     .r-pub-font-chain();
+    font-weight: bold;
   }
   .r-ct-hd-content-tt {
     font-size: smaller;

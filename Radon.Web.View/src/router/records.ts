@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from "vue-router";
 
 type RouterRecordMeta = {
-  title?: string;
+  title: string;
   icon?: string;
   auth?: boolean;
 };

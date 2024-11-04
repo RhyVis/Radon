@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { CopyIcon, DownloadIcon } from "tdesign-icons-vue-next";
 import { b64ToBlob } from "@/lib/util/imageTransform";
-import { usePjskStore } from "@/store/comps/pjsk";
+import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
 import CharacterList from "@/assets/conf/characters.json";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import StickerCanvas from "@/pages/draw/pjsk-sticker/comps/StickerCanvas.vue";

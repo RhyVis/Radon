@@ -1,7 +1,7 @@
 import { validateToken } from "@/lib/util/authFunction";
-import HomeView from "@/pages/base/HomeView.vue";
+import { useAuthStore } from "@/pages/base/auth/scripts/store";
+import HomeView from "@/pages/base/home/index.vue";
 import { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
-import { useAuthStore } from "@/store/comps/auth";
 import { MessagePlugin } from "tdesign-vue-next";
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
@@ -11,6 +11,9 @@ const records: RouteRecordRaw[] = [
     path: "/",
     name: "Home",
     component: HomeView,
+    meta: {
+      title: "Radon",
+    },
   },
   ...baseRecords,
   ...dataRecords,
@@ -22,11 +25,17 @@ const records: RouteRecordRaw[] = [
     path: "/error",
     name: "404",
     component: () => import("@/pages/base/error/index.vue"),
+    meta: {
+      title: "错误",
+    },
   },
   {
     path: "/:pathMatch(.*)",
     name: "404",
     component: () => import("@/pages/base/error/index.vue"),
+    meta: {
+      title: "错误",
+    },
   },
 ];
 

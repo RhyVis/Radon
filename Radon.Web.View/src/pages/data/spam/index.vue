@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { apiPost } from "@/lib/util/apiMethods";
 import { MessagePlugin, type TableProps } from "tdesign-vue-next";
-import { useSpamStore } from "@/store/comps/spam";
+import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import SelectSimple from "@/components/select/SelectSimple.vue";
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";

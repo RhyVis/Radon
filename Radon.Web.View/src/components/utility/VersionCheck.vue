@@ -7,8 +7,10 @@ import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
 import VersionView from "@/assets/local/version.json";
 import moment from "moment";
 import useStatic from "@/lib/util/useStatic";
+import { useI18n } from "vue-i18n";
 
 const loading = ref(true);
+const { t } = useI18n();
 
 const versionFont = ref({
   fontWeight: "bold",
@@ -25,25 +27,25 @@ const vDisplay = computed(() => {
       return {
         theme: "success",
         icon: () => <t-icon name="check-circle" />,
-        value: `${decimalRadixValExtended(vLocal)} 最新版本`,
+        value: `${decimalRadixValExtended(vLocal)} ${t("versionCheck.display.latest")}`,
       };
     case 1:
       return {
         theme: "warning",
         icon: () => <t-icon name="info-circle" />,
-        value: `${decimalRadixValExtended(vLocal)} -> ${decimalRadixValExtended(vRemote.value)} 需要更新`,
+        value: `${decimalRadixValExtended(vLocal)} -> ${decimalRadixValExtended(vRemote.value)} ${t("versionCheck.display.update")}`,
       };
     case -1:
       return {
         theme: "danger",
         icon: () => <t-icon name="error-circle" />,
-        value: "版本获取失败",
+        value: t("versionCheck.display.error"),
       };
     default:
       return {
         theme: "default",
         icon: () => <t-icon name="help-circle" />,
-        value: "等待版本获取",
+        value: t("versionCheck.display.wait"),
       };
   }
 });
@@ -71,18 +73,18 @@ onMounted(async () => {
       if (v != vLocal) {
         vState.value = 1;
         showDialog.value = true;
-        await MessagePlugin.warning("非最新版本");
+        await MessagePlugin.warning(t("versionCheck.message.update"));
       } else {
         vState.value = 0;
       }
     } else {
       vState.value = -1;
-      await MessagePlugin.warning("获取版本异常");
+      await MessagePlugin.warning(t("versionCheck.message.error"));
     }
   } catch (e) {
     vState.value = -1;
     console.error(e);
-    await MessagePlugin.error("与服务器通信失败");
+    await MessagePlugin.error(t("versionCheck.message.comm-error"));
   } finally {
     loading.value = false;
   }
@@ -103,7 +105,7 @@ onMounted(async () => {
             <RefreshIcon />
           </t-button>
           <ArrowLeftIcon />
-          <t-tag class="r-vc-refresh-font">点击刷新页面以更新</t-tag>
+          <t-tag class="r-vc-refresh-font">{{ t("versionCheck.refresh") }}</t-tag>
         </t-space>
       </div>
     </t-space>
@@ -142,3 +144,30 @@ onMounted(async () => {
   padding: 10px 14px 8px;
 }
 </style>
+
+<i18n lang="yaml">
+en:
+  versionCheck:
+    display:
+      latest: "Latest Version"
+      update: "Update Required"
+      error: "Version Fetch Failed"
+      wait: "Waiting for Version Fetch"
+    message:
+      update: "Non-latest version"
+      error: "Version fetch failed"
+      comm-error: "Communication with server failed"
+    refresh: "Click to refresh the page to update"
+zh-CN:
+  versionCheck:
+    display:
+      latest: "最新版本"
+      update: "需要更新"
+      error: "版本获取失败"
+      wait: "等待版本获取"
+    message:
+      update: "非最新版本"
+      error: "版本获取失败"
+      comm-error: "与服务器通信失败"
+    refresh: "点击刷新页面以更新"
+</i18n>

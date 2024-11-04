@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ProjectIcon from "@/assets/icon.svg";
+import { useAuthStore } from "@/pages/base/auth/scripts/store";
 import { dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
-import { useAuthStore } from "@/store/comps/auth";
 import { useGlobalStore } from "@/store/global";
 import {
   CloseIcon,
@@ -189,6 +189,7 @@ onMounted(() => {
   }
   .r-ct-sd-tt {
     font-size: larger;
+    font-weight: bold;
     .r-pub-font-chain();
     .r-no-select();
   }

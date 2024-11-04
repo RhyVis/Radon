@@ -1,0 +1,71 @@
+<script lang="ts" setup>
+import LoadStatus from "@/components/utility/LoadStatus.vue";
+import VersionCheck from "@/components/utility/VersionCheck.vue";
+import CardLayout from "@/layout/frame/ContentLayout.vue";
+import { useGlobalStore } from "@/store/global";
+import { useI18n } from "vue-i18n";
+
+const global = useGlobalStore();
+const { t } = useI18n();
+</script>
+
+<template>
+  <CardLayout :title="t('home.title')">
+    <t-title level="h4">{{ t("home.description.tt") }}</t-title>
+    <t-paragraph>
+      <t-text>{{ t("home.description.content") }}</t-text>
+    </t-paragraph>
+    <t-title level="h4">{{ t("home.hint.tt") }}</t-title>
+    <t-paragraph>
+      <t-text>{{ t("home.hint.font-hint") }}</t-text>
+    </t-paragraph>
+    <t-title level="h4">{{ t("home.loading-status.tt") }}</t-title>
+    <t-paragraph>
+      <LoadStatus :loading="!global.fontLoaded" :label="t('home.loading-status.font')" name="font" />
+    </t-paragraph>
+    <t-title level="h4">{{ t("home.version.tt") }}</t-title>
+    <t-paragraph>
+      <VersionCheck />
+    </t-paragraph>
+    <t-paragraph>
+      <t-title level="h6" :content="t('home.version.why')" />
+      <t-text>{{ t("home.version.reason") }}</t-text>
+    </t-paragraph>
+  </CardLayout>
+</template>
+
+<i18n lang="yaml">
+en:
+  home:
+    title: Home
+    description:
+      tt: Description
+      content: "I don't think anyone needs me to teach them how to use it"
+    hint:
+      tt: Hint
+      font-hint: "It is recommended to disable scripts and plugins that render fonts on this site,
+        which will cause the application's custom font rendering image function to be abnormal."
+    loading-status:
+      tt: Loading Status
+      font: Font
+    version:
+      tt: "Version Check"
+      why: "Why version check?"
+      reason: "Because I can't handle the server-side page cache settings, sometimes it works and sometimes it doesn't, I'm 🤗"
+zh:
+  home:
+    title: 主页
+    description:
+      tt: 简介
+      content: "不会还有人需要我教怎么用吧，不会吧不会吧"
+    hint:
+      tt: 提示
+      font-hint: "建议在本站禁用字体渲染的脚本与插件，会导致应用自定义字体渲染图像的功能异常。"
+    loading-status:
+      tt: 加载状态
+      font: 字体
+    version:
+      tt: "版本检查"
+      why: "为什么会有版本检查？"
+      reason: "因为我玩不转服务端页面缓存设置，有时候管用有时候又不管用，摆了🤗"
+</i18n>
