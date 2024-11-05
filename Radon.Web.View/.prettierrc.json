@@ -1,6 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/prettierrc",
   "plugins": [
+    "prettier-plugin-packagejson",
     "prettier-plugin-organize-attributes",
     "prettier-plugin-organize-imports",
     "prettier-plugin-tailwindcss"],

@@ -72,7 +72,7 @@ const tryRefreshToken = () => {
         global.authPassed = false;
         MessagePlugin.error(t("auth.message.tokenInvalid"));
         setTimeout(() => {
-          router.push("/login");
+          router.push("/auth");
         }, 1420);
       }
     });

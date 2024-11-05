@@ -53,14 +53,14 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    //    fetch(window.location.host, { cache: "no-store" })
-    //      .then(response => response.text())
-    //      .then(html => {
-    //        document.open();
-    //        document.write(html);
-    //        document.close();
-    //      });
-    window.location.reload();
+    fetch(window.location.href, { cache: "no-store" })
+      .then(response => response.text())
+      .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+        window.location.replace(window.location.href);
+      });
   }
   showDialog.value = false;
 };
