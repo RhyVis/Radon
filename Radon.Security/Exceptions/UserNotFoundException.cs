@@ -1,5 +1,4 @@
-﻿using Radon.Common.Core.Exception;
+﻿namespace Radon.Security.Exceptions;
 
-namespace Radon.Security.Exceptions;
-
-public class UserNotFoundException(string name) : BaseException($"User {name} not found") { }
+public class UserNotFoundException(string name)
+    : BaseSecurityException($"User {name} not found") { }

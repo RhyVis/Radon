@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
+using Radon.Security.Data.Entity;
 using Radon.Security.Exceptions;
 using Radon.Security.Model;
 using Radon.Security.Service.Interface;
@@ -17,20 +18,20 @@ public class JwtService(IRedisClient cli) : IJwtService
 {
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public Passport GenerateAnonymousToken()
+    public Passport GenerateToken(User user)
     {
-        var p = GenPassport([new Claim("role", RoleType.Anonymous.ToString())]);
-        cli.Set(p.Token, p.Role, AppSettings.Get().Security.Jwt.ExpireMinutes * 60);
+        var p = GenPassport(user);
+        cli.Set(p.Token, p.Username, AppSettings.Get().Security.Jwt.ExpireMinutes * 60);
         return p;
     }
 
-    public bool CheckToken(string token, bool checkSession = false)
+    public string CheckToken(string token, bool checkSession = false)
     {
         var conf = AppSettings.Get().Security.Jwt;
         var handler = new JwtSecurityTokenHandler();
         try
         {
-            handler.ValidateToken(
+            var principal = handler.ValidateToken(
                 token,
                 new TokenValidationParameters
                 {
@@ -48,24 +49,34 @@ public class JwtService(IRedisClient cli) : IJwtService
             {
                 throw new SessionNotExistException();
             }
+
+            return principal.FindFirst("username")?.Value ?? "anonymous";
         }
         catch (SessionNotExistException)
         {
             _logger.Warn("Invalid token rejected by session check");
-            return false;
+            throw;
         }
         catch (Exception)
         {
             _logger.Warn("Invalid token rejected by validation");
-            return false;
+            throw new InvalidCredentialException("Invalid token");
         }
-        return true;
     }
 
-    private static Passport GenPassport(List<Claim> claims)
+    public void InvalidateToken(string token) => cli.Del(token);
+
+    private static Passport GenPassport(User user)
     {
         var conf = AppSettings.Get().Security.Jwt;
         var expr = DateTime.Now.AddMinutes(conf.ExpireMinutes);
+
+        var claims = new List<Claim>
+        {
+            new("id", user.Id.ToString()),
+            new("username", user.Username),
+            new("role", user.Role.ToString()),
+        };
 
         var token = new JwtSecurityToken(
             issuer: conf.Issuer,
@@ -75,7 +86,8 @@ public class JwtService(IRedisClient cli) : IJwtService
             expires: expr,
             signingCredentials: conf.SigningCredentials
         );
+        var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new Passport(new JwtSecurityTokenHandler().WriteToken(token), expr);
+        return new Passport(tokenStr, user.Username, expr);
     }
 }

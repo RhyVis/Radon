@@ -1,16 +1,44 @@
 <script setup lang="ts">
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { useAuthStore } from "@/pages/base/auth/scripts/store"
-import { ArrowUpDown2Icon } from "tdesign-icons-vue-next";
+import { login } from "@/lib/util/authMethods";
+import { useAuthStore } from "@/pages/base/auth/scripts/store";
+import { ArrowUpDown2Icon, DeleteIcon, Fingerprint2Icon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { ref } from "vue";
+import { computed, reactive, ref } from "vue";
 
 const auth = useAuthStore();
+const query = reactive({
+  username: "",
+  password: "",
+});
 
 const token = ref("");
 const btnTheme = ref("primary");
 const txtTheme = ref("default");
+const storageToken = computed({
+  get: () => localStorage.getItem("token") || "",
+  set: (v: string) => {
+    localStorage.setItem("token", v);
+    token.value = v;
+  },
+});
 
+const loginLoading = ref(false);
+
+const handleLogin = async () => {
+  if (query.username.length > 0 && query.password.length > 0) {
+    loginLoading.value = true;
+    const b = await login(query);
+    if (b) {
+      await MessagePlugin.success("登陆成功");
+    } else {
+      await MessagePlugin.warning("登陆失败");
+    }
+    loginLoading.value = false;
+  } else {
+    await MessagePlugin.warning("不要空置输入框");
+  }
+};
 const handleValidation = async () => {
   btnTheme.value = "primary";
   txtTheme.value = "default";
@@ -50,10 +78,36 @@ const handleValidation = async () => {
       <t-form-item label="校验码">
         <t-input v-model="token" />
       </t-form-item>
+      <t-form-item label="用户名">
+        <t-input v-model="query.username" />
+      </t-form-item>
+      <t-form-item label="密码">
+        <t-input v-model="query.password" type="password" />
+      </t-form-item>
       <t-form-item label="验证">
         <t-button shape="round" :theme="btnTheme" @click="handleValidation">
           <ArrowUpDown2Icon />
         </t-button>
+      </t-form-item>
+      <t-form-item label="登陆">
+        <t-button shape="round" theme="primary" @click="handleLogin" :loading="loginLoading">
+          <ArrowUpDown2Icon />
+        </t-button>
+      </t-form-item>
+      <t-divider />
+      <t-form-item label="显示令牌">
+        <t-popup :content="storageToken" trigger="click" :destroy-on-close="true">
+          <t-button shape="round" theme="default">
+            <Fingerprint2Icon />
+          </t-button>
+        </t-popup>
+      </t-form-item>
+      <t-form-item label="清空令牌">
+        <t-popconfirm content="确认清空令牌吗" theme="warning" @confirm="storageToken = ''">
+          <t-button shape="round" theme="default">
+            <DeleteIcon />
+          </t-button>
+        </t-popconfirm>
       </t-form-item>
     </t-form>
   </ContentLayout>

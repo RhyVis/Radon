@@ -6,7 +6,7 @@ using Radon.Core.Service.Interface;
 namespace Radon.Web.Controller;
 
 [ApiController]
-[Route("api/auth")]
+[Route("api/auth/legacy")]
 public class SimpleAuthenticationController(ISimpleAuthenticationService service) : ControllerBase
 {
     [HttpPost]

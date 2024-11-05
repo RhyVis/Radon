@@ -1,6 +1,7 @@
 ﻿using NLog;
 using Radon.Common.Core.DI;
 using Radon.Common.Core.Extension;
+using Radon.Web.Middleware;
 using Scalar.AspNetCore;
 
 namespace Radon.Web.Setup;
@@ -16,6 +17,7 @@ public static class InitApplication
     {
         app.SetupInitializer();
 
+        app.UseMiddleware<ExceptionFilterMiddleware>();
         app.UseStaticFiles();
         app.UseRouting();
         app.MapControllers();

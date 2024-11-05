@@ -1,6 +1,4 @@
-﻿using Radon.Common.Core.Exception;
-
-namespace Radon.Security.Exceptions;
+﻿namespace Radon.Security.Exceptions;
 
 public class SessionNotExistException()
-    : BaseException("Token is valid but session does not exist.") { }
+    : BaseSecurityException("Token is valid but session does not exist.") { }
