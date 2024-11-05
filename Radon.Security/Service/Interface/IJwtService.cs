@@ -18,7 +18,7 @@ public interface IJwtService
     /// <param name="token">JWT</param>
     /// <param name="checkSession">Check if the session exists</param>
     /// <returns>Username</returns>
-    string CheckToken(string token, bool checkSession = false);
+    string CheckToken(string token, bool checkSession = true);
 
     /// <summary>
     /// Invalidate the token

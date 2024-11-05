@@ -7,23 +7,11 @@
 public abstract class BaseApiReq<D>()
     where D : class
 {
-    protected BaseApiReq(int code, string message, D data)
+    protected BaseApiReq(D data)
         : this()
     {
-        Code = code;
-        Meta = message;
         Data = data;
     }
-
-    /// <summary>
-    /// Status Code
-    /// </summary>
-    public int Code { get; set; }
-
-    /// <summary>
-    /// Assigned Message
-    /// </summary>
-    public string Meta { get; set; } = "";
 
     /// <summary>
     /// Data

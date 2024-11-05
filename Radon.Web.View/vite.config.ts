@@ -17,7 +17,7 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VueI18nPlugin({
-      include: fileURLToPath(new URL("./src/**/*.{yaml,vue}", import.meta.url)),
+      include: fileURLToPath(new URL("./src/**/*.{yml,yaml,vue,json5}", import.meta.url)),
     }),
     VitePWA({
       injectRegister: "auto",

@@ -1,0 +1,17 @@
+﻿{
+  global: {
+    title: "Radon",
+    description: "基于 Vue 3.0 的 Web 应用"
+  },
+  auth: {
+    message: {
+      tokenValidAndRefreshed: "令牌有效并已刷新",
+      tokenInvalid: "令牌已失效，请重新登录"
+    }
+  },
+  loader: {
+    message: {
+      fontLoadingFailed: "字体加载失败"
+    }
+  }
+}

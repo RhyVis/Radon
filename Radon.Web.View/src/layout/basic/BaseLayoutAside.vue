@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ProjectIcon from "@/assets/icon.svg";
-import { useAuthStore } from "@/pages/base/auth/scripts/store";
 import { dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { useGlobalStore } from "@/store/global";
 import {
@@ -17,7 +16,6 @@ import {
 import { computed, onMounted } from "vue";
 
 const global = useGlobalStore();
-const auth = useAuthStore();
 
 const visible = computed({
   get() {
@@ -61,7 +59,12 @@ onMounted(() => {
           <span>Data</span>
         </template>
         <div v-for="item in dataRecords" :key="item.name">
-          <t-menu-item v-if="!(item.meta.auth && !auth.valid)" :to="item.path" :value="item.name" @click="handleClose">
+          <t-menu-item
+            v-if="!(item.meta.auth && !global.authPassed)"
+            :to="item.path"
+            :value="item.name"
+            @click="handleClose"
+          >
             <template #icon>
               <icon v-if="item.meta.icon" :name="item.meta.icon" />
             </template>
@@ -79,7 +82,12 @@ onMounted(() => {
           <span>Myst</span>
         </template>
         <div v-for="item in mystRecords" :key="item.name">
-          <t-menu-item v-if="!(item.meta.auth && !auth.valid)" :to="item.path" :value="item.name" @click="handleClose">
+          <t-menu-item
+            v-if="!(item.meta.auth && !global.authPassed)"
+            :to="item.path"
+            :value="item.name"
+            @click="handleClose"
+          >
             <template #icon>
               <icon v-if="item.meta.icon" :name="item.meta.icon" />
             </template>
@@ -97,7 +105,12 @@ onMounted(() => {
           <span>Draw</span>
         </template>
         <div v-for="item in drawRecords" :key="item.name">
-          <t-menu-item v-if="!(item.meta.auth && !auth.valid)" :to="item.path" :value="item.name" @click="handleClose">
+          <t-menu-item
+            v-if="!(item.meta.auth && !global.authPassed)"
+            :to="item.path"
+            :value="item.name"
+            @click="handleClose"
+          >
             <template #icon>
               <icon v-if="item.meta.icon" :name="item.meta.icon" />
             </template>
@@ -115,7 +128,12 @@ onMounted(() => {
           <span>Math</span>
         </template>
         <div v-for="item in mathRecords" :key="item.name">
-          <t-menu-item v-if="!(item.meta.auth && !auth.valid)" :to="item.path" :value="item.name" @click="handleClose">
+          <t-menu-item
+            v-if="!(item.meta.auth && !global.authPassed)"
+            :to="item.path"
+            :value="item.name"
+            @click="handleClose"
+          >
             <template #icon>
               <icon v-if="item.meta.icon" :name="item.meta.icon" />
             </template>
@@ -133,7 +151,12 @@ onMounted(() => {
           <span>Util</span>
         </template>
         <div v-for="item in utilRecords" :key="item.name">
-          <t-menu-item v-if="!(item.meta.auth && !auth.valid)" :to="item.path" :value="item.name" @click="handleClose">
+          <t-menu-item
+            v-if="!(item.meta.auth && !global.authPassed)"
+            :to="item.path"
+            :value="item.name"
+            @click="handleClose"
+          >
             <template #icon>
               <icon v-if="item.meta.icon" :name="item.meta.icon" />
             </template>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Radon.Core.Model.Request;
 using Radon.Core.Model.Response;
 using Radon.Security.Service.Interface;
@@ -18,6 +19,7 @@ public class AuthenticationController(IUsernameAuthService service, IJwtService 
         return Ok(new PlainTextRes(p.Token));
     }
 
+    [Authorize]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult Register(UsernameReq req)

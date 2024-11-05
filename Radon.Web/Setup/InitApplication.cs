@@ -25,11 +25,6 @@ public static class InitApplication
         app.UseAuthentication();
         app.UseAuthorization();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
         app.UseOpenApi(opt =>
         {
             opt.Path = "/api/openapi/{documentName}.json";

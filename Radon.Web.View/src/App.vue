@@ -3,6 +3,7 @@ import ContentAside from "@/layout/basic/BaseLayoutAside.vue";
 import ContentFooter from "@/layout/basic/BaseLayoutFooter.vue";
 import ContentHeader from "@/layout/basic/BaseLayoutHeader.vue";
 import BaseLayout from "@/layout/frame/BaseLayout.vue";
+import { validateWithRefresh } from "@/lib/util/authMethods";
 import { loadFonts } from "@/lib/util/fontLoader";
 import { useGlobalStore } from "@/store/global";
 import { useTitle } from "@vueuse/core";
@@ -14,6 +15,7 @@ import { RouterView, useRouter } from "vue-router";
 const global = useGlobalStore();
 const router = useRouter();
 const i18n = useI18n();
+const { t } = i18n;
 
 window.onload = () => {
   document.addEventListener("touchstart", function (event) {
@@ -47,16 +49,40 @@ window.onresize = () => {
   }
 };
 
-onMounted(() => {
+const syncLocale = () => {
   i18n.locale.value = global.locale;
+  console.info(`Locale synced: ${global.locale}`);
+};
+const tryLoadFonts = () => {
   try {
     if (!global.fontLoaded) {
       loadFonts().then(() => (global.fontLoaded = true));
     }
   } catch (e) {
     console.error(e);
-    MessagePlugin.error("字体加载失败");
+    MessagePlugin.error(t("loader.message.fontLoadingFailed"));
   }
+};
+const tryRefreshToken = () => {
+  if (global.authPassed) {
+    validateWithRefresh().then(v => {
+      if (v) {
+        MessagePlugin.success(t("auth.message.tokenValidAndRefreshed"));
+      } else {
+        global.authPassed = false;
+        MessagePlugin.error(t("auth.message.tokenInvalid"));
+        setTimeout(() => {
+          router.push("/login");
+        }, 1420);
+      }
+    });
+  }
+};
+
+onMounted(() => {
+  syncLocale();
+  tryLoadFonts();
+  tryRefreshToken();
 });
 
 watch(

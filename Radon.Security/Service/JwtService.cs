@@ -25,7 +25,7 @@ public class JwtService(IRedisClient cli) : IJwtService
         return p;
     }
 
-    public string CheckToken(string token, bool checkSession = false)
+    public string CheckToken(string token, bool checkSession = true)
     {
         var conf = AppSettings.Get().Security.Jwt;
         var handler = new JwtSecurityTokenHandler();

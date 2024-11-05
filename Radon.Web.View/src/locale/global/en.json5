@@ -1,0 +1,18 @@
+﻿{
+  global: {
+    title: "Radon",
+    description: "A Vue 3.0 based web application",
+    
+  },
+  auth: {
+    message: {
+      tokenValidAndRefreshed: "Token is valid and refreshed",
+      tokenInvalid: "Token is invalid, please login again"
+    }
+  },
+  loader: {
+    message: {
+      fontLoadingFailed: "Font loading failed"
+    }
+  }
+}
