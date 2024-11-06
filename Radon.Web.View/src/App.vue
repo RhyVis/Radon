@@ -6,11 +6,7 @@ import BaseLayout from "@/layout/frame/BaseLayout.vue";
 import { validateWithRefresh } from "@/lib/util/authMethods";
 import { loadFonts } from "@/lib/util/fontLoader";
 import { useGlobalStore } from "@/store/global";
-import { useTitle } from "@vueuse/core";
 import { MessagePlugin } from "tdesign-vue-next";
-import { onMounted, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { RouterView, useRouter } from "vue-router";
 
 const global = useGlobalStore();
 const router = useRouter();
@@ -88,7 +84,7 @@ onMounted(() => {
 watch(
   () => router.currentRoute.value.path,
   () => {
-    const title = router.currentRoute.value.meta.title as string;
+    const title = router.currentRoute.value.meta.title as string | null;
     if (title) {
       useTitle(title);
     }

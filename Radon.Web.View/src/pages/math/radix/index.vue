@@ -4,7 +4,6 @@ import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { radixVal } from "@/pages/math/radix/scripts/radix";
 import { ArrowRightCircleIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { computed, reactive, ref } from "vue";
 
 const defaultCharset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const query = reactive({
@@ -14,8 +13,8 @@ const query = reactive({
   iCharset: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
   oCharset: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
 });
-const iCharsetInputStatus = ref("default");
-const oCharsetInputStatus = ref("default");
+const iCharsetInputStatus = ref<"default" | "error" | "success" | "warning">("default");
+const oCharsetInputStatus = ref<"default" | "error" | "success" | "warning">("default");
 const result = computed(() => {
   return radixVal(query.input, query.iRadix, query.oRadix, query.iCharset, query.oCharset);
 });

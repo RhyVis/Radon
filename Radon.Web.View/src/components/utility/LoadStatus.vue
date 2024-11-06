@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
 import { CheckCircleIcon, HelpCircleIcon } from "tdesign-icons-vue-next";
-import { computed } from "vue";
 
 const props = defineProps<{
   name: string;

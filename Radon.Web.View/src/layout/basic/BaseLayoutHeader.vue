@@ -3,7 +3,6 @@ import ProjectIcon from "@/assets/icon.svg";
 import SelLocale from "@/components/select/SelLocale.vue";
 import { useGlobalStore } from "@/store/global";
 import { MenuFoldIcon, MenuUnfoldIcon } from "tdesign-icons-vue-next";
-import { computed } from "vue";
 
 const store = useGlobalStore();
 const dev = computed(() => import.meta.env.DEV);

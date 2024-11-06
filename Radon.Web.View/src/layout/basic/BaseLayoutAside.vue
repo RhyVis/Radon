@@ -13,7 +13,7 @@ import {
   RelationIcon,
   ToolsIcon,
 } from "tdesign-icons-vue-next";
-import { computed, onMounted } from "vue";
+import type { MenuRoute, MenuValue } from "tdesign-vue-next";
 
 const global = useGlobalStore();
 
@@ -43,7 +43,7 @@ onMounted(() => {
         <t-image class="r-ct-icon" shape="round" :src="ProjectIcon" alt="Radon" />
         <span class="r-ct-sd-tt">Radon</span>
       </template>
-      <t-menu-item to="/" @click="handleClose">
+      <t-menu-item :to="'/' as MenuRoute" @click="handleClose">
         <template #icon>
           <HomeIcon />
         </template>
@@ -61,8 +61,8 @@ onMounted(() => {
         <div v-for="item in dataRecords" :key="item.name">
           <t-menu-item
             v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path"
-            :value="item.name"
+            :to="item.path as MenuRoute"
+            :value="item.name as MenuValue"
             @click="handleClose"
           >
             <template #icon>
@@ -84,8 +84,8 @@ onMounted(() => {
         <div v-for="item in mystRecords" :key="item.name">
           <t-menu-item
             v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path"
-            :value="item.name"
+            :to="item.path as MenuRoute"
+            :value="item.name as MenuValue"
             @click="handleClose"
           >
             <template #icon>
@@ -107,8 +107,8 @@ onMounted(() => {
         <div v-for="item in drawRecords" :key="item.name">
           <t-menu-item
             v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path"
-            :value="item.name"
+            :to="item.path as MenuRoute"
+            :value="item.name as MenuValue"
             @click="handleClose"
           >
             <template #icon>
@@ -130,8 +130,8 @@ onMounted(() => {
         <div v-for="item in mathRecords" :key="item.name">
           <t-menu-item
             v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path"
-            :value="item.name"
+            :to="item.path as MenuRoute"
+            :value="item.name as MenuValue"
             @click="handleClose"
           >
             <template #icon>
@@ -153,8 +153,8 @@ onMounted(() => {
         <div v-for="item in utilRecords" :key="item.name">
           <t-menu-item
             v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path"
-            :value="item.name"
+            :to="item.path as MenuRoute"
+            :value="item.name as MenuValue"
             @click="handleClose"
           >
             <template #icon>
@@ -172,13 +172,13 @@ onMounted(() => {
         <template #title>
           <span>Extra</span>
         </template>
-        <t-menu-item to="/credits" value="credits" @click="handleClose">
+        <t-menu-item :to="'/credits' as MenuRoute" value="credits" @click="handleClose">
           <template #icon>
             <icon name="undertake-delivery" />
           </template>
           <span>Credits</span>
         </t-menu-item>
-        <t-menu-item v-if="global.authShow" to="/auth" value="auth" @click="handleClose">
+        <t-menu-item v-if="global.authShow" :to="'/auth' as MenuRoute" value="auth" @click="handleClose">
           <template #icon>
             <icon name="lock-on" />
           </template>

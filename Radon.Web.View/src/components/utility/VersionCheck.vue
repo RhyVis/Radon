@@ -1,13 +1,11 @@
 <script setup lang="tsx">
-import { computed, onMounted, ref } from "vue";
 import { getVersion } from "@/lib/util/apiMethods";
-import { MessagePlugin } from "tdesign-vue-next";
+import { MessagePlugin, type TNodeReturnValue } from "tdesign-vue-next";
 import { ArrowLeftIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
 import VersionView from "@/assets/local/version.json";
 import moment from "moment";
 import useStatic from "@/lib/util/useStatic";
-import { useI18n } from "vue-i18n";
 
 const loading = ref(true);
 const { t } = useI18n();
@@ -21,7 +19,11 @@ const vLocal = VersionView.compileTime;
 const vRemote = ref(0);
 
 const vState = ref(9);
-const vDisplay = computed(() => {
+const vDisplay = computed<{
+  theme: "success" | "warning" | "danger" | "default" | "primary";
+  icon: () => TNodeReturnValue;
+  value: string;
+}>(() => {
   switch (vState.value) {
     case 0:
       return {
@@ -134,7 +136,7 @@ onMounted(async () => {
   </t-dialog>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .r-vc-card {
   width: max-content;
   .r-vc-refresh-font {
@@ -146,29 +148,30 @@ onMounted(async () => {
 }
 </style>
 
-<i18n lang="yaml">
-en:
-  versionCheck:
-    display:
-      latest: "Latest Version"
-      update: "Update Required"
-      error: "Version Fetch Failed"
-      wait: "Waiting for Version Fetch"
-    message:
-      update: "Non-latest version"
-      error: "Version fetch failed"
-      comm-error: "Communication with server failed"
-    refresh: "Click to refresh the page to update"
-zh-CN:
-  versionCheck:
-    display:
-      latest: "最新版本"
-      update: "需要更新"
-      error: "版本获取失败"
-      wait: "等待版本获取"
-    message:
-      update: "非最新版本"
-      error: "版本获取失败"
-      comm-error: "与服务器通信失败"
-    refresh: "点击刷新页面以更新"
+<i18n lang="yaml" locale="en">
+versionCheck:
+  display:
+    latest: "Latest Version"
+    update: "Update Required"
+    error: "Version Fetch Failed"
+    wait: "Waiting for Version Fetch"
+  message:
+    update: "Non-latest version"
+    error: "Version fetch failed"
+    comm-error: "Communication with server failed"
+  refresh: "Click to refresh the page to update"
+</i18n>
+
+<i18n lang="yaml" locale="zh-CN">
+versionCheck:
+  display:
+    latest: "最新版本"
+    update: "需要更新"
+    error: "版本获取失败"
+    wait: "等待版本获取"
+  message:
+    update: "非最新版本"
+    error: "版本获取失败"
+    comm-error: "与服务器通信失败"
+  refresh: "点击刷新页面以更新"
 </i18n>

@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import { computed, onMounted, reactive, ref } from "vue";
 import { CopyIcon, DownloadIcon } from "tdesign-icons-vue-next";
 import { b64ToBlob } from "@/lib/util/imageTransform";
 import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";

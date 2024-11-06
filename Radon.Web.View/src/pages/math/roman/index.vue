@@ -2,7 +2,6 @@
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
-import { computed, ref } from "vue";
 
 const input = ref(0);
 const roman = computed(() => intToRoman(input.value));

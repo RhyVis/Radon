@@ -9,23 +9,38 @@ defineProps({
   },
 });
 
+const { t } = useI18n();
 const emit = defineEmits(["update:target"]);
 const action = async () => {
   try {
     const text = await navigator.clipboard.readText();
     emit("update:target", text);
-    await MessagePlugin.success("读取剪贴板成功");
+    await MessagePlugin.success(t("btnRead.readClipboardSuccess"));
   } catch (e) {
     console.error("Fail in reading clipboard content: ", e);
-    await MessagePlugin.error("读取剪贴板失败");
+    await MessagePlugin.error(t("btnRead.readClipboardFail"));
   }
 };
 </script>
 
 <template>
-  <t-tooltip content="读取剪贴板内容" placement="top">
+  <t-tooltip :content="t('btnRead.readClipboard')" placement="top">
     <t-button theme="default" shape="square" @click="action">
       <BrushIcon />
     </t-button>
   </t-tooltip>
 </template>
+
+<i18n lang="yaml" locale="en">
+btnRead:
+  readClipboard: Read Clipboard
+  readClipboardSuccess: Read Clipboard Success
+  readClipboardFail: Read Clipboard Fail
+</i18n>
+
+<i18n lang="yaml" locale="zh-CN">
+btnRead:
+  readClipboard: 读取剪贴板
+  readClipboardSuccess: 读取剪贴板成功
+  readClipboardFail: 读取剪贴板失败
+</i18n>

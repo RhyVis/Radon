@@ -3,18 +3,16 @@ import { useGlobalStore } from "@/store/global";
 import { EarthIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { watch } from "vue";
-import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
 const global = useGlobalStore();
 
-type LocaleOption = { content: string; value: string };
-const options: LocaleOption[] = [
+const options = [
   { content: "English", value: "en" },
   { content: "简体中文", value: "zh-CN" },
 ];
-const handleChange = (data: LocaleOption) => {
-  global.locale = data.value;
+const handleChange = (data: unknown) => {
+  global.locale = (data as { value: string }).value;
 };
 
 watch(
@@ -34,19 +32,20 @@ watch(
   </t-dropdown>
 </template>
 
-<i18n lang="yaml">
-en:
-  lang:
-    en: English
-    zh-CN: 简体中文
-  sel-locale:
-    unknown: Unknown Language
-    msg: Selected {lang}
-zh-CN:
-  lang:
-    en: English
-    zh-CN: 简体中文
-  sel-locale:
-    unknown: 未知语言
-    msg: 切换至{lang}
+<i18n lang="yaml" locale="en">
+lang:
+  en: English
+  zh-CN: 简体中文
+sel-locale:
+  unknown: Unknown Language
+  msg: Selected {lang}
+</i18n>
+
+<i18n lang="yaml" locale="zh-CN">
+lang:
+  en: English
+  zh-CN: 简体中文
+sel-locale:
+  unknown: 未知语言
+  msg: 切换至{lang}
 </i18n>

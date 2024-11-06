@@ -6,7 +6,6 @@ import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { apiPost } from "@/lib/util/apiMethods";
 import { SendIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { reactive, ref } from "vue";
 
 const query = reactive({
   text: "哦牛",

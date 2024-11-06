@@ -4,7 +4,6 @@ import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import ButtonRead from "@/components/btn/ButtonRead.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { Base64 } from "js-base64";
-import { computed, ref } from "vue";
 
 const inputRef = ref("");
 const inputStatusRef = computed(() => {

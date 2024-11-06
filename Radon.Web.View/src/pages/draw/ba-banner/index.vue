@@ -2,7 +2,6 @@
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import BannerCanvas from "@/pages/draw/ba-banner/comps/BannerCanvas.vue";
 import AdvancedOptContainer from "@/components/menu/AdvOptContainer.vue";
-import { ref } from "vue";
 import { CopyIcon, DownloadIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
 

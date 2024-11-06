@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { SwapLeftIcon, SwapRightIcon } from "tdesign-icons-vue-next";
-import { ref } from "vue";
 
 const showAdv = ref(false);
 const handleAdv = () => {
@@ -24,7 +23,7 @@ const handleAdv = () => {
   </t-space>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .move-enter-active {
   transition: all 0.3s ease-out;
 }

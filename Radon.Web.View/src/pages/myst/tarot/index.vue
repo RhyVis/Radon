@@ -8,7 +8,6 @@ import TarotMain from "@/pages/myst/tarot/comps/TarotMain.vue";
 import { useTarotStore } from "@/pages/myst/tarot/scripts/store";
 import { CardIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { computed, onMounted, reactive, type Ref, ref } from "vue";
 
 const store = useTarotStore();
 
