@@ -68,7 +68,11 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
 
             await Task.WhenAll(loadings);
 
-            TarotData.Init(_deckDict, _deckMainOnlyDict, _deckInfoDict);
+            TarotData.Init(
+                _deckDict,
+                _deckMainOnlyDict,
+                _deckInfoDict.OrderBy(p => p.Key).ToDictionary()
+            );
 
             _logger.Info($"Successfully initialized {_deckDict.Count} decks");
 
