@@ -20,7 +20,7 @@ const vRemote = ref(0);
 
 const vState = ref(9);
 const vDisplay = computed<{
-  theme: "success" | "warning" | "danger" | "default" | "primary";  
+  theme: "success" | "warning" | "danger" | "default" | "primary";
   icon: () => TNodeReturnValue;
   value: string;
 }>(() => {

@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import { onMounted, reactive, ref } from "vue";
 import { apiPost, apiPut } from "@/lib/util/apiMethods";
 import { MessagePlugin, type TableProps } from "tdesign-vue-next";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
@@ -131,7 +130,7 @@ const handleAppend = async (repeat: boolean = false) => {
   } finally {
     appendLoading.value = false;
     if (!repeat) {
-      setTimeout(() => (showAppendingDialog.value = false));
+      setTimeout(() => (showAppendingDialog.value = false), 666);
     }
   }
 };
@@ -172,10 +171,13 @@ onMounted(() => {
           <t-form-item label="选择游戏">
             <t-radio-group v-model="query.type">
               <t-tooltip content="原神" placement="top">
-                <t-radio-button value="gs">原神怎么你了</t-radio-button>
+                <t-radio-button value="gs">原批</t-radio-button>
               </t-tooltip>
               <t-tooltip content="明日方舟" placement="top">
-                <t-radio-button value="ak">二游半壁江山</t-radio-button>
+                <t-radio-button value="ak">粥畜</t-radio-button>
+              </t-tooltip>
+              <t-tooltip content="麻辣香锅" placement="top">
+                <t-radio-button value="ml">麻辣</t-radio-button>
               </t-tooltip>
             </t-radio-group>
           </t-form-item>
@@ -243,7 +245,7 @@ onMounted(() => {
         </t-button>
       </RouterLink>
     </template>
-    <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%">
+    <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%" @close="appendQuery.text = ''">
       <t-form label-align="top">
         <t-form-item label="类型">
           <SelSimple v-model:selected="appendQuery.type" :options="spamTypes" />

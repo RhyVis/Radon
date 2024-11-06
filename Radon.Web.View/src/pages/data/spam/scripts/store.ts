@@ -15,7 +15,7 @@ export const useSpamStore = defineStore("spam", {
     dict: "none",
     size: 1,
     activeTab: "spam",
-    appendType: "sn"
+    appendType: "sn",
   }),
   actions: {
     update(query: Query, conf: Conf) {
