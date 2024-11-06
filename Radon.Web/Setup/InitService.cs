@@ -66,6 +66,8 @@ public static class InitService
             .UseAutoSyncStructure(true)
             .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
             .Build();
+        _logger.Debug("Sync Database Structure");
+        fsql.CodeFirst.SyncStructure();
         services.AddSingleton(fsql);
 
         _logger.Debug("Register Repository");
