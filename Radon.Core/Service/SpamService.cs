@@ -25,7 +25,7 @@ public class SpamService(
 {
     private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public SpamRes HandleSpam(SpamReq req)
+    public SpamRes Fetch(SpamFetchReq req)
     {
         var size = req.Data.Size;
         var type = req.Data.Type.TryParseEnum(SpamType.N);
@@ -56,6 +56,68 @@ public class SpamService(
             SpamType.SX => HandleTransform(mxRepo.FindRand(size), dict),
             _ => SpamRes.FromEntity(new DummySpamEntity()),
         };
+    }
+
+    public bool Append(SpamAppendReq req)
+    {
+        var type = req.Data.Type.TryParseEnum(SpamType.N);
+        try
+        {
+            switch (type)
+            {
+                case SpamType.AK:
+                {
+                    akRepo.Insert(new GachaAk { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.GS:
+                {
+                    gsRepo.Insert(new GachaGs { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.ML:
+                {
+                    mlRepo.Insert(new GachaMl { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.AC:
+                {
+                    acRepo.Insert(new MemeAcgn { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.DN:
+                {
+                    dnRepo.Insert(new MemeDinner { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.SN:
+                {
+                    mnRepo.Insert(new SpamMin { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.SX:
+                {
+                    mxRepo.Insert(new SpamMax { Text = req.Data.Text });
+                    break;
+                }
+                case SpamType.N:
+                {
+                    _logger.Warn("Unrecognized spam appending type");
+                    return false;
+                }
+                default:
+                {
+                    _logger.Warn("Unrecognized spam appending type");
+                    return false;
+                }
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, $"Failed to append spam for type {type}");
+            throw;
+        }
     }
 
     private SpamRes HandleTransform<T>(T? entity, DictType type)

@@ -1,14 +1,18 @@
 <script setup lang="tsx">
 import { onMounted, reactive, ref } from "vue";
-import { apiPost } from "@/lib/util/apiMethods";
+import { apiPost, apiPut } from "@/lib/util/apiMethods";
 import { MessagePlugin, type TableProps } from "tdesign-vue-next";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import SelectSimple from "@/components/select/SelectSimple.vue";
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import type { TextEntry } from "@/lib/type/typeEntry";
 import useClipboard from "vue-clipboard3";
+import { HomeIcon, ToolsIcon } from "tdesign-icons-vue-next";
+import { useGlobalStore } from "@/store/global";
+import SelSimple from "@/components/select/SelSimple.vue";
+import { spamTypes } from "@/pages/data/spam/scripts/type";
 
+const global = useGlobalStore();
 const store = useSpamStore();
 const { toClipboard } = useClipboard();
 
@@ -16,6 +20,10 @@ const query = reactive({
   type: "sn",
   dict: "none",
   size: 1,
+});
+const appendQuery = reactive({
+  type: "sn",
+  text: "",
 });
 const conf = reactive({
   activeTab: "spam",
@@ -63,6 +71,8 @@ const codeTypes = [
   { value: "sprk", label: "火星密文😘" },
   { value: "diff", label: "形近转换🧐" },
 ];
+const showAppendingDialog = ref(false);
+const appendLoading = ref(false);
 
 const changeTab = (key: string | number) => {
   switch (key) {
@@ -100,12 +110,38 @@ const handleSpam = async () => {
     resultLoading.value = false;
   }
 };
+const handleAppend = async (repeat: boolean = false) => {
+  if (appendQuery.text.length === 0) {
+    await MessagePlugin.error("内容不能为空");
+    return;
+  }
+  appendLoading.value = true;
+  try {
+    const r = (await apiPut("/api/spam", appendQuery)).data as number;
+    if (r === 0) {
+      appendQuery.text = "";
+      store.appendType = appendQuery.type;
+      await MessagePlugin.success("追加成功");
+    } else {
+      await MessagePlugin.error("追加失败");
+    }
+  } catch (e) {
+    console.error(e);
+    await MessagePlugin.error("追加失败");
+  } finally {
+    appendLoading.value = false;
+    if (!repeat) {
+      setTimeout(() => (showAppendingDialog.value = false));
+    }
+  }
+};
 
 onMounted(() => {
   query.type = store.type;
   query.dict = store.dict;
   query.size = store.size;
   conf.activeTab = store.activeTab;
+  appendQuery.type = store.appendType;
 });
 </script>
 
@@ -163,7 +199,7 @@ onMounted(() => {
       </t-tabs>
       <div class="mt-4">
         <t-form-item label="转义方式">
-          <SelectSimple v-model:selected="query.dict" :options="codeTypes" />
+          <SelSimple v-model:selected="query.dict" :options="codeTypes" />
         </t-form-item>
         <t-form-item label="妙语连珠">
           <t-input-number v-model="query.size" :min="1" :max="10" :auto-width="true" :allow-input-over-limit="false" />
@@ -190,6 +226,41 @@ onMounted(() => {
         :loading="resultLoading"
       />
     </div>
+    <template #actions>
+      <t-button
+        v-if="global.authPassed"
+        variant="text"
+        shape="circle"
+        theme="primary"
+        size="small"
+        @click="showAppendingDialog = true"
+      >
+        <ToolsIcon />
+      </t-button>
+      <RouterLink to="/">
+        <t-button variant="text" theme="primary" shape="circle" size="small">
+          <HomeIcon />
+        </t-button>
+      </RouterLink>
+    </template>
+    <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%">
+      <t-form label-align="top">
+        <t-form-item label="类型">
+          <SelSimple v-model:selected="appendQuery.type" :options="spamTypes" />
+        </t-form-item>
+        <t-form-item label="内容">
+          <t-textarea v-model="appendQuery.text" />
+        </t-form-item>
+      </t-form>
+      <template #footer>
+        <t-space>
+          <ButtonRead v-model:target="appendQuery.text" />
+          <t-button theme="default" @click="showAppendingDialog = false">取消</t-button>
+          <t-button theme="primary" @click="handleAppend()" :loading="appendLoading">确定</t-button>
+          <t-button theme="primary" @click="handleAppend(true)" :loading="appendLoading">确定并重复</t-button>
+        </t-space>
+      </template>
+    </t-dialog>
   </ContentLayout>
 </template>
 

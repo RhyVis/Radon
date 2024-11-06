@@ -111,7 +111,16 @@ const counterIncrement = () => {
       </ul>
     </t-paragraph>
     <template #actions>
-      <HomeIcon class="r-no-select" @click="counterIncrement" />
+      <t-button
+        class="r-no-select"
+        variant="text"
+        theme="primary"
+        shape="circle"
+        size="small"
+        @click="counterIncrement"
+      >
+        <HomeIcon />
+      </t-button>
     </template>
   </ContentLayout>
 </template>

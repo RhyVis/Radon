@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import SelectSimple from "@/components/select/SelectSimple.vue";
+import SelectSimple from "@/components/select/SelSimple.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import type { Card, CardDisplay, DeckInfo, DeckInfoInterface, DeckInfoSelect } from "@/lib/type/typeTarot";
 import { apiGet, apiPost } from "@/lib/util/apiMethods";

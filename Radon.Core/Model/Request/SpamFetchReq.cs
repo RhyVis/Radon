@@ -2,7 +2,7 @@
 
 namespace Radon.Core.Model.Request;
 
-public class SpamReq : BaseApiReq<SpamReq.SpamReqData>
+public class SpamFetchReq : BaseApiReq<SpamFetchReq.SpamReqData>
 {
     public class SpamReqData
     {

@@ -13,11 +13,15 @@ defineProps<{
     <t-card class="r-ct-layout-card" :title="title" :subtitle="subtitle" :header-bordered="true">
       <slot />
       <template #actions>
-        <slot name="actions">
-          <RouterLink to="/">
-            <HomeIcon />
-          </RouterLink>
-        </slot>
+        <t-space :size="6">
+          <slot name="actions">
+            <RouterLink to="/">
+              <t-button variant="text" theme="primary" shape="circle">
+                <HomeIcon />
+              </t-button>
+            </RouterLink>
+          </slot>
+        </t-space>
       </template>
     </t-card>
   </div>

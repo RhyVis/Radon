@@ -11,10 +11,11 @@ type Conf = {
 
 export const useSpamStore = defineStore("spam", {
   state: () => ({
-    type: "spam_min",
+    type: "sn",
     dict: "none",
     size: 1,
     activeTab: "spam",
+    appendType: "sn"
   }),
   actions: {
     update(query: Query, conf: Conf) {

@@ -5,5 +5,7 @@ namespace Radon.Core.Service.Interface;
 
 public interface ISpamService
 {
-    public SpamRes HandleSpam(SpamReq req);
+    public SpamRes Fetch(SpamFetchReq req);
+
+    public bool Append(SpamAppendReq req);
 }

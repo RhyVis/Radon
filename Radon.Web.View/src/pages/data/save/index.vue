@@ -8,9 +8,9 @@ import type { SaveEntry } from "@/pages/data/save/scripts/entryType";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { onMounted, reactive, ref } from "vue";
 
 const saveStore = useSaveStore();
+const { t } = useI18n();
 
 const query = reactive({
   id: 0,
@@ -88,25 +88,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout title="字符存储" subtitle="键值对">
+  <ContentLayout :title="t('textStorage.tt')" :subtitle="t('textStorage.st')">
     <t-form>
-      <t-form-item label="存储内容">
+      <t-form-item :label="t('textStorage.form.store')">
         <t-textarea v-model="query.text" :autosize="true" placeholder="存储内容" />
       </t-form-item>
-      <t-form-item label="存储备注">
+      <t-form-item :label="t('textStorage.form.note')">
         <t-input v-model="query.note" placeholder="存储备注" />
       </t-form-item>
-      <t-form-item label="读取内容">
+      <t-form-item :label="t('textStorage.form.read')">
         <t-textarea :autosize="true" :readonly="true" :value="result.text" placeholder="读取内容" />
       </t-form-item>
-      <t-form-item label="读取备注">
+      <t-form-item :label="t('textStorage.form.readNote')">
         <t-input :value="result.note" :readonly="true" placeholder="读取备注" />
       </t-form-item>
       <t-divider />
       <t-form-item label="ID">
         <t-input-number v-model="query.id" :auto-width="true" :min="0" size="small" />
       </t-form-item>
-      <t-form-item label="数据操作">
+      <t-form-item :label="t('textStorage.form.operation')">
         <t-loading :loading="loading" size="small">
           <t-space>
             <t-button shape="circle" theme="primary" @click="handleStore">
@@ -118,7 +118,7 @@ onMounted(() => {
           </t-space>
         </t-loading>
       </t-form-item>
-      <t-form-item label="工具">
+      <t-form-item :label="t('textStorage.form.tool')">
         <t-space :size="5">
           <ButtonCopy :target="result.text" />
           <ButtonRead v-model:target="query.text" />
@@ -128,3 +128,29 @@ onMounted(() => {
     </t-form>
   </ContentLayout>
 </template>
+
+<i18n lang="yaml" locale="en">
+textStorage:
+  tt: "Text Storage"
+  st: "Key-Value"
+  form:
+    store: "Store Content"
+    note: "Store Note"
+    read: "Read Content"
+    readNote: "Read Note"
+    operation: "Data Operation"
+    tool: "Tool"
+</i18n>
+
+<i18n lang="yaml" locale="zh-CN">
+textStorage:
+  tt: "字符存储"
+  st: "键值对"
+  form:
+    store: "存储内容"
+    note: "存储备注"
+    read: "读取内容"
+    readNote: "读取备注"
+    operation: "数据操作"
+    tool: "工具"
+</i18n>

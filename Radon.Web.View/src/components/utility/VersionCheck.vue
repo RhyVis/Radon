@@ -20,7 +20,7 @@ const vRemote = ref(0);
 
 const vState = ref(9);
 const vDisplay = computed<{
-  theme: "success" | "warning" | "danger" | "default" | "primary";
+  theme: "success" | "warning" | "danger" | "default" | "primary";  
   icon: () => TNodeReturnValue;
   value: string;
 }>(() => {
@@ -55,7 +55,7 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    fetch(window.location.href, { cache: "no-store" })
+    fetch("/index.html", { cache: "no-store" })
       .then(response => response.text())
       .then(html => {
         document.open();
@@ -115,23 +115,23 @@ onMounted(async () => {
   </t-card>
   <t-dialog
     v-model:visible="showDialog"
-    header="版本更新"
+    :header="t('versionCheck.dialog.title')"
     theme="warning"
     confirm-btn="更新"
     :close-btn="false"
     @confirm="handleUpdate"
   >
     <t-space class="r-no-select" direction="vertical">
-      <div>检查到新版本：</div>
+      <div>{{ t("versionCheck.dialog.content") }}：</div>
       <div>
-        <span>构建版本：</span>
+        <span>{{ t("versionCheck.dialog.build") }}：</span>
         <t-tag :style="versionFont">{{ decimalRadixValExtended(vRemote) }}</t-tag>
       </div>
       <div>
-        <span>构建时间：</span>
+        <span>{{ t("versionCheck.dialog.time") }}：</span>
         <t-tag :style="versionFont">{{ moment(vRemote).format("YYYY/MM/DD HH:mm:ss") }}</t-tag>
       </div>
-      <div>是否更新？</div>
+      <div>{{ t("versionCheck.dialog.update") }}</div>
     </t-space>
   </t-dialog>
 </template>
@@ -160,6 +160,12 @@ versionCheck:
     error: "Version fetch failed"
     comm-error: "Communication with server failed"
   refresh: "Click to refresh the page to update"
+  dialog:
+    title: "Version Update"
+    content: "New version detected"
+    build: "Build Version"
+    time: "Build Time"
+    update: "Update?"
 </i18n>
 
 <i18n lang="yaml" locale="zh-CN">
@@ -174,4 +180,10 @@ versionCheck:
     error: "版本获取失败"
     comm-error: "与服务器通信失败"
   refresh: "点击刷新页面以更新"
+  dialog:
+    title: "版本更新"
+    content: "检测到新版本"
+    build: "构建版本"
+    time: "构建时间"
+    update: "更新？"
 </i18n>
