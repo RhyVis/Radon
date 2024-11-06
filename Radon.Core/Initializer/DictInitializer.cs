@@ -87,10 +87,7 @@ public static class DictData
         Dictionary<string, string> dictUnicode
     )
     {
-        if (_isInitialized)
-        {
-            throw new InvalidOperationException("Dict already initialized");
-        }
+        _isInitialized = false;
         _dictHanEmoji = dictHanEmoji;
         _dictEmojiHan = dictEmojiHan;
         _dictHanSpark = dictHanSpark;

@@ -1,30 +1,62 @@
-import { defineStore } from "pinia";
+import type { CardDisplay, DeckInfo, DeckInfoInterface, DeckInfoSelect } from "@/pages/myst/tarot/scripts/typeTarot";
 
+interface TarotStore {
+  qDeck: string;
+  qFull: boolean;
+  qSize: number;
+  activeTab: string;
+  dShowDesc: boolean;
+  dInfoMap: DeckInfoInterface;
+  dInfoSelect: DeckInfoSelect[];
+  dInfoLoaded: boolean;
+  results: CardDisplay[];
+}
 type Query = {
   deck: string;
   full: boolean;
   size: number;
 };
-type Conf = {
-  activeTab: string;
-  deckShowDesc: boolean;
-};
 
 export const useTarotStore = defineStore("tarot", {
-  state: () => ({
-    deck: "waite",
-    full: true,
-    size: 1,
+  state: (): TarotStore => ({
+    qDeck: "waite",
+    qFull: true,
+    qSize: 1,
     activeTab: "simple",
-    deckShowDesc: true,
+    dShowDesc: true,
+    dInfoMap: {},
+    dInfoSelect: [],
+    dInfoLoaded: false,
+    results: [],
   }),
-  actions: {
-    update(query: Query, conf: Conf) {
-      this.deck = query.deck;
-      this.full = query.full;
-      this.size = query.size;
-      this.activeTab = conf.activeTab;
-      this.deckShowDesc = conf.deckShowDesc;
+  getters: {
+    query(state): Query {
+      return {
+        deck: state.qDeck,
+        full: state.qFull,
+        size: state.qSize,
+      };
     },
+  },
+  actions: {
+    async init() {
+      try {
+        const fetch = (await apiGet("/api/tarot/info")).data as DeckInfoInterface;
+        this.dInfoMap = fetch;
+        this.dInfoSelect = (Object.values(fetch) as DeckInfo[]).map(item => {
+          return {
+            value: item.name,
+            label: item.loc,
+          };
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.dInfoLoaded = true;
+      }
+    },
+  },
+  persist: {
+    pick: ["qDeck", "qFull", "qSize", "activeTab", "dShowDesc"],
   },
 });

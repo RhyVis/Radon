@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import type { CardDisplay } from "@/lib/type/typeTarot";
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
+import type { CardDisplay } from "@/pages/myst/tarot/scripts/typeTarot";
 import { MoonIcon, SunnyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed } from "vue";

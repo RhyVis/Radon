@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { getVersion } from "@/lib/util/apiMethods";
+import { getVersion } from "@/lib/common/apiMethods";
 import { MessagePlugin, type TNodeReturnValue } from "tdesign-vue-next";
 import { ArrowLeftIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";

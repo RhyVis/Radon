@@ -14,7 +14,6 @@ declare module 'vue' {
     LoadStatus: typeof import('./src/components/utility/LoadStatus.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SelectSimple: typeof import('@/components/select/SelSimple.vue')['default']
     SelLocale: typeof import('./src/components/select/SelLocale.vue')['default']
     SelSimple: typeof import('./src/components/select/SelSimple.vue')['default']
     TButton: typeof import('tdesign-vue-next')['Button']

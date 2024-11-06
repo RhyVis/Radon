@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { login, refresh, validate } from "@/lib/util/authMethods";
+import { authLogin, authRefresh, authValidate } from "@/lib/common/authMethods";
 import { ArrowUpDown2Icon, DeleteIcon, Fingerprint2Icon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { useGlobalStore } from "@/store/global";
@@ -33,7 +33,7 @@ const tokenValidDisplay = computed(() => {
 const handleLogin = async () => {
   if (query.username.length > 0 && query.password.length > 0) {
     loginLoading.value = true;
-    const b = await login(query);
+    const b = await authLogin(query);
     if (b) {
       global.authPassed = true;
       await MessagePlugin.success(t("auth.msg.loginSuccess"));
@@ -48,7 +48,7 @@ const handleLogin = async () => {
 };
 const handleTokenStateCheck = async () => {
   tokenValidSign.value = 0;
-  const b = await validate();
+  const b = await authValidate();
   if (b) {
     tokenValidSign.value = 1;
     await MessagePlugin.success(t("auth.msg.tokenValid"));
@@ -58,7 +58,7 @@ const handleTokenStateCheck = async () => {
   }
 };
 const handleRefreshToken = async () => {
-  const b = await refresh();
+  const b = await authRefresh();
   if (b) {
     await MessagePlugin.success(t("auth.msg.refreshTokenSuccess"));
   } else {

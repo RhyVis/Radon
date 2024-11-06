@@ -1,4 +1,4 @@
-import { validateWithRefresh } from "@/lib/util/authMethods";
+import { authValidateWithRefresh } from "@/lib/common/authMethods";
 import HomeView from "@/pages/base/home/index.vue";
 import { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -52,7 +52,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, _, next) => {
   if (to.meta.auth) {
-    const b = await validateWithRefresh();
+    const b = await authValidateWithRefresh();
     if (b) {
       next();
     } else {

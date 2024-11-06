@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Radon.Core.Model.Response;
 using Radon.Security.Exceptions;
 

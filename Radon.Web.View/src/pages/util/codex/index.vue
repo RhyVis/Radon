@@ -3,7 +3,7 @@ import ButtonClear from "@/components/btn/ButtonClear.vue";
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import ButtonRead from "@/components/btn/ButtonRead.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { apiPost } from "@/lib/util/apiMethods";
+import { apiPost } from "@/lib/common/apiMethods";
 import { SendIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 

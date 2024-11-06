@@ -3,7 +3,7 @@ import ContentAside from "@/layout/basic/BaseLayoutAside.vue";
 import ContentFooter from "@/layout/basic/BaseLayoutFooter.vue";
 import ContentHeader from "@/layout/basic/BaseLayoutHeader.vue";
 import BaseLayout from "@/layout/frame/BaseLayout.vue";
-import { validateWithRefresh } from "@/lib/util/authMethods";
+import { authValidateWithRefresh } from "@/lib/common/authMethods";
 import { loadFonts } from "@/lib/util/fontLoader";
 import { useGlobalStore } from "@/store/global";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -61,7 +61,7 @@ const tryLoadFonts = () => {
 };
 const tryRefreshToken = () => {
   if (global.authPassed) {
-    validateWithRefresh().then(v => {
+    authValidateWithRefresh().then(v => {
       if (v) {
         MessagePlugin.success(t("auth.message.tokenValidAndRefreshed"));
       } else {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { CardDisplay } from "@/lib/type/typeTarot";
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
+import type { CardDisplay } from "@/pages/myst/tarot/scripts/typeTarot";
 import { computed } from "vue";
 
 const { card, index } = defineProps<{

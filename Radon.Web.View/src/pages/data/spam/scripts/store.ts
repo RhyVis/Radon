@@ -1,29 +1,43 @@
-import { defineStore } from "pinia";
-
 type Query = {
   type: string;
   dict: string;
   size: number;
 };
-type Conf = {
-  activeTab: string;
+type QueryAppend = {
+  type: string;
+  text: string;
 };
 
 export const useSpamStore = defineStore("spam", {
   state: () => ({
-    type: "sn",
-    dict: "none",
-    size: 1,
+    qType: "sn",
+    qDict: "none",
+    qSize: 1,
+    aType: "sn",
+    aText: "",
     activeTab: "spam",
-    appendType: "sn",
   }),
-  actions: {
-    update(query: Query, conf: Conf) {
-      this.type = query.type;
-      this.dict = query.dict;
-      this.size = query.size;
-      this.activeTab = conf.activeTab;
+  getters: {
+    query(state): Query {
+      return {
+        type: state.qType,
+        dict: state.qDict,
+        size: state.qSize,
+      };
+    },
+    queryAppend(state): QueryAppend {
+      return {
+        type: state.aType,
+        text: state.aText,
+      };
     },
   },
-  persist: true,
+  actions: {
+    clearAppendQuery() {
+      this.aText = "";
+    },
+  },
+  persist: {
+    pick: ["qType", "qDict", "qSize", "aType", "activeTab"],
+  },
 });

@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { apiPost, apiPut } from "@/lib/util/apiMethods";
+import { apiPost, apiPut } from "@/lib/common/apiMethods";
 import { MessagePlugin, type TableProps } from "tdesign-vue-next";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
@@ -9,24 +9,13 @@ import useClipboard from "vue-clipboard3";
 import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
 import { useGlobalStore } from "@/store/global";
 import SelSimple from "@/components/select/SelSimple.vue";
-import { spamTypes } from "@/pages/data/spam/scripts/type";
+import { spamTypes, codeTypes } from "@/pages/data/spam/scripts/type";
 
 const global = useGlobalStore();
 const store = useSpamStore();
+const { qType, qDict, qSize, aType, aText, activeTab } = storeToRefs(store);
 const { toClipboard } = useClipboard();
 
-const query = reactive({
-  type: "sn",
-  dict: "none",
-  size: 1,
-});
-const appendQuery = reactive({
-  type: "sn",
-  text: "",
-});
-const conf = reactive({
-  activeTab: "spam",
-});
 const resultLoading = ref(false);
 
 const result = ref<TextEntry[]>([
@@ -63,31 +52,23 @@ const columns = ref<TableProps["columns"]>([
     },
   },
 ]);
-const codeTypes = [
-  { value: "none", label: "直白对决😅" },
-  { value: "nmsl", label: "抽象加密🤗" },
-  { value: "trad", label: "繁体传统🤔" },
-  { value: "sprk", label: "火星密文😘" },
-  { value: "diff", label: "形近转换🧐" },
-];
 const showAppendingDialog = ref(false);
 const appendLoading = ref(false);
 
-const changeTab = (key: string | number) => {
+const handleTabChange = (key: string | number) => {
   switch (key) {
     case "spam":
-      query.type = "sn";
+      qType.value = "sn";
       break;
     case "mmr":
-      query.type = "gs";
+      qType.value = "gs";
       break;
     case "meme":
-      query.type = "ac";
+      qType.value = "ac";
       break;
     default:
   }
 };
-
 const handleCopy = (s: string) => {
   try {
     toClipboard(s.replace(/[\n\r]|\r\n|\\r\\n/, ""));
@@ -100,8 +81,7 @@ const handleCopy = (s: string) => {
 const handleSpam = async () => {
   resultLoading.value = true;
   try {
-    result.value = (await apiPost("/api/spam", query)).data as TextEntry[];
-    store.update(query, conf);
+    result.value = (await apiPost("/api/spam", store.query)).data as TextEntry[];
   } catch (e) {
     console.error(e);
     await MessagePlugin.error("获取信息失败");
@@ -110,16 +90,15 @@ const handleSpam = async () => {
   }
 };
 const handleAppend = async (repeat: boolean = false) => {
-  if (appendQuery.text.length === 0) {
+  if (aText.value.length === 0) {
     await MessagePlugin.error("内容不能为空");
     return;
   }
   appendLoading.value = true;
   try {
-    const r = (await apiPut("/api/spam", appendQuery)).data as number;
+    const r = (await apiPut("/api/spam", store.queryAppend)).data as number;
     if (r === 0) {
-      appendQuery.text = "";
-      store.appendType = appendQuery.type;
+      store.clearAppendQuery();
       await MessagePlugin.success("追加成功");
     } else {
       await MessagePlugin.error("追加失败");
@@ -134,27 +113,19 @@ const handleAppend = async (repeat: boolean = false) => {
     }
   }
 };
-
-onMounted(() => {
-  query.type = store.type;
-  query.dict = store.dict;
-  query.size = store.size;
-  conf.activeTab = store.activeTab;
-  appendQuery.type = store.appendType;
-});
 </script>
 
 <template>
   <ContentLayout title="弹药库" subtitle="对线宝典">
     <t-form>
-      <t-tabs v-model="conf.activeTab" @change="changeTab">
+      <t-tabs v-model="activeTab" @change="handleTabChange">
         <!--祖安-->
         <t-tab-panel class="mt-2" label="祖安特区" value="spam">
           <t-form-item label="使用说明">
             <span class="r-sp-panel-desc">高强度版本容易被夹，建议转义</span>
           </t-form-item>
           <t-form-item label="选择强度">
-            <t-radio-group v-model="query.type">
+            <t-radio-group v-model="qType">
               <t-radio-button value="sn">小喷怡情😋</t-radio-button>
               <t-radio-button value="sx">火力全开😠</t-radio-button>
             </t-radio-group>
@@ -169,7 +140,7 @@ onMounted(() => {
             </span>
           </t-form-item>
           <t-form-item label="选择游戏">
-            <t-radio-group v-model="query.type">
+            <t-radio-group v-model="qType">
               <t-tooltip content="原神" placement="top">
                 <t-radio-button value="gs">原批</t-radio-button>
               </t-tooltip>
@@ -188,7 +159,7 @@ onMounted(() => {
             <span class="r-sp-panel-desc">我喜欢复制粘贴</span>
           </t-form-item>
           <t-form-item label="选择主题">
-            <t-radio-group v-model="query.type" type="button">
+            <t-radio-group v-model="qType" type="button">
               <t-tooltip content="二次元欠图了" placement="top">
                 <t-radio-button value="ac">反二圣经</t-radio-button>
               </t-tooltip>
@@ -201,10 +172,10 @@ onMounted(() => {
       </t-tabs>
       <div class="mt-4">
         <t-form-item label="转义方式">
-          <SelSimple v-model:selected="query.dict" :options="codeTypes" />
+          <SelSimple v-model:selected="qDict" :options="codeTypes" />
         </t-form-item>
         <t-form-item label="妙语连珠">
-          <t-input-number v-model="query.size" :min="1" :max="10" :auto-width="true" :allow-input-over-limit="false" />
+          <t-input-number v-model="qSize" :min="1" :max="10" :auto-width="true" :allow-input-over-limit="false" />
         </t-form-item>
         <t-form-item label="开火！">
           <t-space>
@@ -245,18 +216,18 @@ onMounted(() => {
         </t-button>
       </RouterLink>
     </template>
-    <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%" @close="appendQuery.text = ''">
+    <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%" @close="store.clearAppendQuery()">
       <t-form label-align="top">
         <t-form-item label="类型">
-          <SelSimple v-model:selected="appendQuery.type" :options="spamTypes" />
+          <SelSimple v-model:selected="aType" :options="spamTypes" />
         </t-form-item>
         <t-form-item label="内容">
-          <t-textarea v-model="appendQuery.text" />
+          <t-textarea v-model="aText" />
         </t-form-item>
       </t-form>
       <template #footer>
         <t-space>
-          <ButtonRead v-model:target="appendQuery.text" />
+          <ButtonRead v-model:target="aText" />
           <t-button theme="default" shape="round" @click="showAppendingDialog = false">
             <CloseIcon />
           </t-button>

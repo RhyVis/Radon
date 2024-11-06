@@ -1,13 +1,13 @@
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
 
-const instance = axios.create();
+const axiosInstance = axios.create();
 
-instance.defaults.baseURL = import.meta.env.VITE_API_ROOT;
-instance.defaults.timeout = 10000;
-instance.defaults.headers.post["Content-Type"] = "application/json";
+axiosInstance.defaults.baseURL = import.meta.env.VITE_API_ROOT;
+axiosInstance.defaults.timeout = 10000;
+axiosInstance.defaults.headers.post["Content-Type"] = "application/json";
 
-instance.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   // eslint-disable-next-line
   (config: AxiosRequestConfig): any => {
     config.headers!["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
@@ -18,7 +18,7 @@ instance.interceptors.request.use(
   },
 );
 
-instance.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     // 对响应数据进行处理
     return response;
@@ -29,4 +29,4 @@ instance.interceptors.response.use(
   },
 );
 
-export default instance;
+export default axiosInstance;

@@ -3,6 +3,9 @@
     title: "Radon",
     description: "A Vue 3.0 based web application",
   },
+  common: {
+    fetchError: "Failed to fetch data",
+  },
   auth: {
     message: {
       tokenValidAndRefreshed: "Token is valid and refreshed",

@@ -50,8 +50,17 @@ public static class InitApplication
             var services = scope.ServiceProvider.GetServicesByInterface<IInitializer>();
             foreach (var service in services)
             {
-                _logger.Debug($"Trying to Initialize {service.GetType().Name}");
-                service.InitAsync().GetAwaiter().GetResult();
+                try
+                {
+                    _logger.Debug($"Trying to Initialize {service.GetType().Name}");
+                    service.InitAsync().GetAwaiter().GetResult();
+                }
+                catch (Exception e)
+                {
+                    _logger.Warn($"Initializer {service.GetType().Name} failed with {e.Message}");
+                    _logger.Info($"Retrying to Initialize {service.GetType().Name}");
+                    service.InitAsync().GetAwaiter().GetResult();
+                }
             }
         }
         catch (Exception ex)

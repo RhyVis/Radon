@@ -60,7 +60,7 @@ export default defineConfig({
         runtimeCaching: [
           { urlPattern: /^\/api\//, handler: "NetworkOnly" },
           { urlPattern: /^\/dev_local/, handler: "NetworkOnly" },
-          { urlPattern: "/index.html", handler: "NetworkFirst" },
+          { urlPattern: "/index.html", handler: "NetworkOnly" },
           {
             urlPattern: /\.(?:ttf|otf|woff|woff2)$/,
             handler: "CacheFirst",
@@ -90,9 +90,7 @@ export default defineConfig({
           library: "vue-next",
         }),
       ],
-      eslintrc: {
-        enabled: true,
-      },
+      dirs: ["./src/lib/common"],
     }),
     Icon(),
   ],

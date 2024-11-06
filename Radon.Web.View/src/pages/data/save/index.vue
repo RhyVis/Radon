@@ -3,7 +3,7 @@ import ButtonClear from "@/components/btn/ButtonClear.vue";
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import ButtonRead from "@/components/btn/ButtonRead.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { apiPost } from "@/lib/util/apiMethods";
+import { apiPost, apiPut } from "@/lib/common/apiMethods";
 import type { SaveEntry } from "@/pages/data/save/scripts/entryType";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
@@ -34,7 +34,7 @@ const handleStore = async () => {
   } else {
     loading.value = true;
     try {
-      const dt = (await apiPost("/api/update", query)).data;
+      const dt = (await apiPost("/api/text-store", query)).data;
       if (dt === 0) {
         result.sign = "存储成功";
         saveStore.update(query.id);
@@ -60,7 +60,7 @@ const handleSelect = async () => {
       query.id = 0;
       await MessagePlugin.error("ID不能小于0");
     } else {
-      const r = (await apiPost("/api/save/query", query)).data as SaveEntry;
+      const r = (await apiPut("/api/text-store", query)).data as SaveEntry;
       const { id, text, note } = r;
       if (id < 0) {
         result.sign = "读取失败";

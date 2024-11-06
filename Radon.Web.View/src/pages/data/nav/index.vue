@@ -1,9 +1,7 @@
 <script lang="tsx" setup>
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { ref } from "vue";
-import { MessagePlugin, type TableProps } from "tdesign-vue-next";
-import { apiGet } from "@/lib/util/apiMethods";
-import type { NavData } from "@/pages/data/nav/scripts/navType";
+import { useNavStore } from "@/pages/data/nav/scripts/store";
+import type { TableProps } from "tdesign-vue-next";
 
 const columns = ref<TableProps["columns"]>([
   { colKey: "id", title: "ID", width: 40, align: "center" },
@@ -29,23 +27,14 @@ const columns = ref<TableProps["columns"]>([
   },
   { colKey: "note", title: "Note", width: 100, ellipsis: true },
 ]);
+const store = useNavStore();
+const { navDataList, navLoaded } = storeToRefs(store);
 
-const loading = ref(true);
-const result = ref<NavData[]>([]);
-
-try {
-  apiGet("/api/nav")
-    .then(res => {
-      result.value = res.data as NavData[];
-    })
-    .then(() => {
-      loading.value = false;
-    });
-} catch (e) {
-  loading.value = false;
-  console.error(e);
-  MessagePlugin.error("获取导航信息失败");
-}
+onMounted(() => {
+  if (store.navDataList.length === 0) {
+    store.fetch();
+  }
+});
 </script>
 
 <template>
@@ -53,8 +42,8 @@ try {
     <t-table
       :bordered="true"
       :columns="columns"
-      :data="result"
-      :loading="loading"
+      :data="navDataList"
+      :loading="!navLoaded"
       :hover="true"
       :stripe="true"
       row-key="id"

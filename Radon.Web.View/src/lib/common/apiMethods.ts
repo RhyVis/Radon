@@ -1,5 +1,5 @@
+import axiosInstance from "@/lib/common/apiHttp";
 import type { ApiResponse, CompileTime } from "@/lib/type/typeApi";
-import instance from "@/lib/util/apiHttp";
 
 /**
  * Standard Request Object
@@ -21,7 +21,7 @@ class Req {
  * @param config
  */
 async function apiGet(url: string, config?: never): Promise<ApiResponse> {
-  return (await instance.get(url, config)).data as ApiResponse;
+  return (await axiosInstance.get(url, config)).data as ApiResponse;
 }
 
 /**
@@ -30,7 +30,7 @@ async function apiGet(url: string, config?: never): Promise<ApiResponse> {
  * @param data
  */
 async function apiPost(url: string, data: string | object): Promise<ApiResponse> {
-  return (await instance.post(url, new Req(data))).data as ApiResponse;
+  return (await axiosInstance.post(url, new Req(data))).data as ApiResponse;
 }
 
 /**
@@ -39,7 +39,7 @@ async function apiPost(url: string, data: string | object): Promise<ApiResponse>
  * @param data
  */
 async function apiPut(url: string, data: string | object): Promise<ApiResponse> {
-  return (await instance.put(url, new Req(data))).data as ApiResponse;
+  return (await axiosInstance.put(url, new Req(data))).data as ApiResponse;
 }
 
 /**
@@ -47,11 +47,11 @@ async function apiPut(url: string, data: string | object): Promise<ApiResponse> 
  * @param url
  */
 async function apiDelete(url: string): Promise<ApiResponse> {
-  return (await instance.delete(url)).data as ApiResponse;
+  return (await axiosInstance.delete(url)).data as ApiResponse;
 }
 
 async function getVersion(): Promise<number> {
-  return ((await instance.get("/version.json")).data as CompileTime).compileTime;
+  return ((await axiosInstance.get("/version.json")).data as CompileTime).compileTime;
 }
 
 export { apiDelete, apiGet, apiPost, apiPut, getVersion };

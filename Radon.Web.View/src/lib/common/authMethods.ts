@@ -1,5 +1,5 @@
-﻿import instance from "@/lib/util/apiHttp";
-import { apiPost } from "@/lib/util/apiMethods";
+﻿import axiosInstance from "@/lib/common/apiHttp";
+import { apiPost } from "@/lib/common/apiMethods";
 
 type UsernamePair = {
   username: string;
@@ -10,7 +10,7 @@ type UsernamePair = {
  * Login with the given username and password, token is stored in localStorage.
  * @param pair The username and password pair.
  */
-async function login(pair: UsernamePair): Promise<boolean> {
+async function authLogin(pair: UsernamePair): Promise<boolean> {
   try {
     const resp = await apiPost("/api/auth/login", pair);
     if (resp.code === 100) {
@@ -28,9 +28,9 @@ async function login(pair: UsernamePair): Promise<boolean> {
 /**
  * Validate the token stored in localStorage.
  */
-async function validate(): Promise<boolean> {
+async function authValidate(): Promise<boolean> {
   try {
-    const { status } = await instance.post("/api/auth/validate", { data: localStorage.getItem("token") });
+    const { status } = await axiosInstance.post("/api/auth/validate", { data: localStorage.getItem("token") });
     return status === 204;
   } catch (e) {
     console.warn(e);
@@ -41,9 +41,9 @@ async function validate(): Promise<boolean> {
 /**
  * Validate the token stored in localStorage, if it is valid, refresh it.
  */
-async function validateWithRefresh(): Promise<boolean> {
-  if (await validate()) {
-    void refresh();
+async function authValidateWithRefresh(): Promise<boolean> {
+  if (await authValidate()) {
+    void authRefresh();
     return true;
   } else {
     return false;
@@ -53,7 +53,7 @@ async function validateWithRefresh(): Promise<boolean> {
 /**
  * Refresh the token stored in localStorage.
  */
-async function refresh(): Promise<boolean> {
+async function authRefresh(): Promise<boolean> {
   try {
     const resp = (await apiPost("/api/auth/refresh", localStorage.getItem("token") as string)).data as string;
     localStorage.setItem("token", resp);
@@ -64,4 +64,4 @@ async function refresh(): Promise<boolean> {
   }
 }
 
-export { login, refresh, validate, validateWithRefresh };
+export { authLogin, authRefresh, authValidate, authValidateWithRefresh };

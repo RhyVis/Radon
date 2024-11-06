@@ -102,10 +102,7 @@ public static class TarotData
         Dictionary<string, TarotDeckInfo> deckInfoDict
     )
     {
-        if (_initialized)
-        {
-            throw new InvalidOperationException("TarotConfig already initialized");
-        }
+        _initialized = false;
         _deckDict = deckDict;
         _deckMainOnlyDict = deckMainOnlyDict;
         _deckInfoDict = deckInfoDict;

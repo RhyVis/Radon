@@ -3,6 +3,9 @@
     title: "Radon",
     description: "基于 Vue 3.0 的 Web 应用",
   },
+  common: {
+    fetchError: "获取数据失败",
+  },
   auth: {
     message: {
       tokenValidAndRefreshed: "令牌有效并已刷新",
