@@ -7,7 +7,7 @@ import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import type { TextEntry } from "@/lib/type/typeEntry";
 import useClipboard from "vue-clipboard3";
-import { HomeIcon, ToolsIcon } from "tdesign-icons-vue-next";
+import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
 import { useGlobalStore } from "@/store/global";
 import SelSimple from "@/components/select/SelSimple.vue";
 import { spamTypes } from "@/pages/data/spam/scripts/type";
@@ -255,9 +255,15 @@ onMounted(() => {
       <template #footer>
         <t-space>
           <ButtonRead v-model:target="appendQuery.text" />
-          <t-button theme="default" @click="showAppendingDialog = false">取消</t-button>
-          <t-button theme="primary" @click="handleAppend()" :loading="appendLoading">确定</t-button>
-          <t-button theme="primary" @click="handleAppend(true)" :loading="appendLoading">确定并重复</t-button>
+          <t-button theme="default" shape="round" @click="showAppendingDialog = false">
+            <CloseIcon />
+          </t-button>
+          <t-button theme="primary" shape="round" @click="handleAppend()" :loading="appendLoading">
+            <PlayCircleStrokeAddIcon v-if="!appendLoading" />
+          </t-button>
+          <t-button theme="primary" shape="round" @click="handleAppend(true)" :loading="appendLoading">
+            <ReplayIcon v-if="!appendLoading" />
+          </t-button>
         </t-space>
       </template>
     </t-dialog>
