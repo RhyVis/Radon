@@ -18,6 +18,7 @@ export default defineConfig({
     vueJsx(),
     VueI18nPlugin({
       include: fileURLToPath(new URL("./src/**/*.{yml,yaml,vue,json5}", import.meta.url)),
+      defaultSFCLang: "yaml",
     }),
     VitePWA({
       injectRegister: "auto",

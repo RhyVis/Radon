@@ -29,25 +29,25 @@ const vDisplay = computed<{
       return {
         theme: "success",
         icon: () => <t-icon name="check-circle" />,
-        value: `${decimalRadixValExtended(vLocal)} ${t("versionCheck.display.latest")}`,
+        value: `${decimalRadixValExtended(vLocal)} ${t("display.latest")}`,
       };
     case 1:
       return {
         theme: "warning",
         icon: () => <t-icon name="info-circle" />,
-        value: `${decimalRadixValExtended(vLocal)} -> ${decimalRadixValExtended(vRemote.value)} ${t("versionCheck.display.update")}`,
+        value: `${decimalRadixValExtended(vLocal)} -> ${decimalRadixValExtended(vRemote.value)} ${t("display.update")}`,
       };
     case -1:
       return {
         theme: "danger",
         icon: () => <t-icon name="error-circle" />,
-        value: t("versionCheck.display.error"),
+        value: t("display.error"),
       };
     default:
       return {
         theme: "default",
         icon: () => <t-icon name="help-circle" />,
-        value: t("versionCheck.display.wait"),
+        value: t("display.wait"),
       };
   }
 });
@@ -76,18 +76,18 @@ onMounted(async () => {
       if (v != vLocal) {
         vState.value = 1;
         showDialog.value = true;
-        await MessagePlugin.warning(t("versionCheck.message.update"));
+        await MessagePlugin.warning(t("message.update"));
       } else {
         vState.value = 0;
       }
     } else {
       vState.value = -1;
-      await MessagePlugin.warning(t("versionCheck.message.error"));
+      await MessagePlugin.warning(t("message.error"));
     }
   } catch (e) {
     vState.value = -1;
     console.error(e);
-    await MessagePlugin.error(t("versionCheck.message.comm-error"));
+    await MessagePlugin.error(t("message.comm-error"));
   } finally {
     loading.value = false;
   }
@@ -108,30 +108,30 @@ onMounted(async () => {
             <RefreshIcon />
           </t-button>
           <ArrowLeftIcon />
-          <t-tag class="r-vc-refresh-font">{{ t("versionCheck.refresh") }}</t-tag>
+          <t-tag class="r-vc-refresh-font">{{ t("refresh") }}</t-tag>
         </t-space>
       </div>
     </t-space>
   </t-card>
   <t-dialog
     v-model:visible="showDialog"
-    :header="t('versionCheck.dialog.title')"
+    :header="t('dialog.title')"
     theme="warning"
-    confirm-btn="更新"
+    :confirm-btn="t('dialog.action')"
     :close-btn="false"
     @confirm="handleUpdate"
   >
     <t-space class="r-no-select" direction="vertical">
-      <div>{{ t("versionCheck.dialog.content") }}：</div>
+      <div>{{ t("dialog.content") }}：</div>
       <div>
-        <span>{{ t("versionCheck.dialog.build") }}：</span>
+        <span>{{ t("dialog.build") }}：</span>
         <t-tag :style="versionFont">{{ decimalRadixValExtended(vRemote) }}</t-tag>
       </div>
       <div>
-        <span>{{ t("versionCheck.dialog.time") }}：</span>
+        <span>{{ t("dialog.time") }}：</span>
         <t-tag :style="versionFont">{{ moment(vRemote).format("YYYY/MM/DD HH:mm:ss") }}</t-tag>
       </div>
-      <div>{{ t("versionCheck.dialog.update") }}</div>
+      <div>{{ t("dialog.update") }}</div>
     </t-space>
   </t-dialog>
 </template>
@@ -149,41 +149,41 @@ onMounted(async () => {
 </style>
 
 <i18n lang="yaml" locale="en">
-versionCheck:
-  display:
-    latest: "Latest Version"
-    update: "Update Required"
-    error: "Version Fetch Failed"
-    wait: "Waiting for Version Fetch"
-  message:
-    update: "Non-latest version"
-    error: "Version fetch failed"
-    comm-error: "Communication with server failed"
-  refresh: "Click to refresh the page to update"
-  dialog:
-    title: "Version Update"
-    content: "New version detected"
-    build: "Build Version"
-    time: "Build Time"
-    update: "Update?"
+display:
+  latest: "Latest Version"
+  update: "Update Required"
+  error: "Version Fetch Failed"
+  wait: "Waiting for Version Fetch"
+message:
+  update: "Non-latest version"
+  error: "Version fetch failed"
+  comm-error: "Communication with server failed"
+refresh: "Click to refresh the page to update"
+dialog:
+  title: "Version Update"
+  content: "New version detected"
+  build: "Build Version"
+  time: "Build Time"
+  update: "Update?"
+  action: "Update"
 </i18n>
 
 <i18n lang="yaml" locale="zh-CN">
-versionCheck:
-  display:
-    latest: "最新版本"
-    update: "需要更新"
-    error: "版本获取失败"
-    wait: "等待版本获取"
-  message:
-    update: "非最新版本"
-    error: "版本获取失败"
-    comm-error: "与服务器通信失败"
-  refresh: "点击刷新页面以更新"
-  dialog:
-    title: "版本更新"
-    content: "检测到新版本"
-    build: "构建版本"
-    time: "构建时间"
-    update: "更新？"
+display:
+  latest: "最新版本"
+  update: "需要更新"
+  error: "版本获取失败"
+  wait: "等待版本获取"
+message:
+  update: "非最新版本"
+  error: "版本获取失败"
+  comm-error: "与服务器通信失败"
+refresh: "点击刷新页面以更新"
+dialog:
+  title: "版本更新"
+  content: "检测到新版本"
+  build: "构建版本"
+  time: "构建时间"
+  update: "更新？"
+  action: "更新"
 </i18n>

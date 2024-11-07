@@ -5,6 +5,7 @@ import ButtonRead from "@/components/btn/ButtonRead.vue";
 import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { Base64 } from "js-base64";
 
+const { t } = useI18n();
 const inputRef = ref("");
 const inputStatusRef = computed(() => {
   if (modeRef.value == "decode") {
@@ -36,21 +37,21 @@ const modeRef = ref("encode");
 </script>
 
 <template>
-  <ContentLayout title="BASE64" subtitle="编码、校验与解码">
+  <ContentLayout title="BASE64" :subtitle="t('st')">
     <t-form>
-      <t-form-item label="输入">
+      <t-form-item :label="t('form.input')">
         <t-textarea v-model="inputRef" :status="inputStatusRef" :autosize="true" />
       </t-form-item>
-      <t-form-item label="模式">
+      <t-form-item :label="t('form.mode.label')">
         <t-radio-group v-model="modeRef">
-          <t-radio-button label="编码" value="encode" />
-          <t-radio-button label="解码" value="decode" />
+          <t-radio-button :label="t('form.mode.encode')" value="encode" />
+          <t-radio-button :label="t('form.mode.decode')" value="decode" />
         </t-radio-group>
       </t-form-item>
-      <t-form-item label="输出">
+      <t-form-item :label="t('form.output')">
         <t-textarea :value="outputRef" :autosize="true" />
       </t-form-item>
-      <t-form-item label="工具">
+      <t-form-item :label="t('form.tool')">
         <t-space :size="5">
           <ButtonCopy :target="outputRef" />
           <ButtonRead v-model:target="inputRef" />
@@ -60,3 +61,27 @@ const modeRef = ref("encode");
     </t-form>
   </ContentLayout>
 </template>
+
+<i18n locale="en">
+st: "Encode, Verify and Decode"
+form:
+  input: "Input"
+  mode:
+    label: "Mode"
+    encode: "Encode"
+    decode: "Decode"
+  output: "Output"
+  tool: "Tool"
+</i18n>
+
+<i18n locale="zh-CN">
+st: "编码、校验与解码"
+form:
+  input: "输入"
+  mode:
+    label: "模式"
+    encode: "编码"
+    decode: "解码"
+  output: "输出"
+  tool: "工具"
+</i18n>

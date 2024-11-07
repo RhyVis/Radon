@@ -11,6 +11,7 @@ import { MessagePlugin } from "tdesign-vue-next";
 
 const store = useTarotStore();
 const { qDeck, qFull, qSize, activeTab, dShowDesc, dInfoMap, dInfoSelect, dInfoLoaded, results } = storeToRefs(store);
+const { t } = useI18n();
 
 const loading = ref(false);
 
@@ -36,7 +37,7 @@ const handleDraw = async () => {
     });
   } catch (e) {
     console.error(e);
-    await MessagePlugin.error("与服务器通信失败");
+    await MessagePlugin.error(t("common.fetchError"));
   } finally {
     loading.value = false;
   }
@@ -48,10 +49,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout title="塔罗" subtitle="模拟的说不定比你自己切的牌都顺">
+  <ContentLayout :title="t('tt')" :subtitle="t('st')">
     <t-form>
       <t-tabs v-model:value="activeTab">
-        <t-tab-panel label="简单操作" value="simple">
+        <t-tab-panel :label="t('tabs.simple')" value="simple">
           <div class="mt-2">
             <t-form-item label="卡面类型">
               <SelectSimple
@@ -101,3 +102,17 @@ onMounted(() => {
     </div>
   </ContentLayout>
 </template>
+
+<i18n lang="yaml" locale="en">
+tt: "Tarot"
+st: "Simulation may be smoother than cutting your own cards"
+tabs:
+  simple: "Simple Operation"
+</i18n>
+
+<i18n locale="zh-CN">
+tt: "塔罗牌"
+st: "模拟可能比自己切牌更顺畅"
+tabs:
+  simple: "简单操作"
+</i18n>

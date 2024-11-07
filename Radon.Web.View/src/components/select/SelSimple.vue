@@ -19,10 +19,10 @@ const { t } = useI18n();
 <template>
   <t-select
     v-model="selected"
-    :placeholder="placeholder ?? t('selSimple.placeholder')"
+    :placeholder="placeholder ?? t('placeholder')"
     :auto-width="autoWidth"
     :loading="loading ?? false"
-    :loading-text="t('selSimple.loading')"
+    :loading-text="t('loading')"
     @change="emit('update', selected)"
   >
     <t-option v-for="option in options" :key="option.value" :value="option.value" :label="option.label" />
@@ -30,13 +30,11 @@ const { t } = useI18n();
 </template>
 
 <i18n lang="yaml" locale="en">
-selSimple:
-  placeholder: Please select
-  loading: Loading
+placeholder: Please select
+loading: Loading
 </i18n>
 
 <i18n lang="yaml" locale="zh-CN">
-selSimple:
-  placeholder: 请选择
-  loading: 加载中
+placeholder: 请选择
+loading: 加载中
 </i18n>

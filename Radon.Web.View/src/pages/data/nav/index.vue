@@ -29,6 +29,7 @@ const columns = ref<TableProps["columns"]>([
 ]);
 const store = useNavStore();
 const { navDataList, navLoaded } = storeToRefs(store);
+const { t } = useI18n();
 
 onMounted(() => {
   if (store.navDataList.length === 0) {
@@ -38,7 +39,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout title="导航" subtitle="备忘录">
+  <ContentLayout :title="t('tt')" :subtitle="t('st')">
     <t-table
       :bordered="true"
       :columns="columns"
@@ -51,3 +52,13 @@ onMounted(() => {
     />
   </ContentLayout>
 </template>
+
+<i18n locale="en">
+tt: Navigation
+st: Memo
+</i18n>
+
+<i18n locale="zh-CN">
+tt: 导航
+st: 备忘录
+</i18n>
