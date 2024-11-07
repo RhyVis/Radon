@@ -3,6 +3,6 @@
 public enum ResponseCodeType
 {
     UNKNOWN = 0,
-    SUCCESS = 100,
+    SUCCESS = 200,
     NOT_FOUND = 404,
 }

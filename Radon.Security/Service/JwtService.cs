@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using FreeRedis;
+using Masuit.Tools;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Radon.Common.Core.Config;
@@ -21,7 +22,7 @@ public class JwtService(IRedisClient cli) : IJwtService
     public Passport GenerateToken(User user)
     {
         var p = GenPassport(user);
-        cli.Set(p.Token, p.Username, AppSettings.Get().Security.Jwt.ExpireMinutes * 60);
+        cli.Set(p.Token, p.UserId, AppSettings.Get().Security.Jwt.ExpireMinutes * 60);
         return p;
     }
 
@@ -74,7 +75,7 @@ public class JwtService(IRedisClient cli) : IJwtService
         var claims = new List<Claim>
         {
             new("id", user.Id.ToString()),
-            new("username", user.Username),
+            new("userId", user.Id.ToString()),
             new("role", user.Role.ToString()),
         };
 
@@ -88,6 +89,6 @@ public class JwtService(IRedisClient cli) : IJwtService
         );
         var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new Passport(tokenStr, user.Username, expr);
+        return new Passport(tokenStr, user.Id, expr);
     }
 }

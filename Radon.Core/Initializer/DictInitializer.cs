@@ -9,7 +9,7 @@ namespace Radon.Core.Initializer;
 
 public class DictInitializer : IInitializer
 {
-    private static Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private const string PATH = "Radon.Core.Resources.Dict.";
 
     private Dictionary<string, string[]> _dictHanEmoji = new();

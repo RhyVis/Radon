@@ -58,6 +58,6 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         return context.Response.WriteAsync(json);
     }
 
-    private static JsonSerializerOptions _jsonSerializerOptions =
+    private static readonly JsonSerializerOptions _jsonSerializerOptions =
         new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 }

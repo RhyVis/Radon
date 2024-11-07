@@ -7,10 +7,11 @@ const { card, index } = defineProps<{
   card: CardDisplay;
   index: number;
 }>();
+const { name, loc, rev, desc } = card.data;
 
 const indexNum = computed(() => intToRoman(index + 1));
-const revText = computed(() => (card.data.rev ? "逆位" : "正位"));
-const revDesc = computed(() => (card.data.rev ? card.data.desc.reverse : card.data.desc.upright));
+const revText = computed(() => (rev ? "逆位" : "正位"));
+const revDesc = computed(() => (rev ? desc.reverse : desc.upright));
 
 const handleHash = () => {
   location.hash = `tarot-main-${index}`;
@@ -24,8 +25,8 @@ const handleHash = () => {
     </template>
     <template #subtitle>
       <t-space :size="4">
-        <span>{{ card.data.loc }}</span>
-        <i class="r-tr-desc-tt"> {{ card.data.name }}</i>
+        <span>{{ loc }}</span>
+        <i class="r-tr-desc-tt"> {{ name }}</i>
       </t-space>
     </template>
     <template #actions>
@@ -33,8 +34,8 @@ const handleHash = () => {
     </template>
     <div>
       <t-title level="h6" :content="revDesc" />
-      <t-paragraph v-if="card.data.desc.desc.length > 0">
-        <t-text v-for="(line, index) in card.data.desc.desc" :key="index" :content="line" />
+      <t-paragraph v-if="desc.desc.length > 0">
+        <t-text v-for="(line, index) in desc.desc" :key="index" :content="line" />
       </t-paragraph>
     </div>
   </t-card>

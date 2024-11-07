@@ -9,11 +9,11 @@ const { card, index } = defineProps<{
   card: CardDisplay;
   index: number;
 }>();
+const { name, loc, img, rev, desc } = card.data;
 
-const rev = computed(() => card.data.rev);
-const revClass = computed(() => ({ "r-tarot-img-rev": rev.value }));
-const revText = computed(() => (rev.value ? "(逆位)" : "(正位)"));
-const revDesc = computed(() => (rev.value ? card.data.desc.reverse : card.data.desc.upright));
+const revClass = computed(() => ({ "r-tarot-img-rev": rev }));
+const revText = computed(() => (rev ? "(逆位)" : "(正位)"));
+const revDesc = computed(() => (rev ? desc.reverse : desc.upright));
 const indexNum = computed(() => intToRoman(index + 1));
 
 const handleImage = () => {
@@ -36,7 +36,7 @@ const handleHash = () => {
   <t-card class="r-tarot-main-card-override mb-2" :header-bordered="true" :id="`tarot-main-${index}`">
     <template #title>
       <div class="text-primary r-no-select" @click="handleImage">
-        {{ card.data.loc }}
+        {{ loc }}
       </div>
     </template>
     <template #actions>
@@ -51,19 +51,19 @@ const handleHash = () => {
         <div v-show="!card.showDesc">
           <t-image
             class="r-tarot-img-fit"
-            :alt="card.data.name"
+            :alt="name"
             :class="revClass"
             :lazy="true"
-            :src="card.data.img"
+            :src="img"
             :style="{ width: 'fit-content', maxWidth: '100%', height: '360px' }"
             fit="scale-down"
             loading="💫"
-            @error="handleImageErr(card.data.name)"
+            @error="handleImageErr(name)"
           />
         </div>
         <div v-show="card.showDesc" style="text-align: left; align-items: center">
           <t-title :content="revDesc" level="h6" />
-          <t-text :content="card.data.desc.desc.join('')" />
+          <t-text :content="desc.desc.join('')" />
         </div>
       </div>
     </div>
