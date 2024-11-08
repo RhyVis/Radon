@@ -7,7 +7,7 @@ import type { ApiResponse } from "@/lib/type/typeApi";
 class Req {
   code: number;
   meta: string;
-  data: string | object;
+  data: ReqData;
   constructor(data: string | object) {
     this.code = 0;
     this.meta = "";
@@ -15,17 +15,14 @@ class Req {
   }
 }
 
-type CompileTime = {
-  compileTime: number;
-};
+type ReqData = string | object;
 
 /**
  * Get Method
  * @param url
- * @param config
  */
-async function apiGet<T>(url: string, config?: never): Promise<ApiResponse<T>> {
-  return (await axiosInstance.get(url, config)).data as ApiResponse<T>;
+async function apiGet<T>(url: string): Promise<ApiResponse<T>> {
+  return (await axiosInstance.get(url)).data as ApiResponse<T>;
 }
 
 /**
@@ -33,7 +30,7 @@ async function apiGet<T>(url: string, config?: never): Promise<ApiResponse<T>> {
  * @param url
  * @param data
  */
-async function apiPost<T>(url: string, data: string | object): Promise<ApiResponse<T>> {
+async function apiPost<T>(url: string, data: ReqData): Promise<ApiResponse<T>> {
   return (await axiosInstance.post(url, new Req(data))).data as ApiResponse<T>;
 }
 
@@ -42,7 +39,7 @@ async function apiPost<T>(url: string, data: string | object): Promise<ApiRespon
  * @param url
  * @param data
  */
-async function apiPostStr(url: string, data: string | object): Promise<ApiResponse<string>> {
+async function apiPostStr(url: string, data: ReqData): Promise<ApiResponse<string>> {
   return (await axiosInstance.post(url, new Req(data))).data as ApiResponse<string>;
 }
 
@@ -51,7 +48,7 @@ async function apiPostStr(url: string, data: string | object): Promise<ApiRespon
  * @param url
  * @param data
  */
-async function apiPostState(url: string, data: string | object): Promise<ApiResponse<boolean>> {
+async function apiPostState(url: string, data: ReqData): Promise<ApiResponse<boolean>> {
   return (await axiosInstance.post(url, new Req(data))).data as ApiResponse<boolean>;
 }
 
@@ -60,7 +57,7 @@ async function apiPostState(url: string, data: string | object): Promise<ApiResp
  * @param url
  * @param data
  */
-async function apiPut<T>(url: string, data: string | object): Promise<ApiResponse<T>> {
+async function apiPut<T>(url: string, data: ReqData): Promise<ApiResponse<T>> {
   return (await axiosInstance.put(url, new Req(data))).data as ApiResponse<T>;
 }
 
@@ -69,7 +66,7 @@ async function apiPut<T>(url: string, data: string | object): Promise<ApiRespons
  * @param url
  * @param data
  */
-async function apiPutState(url: string, data: string | object): Promise<ApiResponse<boolean>> {
+async function apiPutState(url: string, data: ReqData): Promise<ApiResponse<boolean>> {
   return (await axiosInstance.put(url, new Req(data))).data as ApiResponse<boolean>;
 }
 
@@ -82,7 +79,7 @@ async function apiDelete<T>(url: string): Promise<ApiResponse<T>> {
 }
 
 async function getVersion(): Promise<number> {
-  return ((await axiosInstance.get("/version.json")).data as CompileTime).compileTime;
+  return (await axiosInstance.get("/version.json")).data.compileTime as number;
 }
 
 export { apiDelete, apiGet, apiPost, apiPut };
