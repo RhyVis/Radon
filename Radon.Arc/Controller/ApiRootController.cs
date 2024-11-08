@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Radon.Common.Core.Config;
 
-namespace Radon.Web.Controller;
+namespace Radon.Arc.Controller;
 
 [ApiController]
 [Route("api")]

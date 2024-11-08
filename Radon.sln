@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radon.Web", "Radon.Web\Radon.Web.csproj", "{0A806725-12B4-474C-B0F7-935B1206102C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radon.Arc", "Radon.Arc\Radon.Arc.csproj", "{0A806725-12B4-474C-B0F7-935B1206102C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radon.Common", "Radon.Common\Radon.Common.csproj", "{CBC79975-205D-463B-871B-68E05EEEF768}"
 EndProject

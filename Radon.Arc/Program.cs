@@ -1,6 +1,6 @@
 ﻿using NLog;
 using NLog.Web;
-using Radon.Web;
+using Radon.Arc;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 

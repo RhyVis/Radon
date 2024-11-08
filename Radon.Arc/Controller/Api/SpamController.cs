@@ -4,7 +4,7 @@ using Radon.Core.Model.Request;
 using Radon.Core.Model.Response;
 using Radon.Core.Service.Interface;
 
-namespace Radon.Web.Controller;
+namespace Radon.Arc.Controller;
 
 [ApiController]
 [Route("api/spam")]

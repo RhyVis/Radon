@@ -3,7 +3,7 @@ using OpenCCNET;
 using Radon.Common.Core.Config;
 using Radon.Common.Utils;
 
-namespace Radon.Web.Setup;
+namespace Radon.Arc.Setup;
 
 public static class InitBuilder
 {

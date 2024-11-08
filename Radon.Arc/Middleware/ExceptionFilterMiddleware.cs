@@ -2,7 +2,7 @@
 using Radon.Core.Model.Response;
 using Radon.Security.Exceptions;
 
-namespace Radon.Web.Middleware;
+namespace Radon.Arc.Middleware;
 
 public class ExceptionFilterMiddleware(RequestDelegate next)
 {

@@ -1,6 +1,6 @@
-using Radon.Web.Setup;
+using Radon.Arc.Setup;
 
-namespace Radon.Web;
+namespace Radon.Arc;
 
 public static class EntryPoint
 {

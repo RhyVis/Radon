@@ -1,10 +1,10 @@
 ﻿using NLog;
+using Radon.Arc.Middleware;
 using Radon.Common.Core.DI;
 using Radon.Common.Core.Extension;
-using Radon.Web.Middleware;
 using Scalar.AspNetCore;
 
-namespace Radon.Web.Setup;
+namespace Radon.Arc.Setup;
 
 public static class InitApplication
 {

@@ -14,7 +14,7 @@ using Radon.Data.Entity;
 using Radon.Security.Model;
 using Scrutor;
 
-namespace Radon.Web.Setup;
+namespace Radon.Arc.Setup;
 
 public static class InitService
 {
@@ -31,7 +31,7 @@ public static class InitService
         typeof(BaseApiReq<>).Assembly,
         // Radon.Security
         typeof(Passport).Assembly,
-        // Radon.Web
+        // Radon.Arc
         typeof(Init).Assembly,
     };
 
