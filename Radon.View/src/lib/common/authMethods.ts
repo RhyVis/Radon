@@ -1,5 +1,4 @@
 ﻿import axiosInstance from "@/lib/common/apiHttp";
-import { apiPost } from "@/lib/common/apiMethods";
 
 type UsernamePair = {
   username: string;
@@ -12,9 +11,9 @@ type UsernamePair = {
  */
 async function authLogin(pair: UsernamePair): Promise<boolean> {
   try {
-    const resp = await apiPost("/api/auth/login", pair);
-    if (resp.code === 100) {
-      localStorage.setItem("token", resp.data as string);
+    const { code, data } = await apiPostStr("/api/auth/login", pair);
+    if (code === 100) {
+      localStorage.setItem("token", data);
       return true;
     } else {
       return false;
@@ -55,8 +54,8 @@ async function authValidateWithRefresh(): Promise<boolean> {
  */
 async function authRefresh(): Promise<boolean> {
   try {
-    const resp = (await apiPost("/api/auth/refresh", localStorage.getItem("token") as string)).data as string;
-    localStorage.setItem("token", resp);
+    const { data } = await apiPostStr("/api/auth/refresh", localStorage.getItem("token") ?? "");
+    localStorage.setItem("token", data);
     return true;
   } catch (e) {
     console.warn(e);

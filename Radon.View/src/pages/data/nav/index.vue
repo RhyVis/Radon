@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { useNavStore } from "@/pages/data/nav/scripts/store";
 import type { TableProps } from "tdesign-vue-next";
 
@@ -39,7 +38,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :title="t('tt')" :subtitle="t('st')">
     <t-table
       :bordered="true"
       :columns="columns"
@@ -50,7 +49,7 @@ onMounted(() => {
       row-key="id"
       size="small"
     />
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <i18n locale="en">

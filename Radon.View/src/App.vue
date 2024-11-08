@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import ContentAside from "@/layout/basic/BaseLayoutAside.vue";
 import ContentFooter from "@/layout/basic/BaseLayoutFooter.vue";
 import ContentHeader from "@/layout/basic/BaseLayoutHeader.vue";
-import BaseLayout from "@/layout/frame/BaseLayout.vue";
+import ContentSide from "@/layout/basic/BaseLayoutSide.vue";
 import { authValidateWithRefresh } from "@/lib/common/authMethods";
 import { loadFonts } from "@/lib/util/fontLoader";
 import { useGlobalStore } from "@/store/global";
@@ -99,9 +98,9 @@ watch(
 </script>
 
 <template>
-  <BaseLayout class="r-app-base-layout">
-    <template #aside>
-      <ContentAside />
+  <base-layout class="r-app-base-layout">
+    <template #side>
+      <ContentSide />
     </template>
     <template #header>
       <ContentHeader />
@@ -116,7 +115,7 @@ watch(
     <template #footer>
       <ContentFooter />
     </template>
-  </BaseLayout>
+  </base-layout>
 </template>
 
 <style scoped lang="less">

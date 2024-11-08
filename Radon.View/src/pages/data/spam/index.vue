@@ -1,24 +1,19 @@
 <script setup lang="tsx">
-import { apiPost, apiPut } from "@/lib/common/apiMethods";
 import { MessagePlugin, type TableProps } from "tdesign-vue-next";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import ButtonCopy from "@/components/btn/ButtonCopy.vue";
 import type { TextEntry } from "@/lib/type/typeEntry";
-import useClipboard from "vue-clipboard3";
 import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
 import { useGlobalStore } from "@/store/global";
-import SelSimple from "@/components/select/SelSimple.vue";
 import { spamTypes, codeTypes } from "@/pages/data/spam/scripts/type";
 
 const global = useGlobalStore();
 const store = useSpamStore();
 const { qType, qDict, qSize, aType, aText, activeTab } = storeToRefs(store);
-const { toClipboard } = useClipboard();
+const { copy } = useClipboard();
 
 const resultLoading = ref(false);
 
-const result = ref<TextEntry[]>([
+const result = ref([
   { id: 666, text: "快乐生活每一天，请不要用这个工具的结果来攻击他人哦😊" },
   { id: 999, text: "仅供学习交流使用，由您不当使用造成的后果，将由您承担" },
 ]);
@@ -71,8 +66,7 @@ const handleTabChange = (key: string | number) => {
 };
 const handleCopy = (s: string) => {
   try {
-    toClipboard(s.replace(/[\n\r]|\r\n|\\r\\n/, ""));
-    MessagePlugin.success("复制成功");
+    copy(s.replace(/[\n\r]|\r\n|\\r\\n/, "")).then(() => MessagePlugin.success("复制成功"));
   } catch (e) {
     console.error(e);
     MessagePlugin.error("复制失败");
@@ -81,7 +75,7 @@ const handleCopy = (s: string) => {
 const handleSpam = async () => {
   resultLoading.value = true;
   try {
-    result.value = (await apiPost("/api/spam", store.query)).data as TextEntry[];
+    result.value = (await apiPost<TextEntry[]>("/api/spam", store.query)).data;
   } catch (e) {
     console.error(e);
     await MessagePlugin.error("获取信息失败");
@@ -96,8 +90,8 @@ const handleAppend = async (repeat: boolean = false) => {
   }
   appendLoading.value = true;
   try {
-    const r = (await apiPut("/api/spam", store.queryAppend)).data as number;
-    if (r === 0) {
+    const r = (await apiPutState("/api/spam", store.queryAppend)).data;
+    if (r) {
       store.clearAppendQuery();
       await MessagePlugin.success("追加成功");
     } else {
@@ -116,7 +110,7 @@ const handleAppend = async (repeat: boolean = false) => {
 </script>
 
 <template>
-  <ContentLayout title="弹药库" subtitle="对线宝典">
+  <content-layout title="弹药库" subtitle="对线宝典">
     <t-form>
       <t-tabs v-model="activeTab" @change="handleTabChange">
         <!--祖安-->
@@ -172,7 +166,7 @@ const handleAppend = async (repeat: boolean = false) => {
       </t-tabs>
       <div class="mt-4">
         <t-form-item label="转义方式">
-          <SelSimple v-model:selected="qDict" :options="codeTypes" />
+          <SelSimple v-model="qDict" :options="codeTypes" />
         </t-form-item>
         <t-form-item label="妙语连珠">
           <t-input-number v-model="qSize" :min="1" :max="10" :auto-width="true" :allow-input-over-limit="false" />
@@ -180,7 +174,7 @@ const handleAppend = async (repeat: boolean = false) => {
         <t-form-item label="开火！">
           <t-space>
             <t-button shape="round" theme="warning" variant="outline" @click="handleSpam">😤</t-button>
-            <ButtonCopy :target="result.map(t => t.text).join('\n')" />
+            <btn-copy :target="result.map(t => t.text).join('\n')" />
           </t-space>
         </t-form-item>
       </div>
@@ -219,7 +213,7 @@ const handleAppend = async (repeat: boolean = false) => {
     <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%" @close="store.clearAppendQuery()">
       <t-form label-align="top">
         <t-form-item label="类型">
-          <SelSimple v-model:selected="aType" :options="spamTypes" />
+          <SelSimple v-model="aType" :options="spamTypes" />
         </t-form-item>
         <t-form-item label="内容">
           <t-textarea v-model="aText" />
@@ -227,7 +221,7 @@ const handleAppend = async (repeat: boolean = false) => {
       </t-form>
       <template #footer>
         <t-space>
-          <ButtonRead v-model:target="aText" />
+          <btn-read v-model="aText" />
           <t-button theme="default" shape="round" @click="showAppendingDialog = false">
             <CloseIcon />
           </t-button>
@@ -240,7 +234,7 @@ const handleAppend = async (repeat: boolean = false) => {
         </t-space>
       </template>
     </t-dialog>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <style scoped lang="less">

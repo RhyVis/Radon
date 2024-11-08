@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import { getVersion } from "@/lib/common/apiMethods";
 import { MessagePlugin, type TNodeReturnValue } from "tdesign-vue-next";
 import { ArrowLeftIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
@@ -55,7 +54,7 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    fetch("/index.html", { cache: "no-store" })
+    fetch(`/index.html?v=${moment().utc().toString()}`, { cache: "no-store" })
       .then(response => response.text())
       .then(html => {
         document.open();

@@ -41,7 +41,7 @@ export const useTarotStore = defineStore("tarot", {
   actions: {
     async init() {
       try {
-        const fetch = (await apiGet("/api/tarot/info")).data as DeckInfoInterface;
+        const fetch = (await apiGet<DeckInfoInterface>("/api/tarot/info")).data;
         this.dInfoMap = fetch;
         this.dInfoSelect = (Object.values(fetch) as DeckInfo[]).map(item => {
           return {

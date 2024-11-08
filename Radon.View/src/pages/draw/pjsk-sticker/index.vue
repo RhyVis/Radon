@@ -3,7 +3,6 @@ import { CopyIcon, DownloadIcon } from "tdesign-icons-vue-next";
 import { b64ToBlob } from "@/lib/util/imageTransform";
 import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
 import CharacterList from "@/assets/conf/characters.json";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import StickerCanvas from "@/pages/draw/pjsk-sticker/comps/StickerCanvas.vue";
 import SelectChara from "@/pages/draw/pjsk-sticker/comps/SelectChara.vue";
 import type { CharacterDefinition, DrawConf } from "@/lib/type/typeSticker";
@@ -85,7 +84,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout title="PJSK表情" :subtitle="subtitle">
+  <content-layout title="PJSK表情" :subtitle="subtitle">
     <div class="mb-3 mt-1" style="text-align: center">
       <t-space :size="8" direction="vertical">
         <t-space :size="16" direction="horizontal">
@@ -130,5 +129,5 @@ onMounted(() => {
         <t-switch v-model="currentConf.useCommercialFonts" @change="proxyDraw" />
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>

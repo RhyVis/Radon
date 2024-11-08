@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import SelectSimple from "@/components/select/SelSimple.vue";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { apiPost } from "@/lib/common/apiMethods";
 import TarotDesc from "@/pages/myst/tarot/comps/TarotDesc.vue";
 import TarotMain from "@/pages/myst/tarot/comps/TarotMain.vue";
 import { useTarotStore } from "@/pages/myst/tarot/scripts/store";
@@ -27,8 +24,7 @@ const handleDraw = async () => {
   location.hash = "";
   loading.value = true;
   try {
-    const respond = (await apiPost("/api/tarot", store.query)).data as Card[];
-    results.value = respond.map(card => {
+    results.value = (await apiPost<Card[]>("/api/tarot", store.query)).data.map(card => {
       return {
         data: card,
         showImg: true,
@@ -49,18 +45,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :title="t('tt')" :subtitle="t('st')">
     <t-form>
       <t-tabs v-model:value="activeTab">
         <t-tab-panel :label="t('tabs.simple')" value="simple">
           <div class="mt-2">
             <t-form-item label="卡面类型">
-              <SelectSimple
-                v-model:selected="qDeck"
-                :loading="!dInfoLoaded"
-                :options="dInfoSelect"
-                @update="handleSelect"
-              />
+              <sel-simple v-model="qDeck" :loading="!dInfoLoaded" :options="dInfoSelect" @update="handleSelect" />
             </t-form-item>
             <t-form-item :help="deckFullTooltip" label="完整卡组">
               <t-switch v-model="qFull" :disabled="!deckFull" />
@@ -100,7 +91,7 @@ onMounted(() => {
         </t-row>
       </div>
     </div>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <i18n lang="yaml" locale="en">

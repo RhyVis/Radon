@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import ButtonClear from "@/components/btn/ButtonClear.vue";
-import ButtonCopy from "@/components/btn/ButtonCopy.vue";
-import ButtonRead from "@/components/btn/ButtonRead.vue";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { Base64 } from "js-base64";
 
 const { t } = useI18n();
@@ -37,7 +33,7 @@ const modeRef = ref("encode");
 </script>
 
 <template>
-  <ContentLayout title="BASE64" :subtitle="t('st')">
+  <content-layout title="BASE64" :subtitle="t('st')">
     <t-form>
       <t-form-item :label="t('form.input')">
         <t-textarea v-model="inputRef" :status="inputStatusRef" :autosize="true" />
@@ -53,13 +49,13 @@ const modeRef = ref("encode");
       </t-form-item>
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
-          <ButtonCopy :target="outputRef" />
-          <ButtonRead v-model:target="inputRef" />
-          <ButtonClear v-model:target="inputRef" />
+          <btn-copy :target="outputRef" />
+          <btn-read v-model="inputRef" />
+          <btn-clear v-model="inputRef" />
         </t-space>
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <i18n locale="en">

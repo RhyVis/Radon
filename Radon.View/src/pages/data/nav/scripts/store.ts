@@ -14,7 +14,7 @@ export const useNavStore = defineStore("navigation", {
   actions: {
     async fetch() {
       try {
-        this.navDataList = (await apiGet("/api/nav")).data as NavData[];
+        this.navDataList = (await apiGet<NavData[]>("/api/nav")).data;
       } catch (e) {
         console.error(e);
         await MessagePlugin.error(useI18n().t("common.fetchError"));

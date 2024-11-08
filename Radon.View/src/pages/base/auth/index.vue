@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { authLogin, authRefresh, authValidate } from "@/lib/common/authMethods";
 import { ArrowUpDown2Icon, DeleteIcon, Fingerprint2Icon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -74,7 +73,7 @@ const handleClearToken = () => {
 </script>
 
 <template>
-  <ContentLayout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :title="t('tt')" :subtitle="t('st')">
     <t-form>
       <t-form-item :label="t('input.username')">
         <t-input v-model="query.username" />
@@ -113,7 +112,7 @@ const handleClearToken = () => {
         </t-popconfirm>
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <i18n locale="en">

@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import ButtonClear from "@/components/btn/ButtonClear.vue";
-import ButtonCopy from "@/components/btn/ButtonCopy.vue";
-import ButtonRead from "@/components/btn/ButtonRead.vue";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { reverseModes } from "@/pages/util/reverse/scripts/reverse";
 import { RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -39,7 +35,7 @@ const result = ref("");
 </script>
 
 <template>
-  <ContentLayout title="倒叙者" subtitle="别急有反转">
+  <content-layout title="倒叙者" subtitle="别急有反转">
     <t-form>
       <t-form-item label="原始文本">
         <t-textarea v-model="query.text" placeholder="空白是你的谎言" />
@@ -59,11 +55,11 @@ const result = ref("");
       </t-form-item>
       <t-form-item label="工具">
         <t-space :size="5">
-          <ButtonCopy :target="result" />
-          <ButtonRead v-model:target="query.text" />
-          <ButtonClear v-model:target="query.text" />
+          <btn-copy :target="result" />
+          <btn-read v-model="query.text" />
+          <btn-clear v-model="query.text" />
         </t-space>
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>

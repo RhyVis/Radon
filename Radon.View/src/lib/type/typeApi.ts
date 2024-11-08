@@ -1,14 +1,12 @@
 /**
  * @description refer to ApiResBase defined in core
  */
-type ApiResponse = {
+type ApiResponse<T> = {
   code: number;
-  data: unknown;
-  message: string;
+  msg: string;
+  data: T;
 };
 
-type CompileTime = {
-  compileTime: number;
-};
+type ErrResponse = ApiResponse<string>;
 
-export type { ApiResponse, CompileTime };
+export type { ApiResponse, ErrResponse };

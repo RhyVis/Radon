@@ -4,7 +4,7 @@ type SimpleSelOpt = {
   value?: string;
 };
 
-const selected = defineModel<string>("selected", { required: true });
+const model = defineModel<string>({ required: true });
 const emit = defineEmits(["update"]);
 defineProps<{
   options: SimpleSelOpt[];
@@ -18,12 +18,12 @@ const { t } = useI18n();
 
 <template>
   <t-select
-    v-model="selected"
+    v-model="model"
     :placeholder="placeholder ?? t('placeholder')"
     :auto-width="autoWidth"
     :loading="loading ?? false"
     :loading-text="t('loading')"
-    @change="emit('update', selected)"
+    @change="emit('update', model)"
   >
     <t-option v-for="option in options" :key="option.value" :value="option.value" :label="option.label" />
   </t-select>

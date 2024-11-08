@@ -8,7 +8,7 @@ import { Content as TContent } from "tdesign-vue-next";
       <slot name="header" />
     </t-header>
     <t-content class="r-limit-height">
-      <slot name="aside" />
+      <slot name="side" />
       <slot />
     </t-content>
     <t-footer>

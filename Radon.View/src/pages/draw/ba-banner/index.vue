@@ -1,7 +1,5 @@
 <script lang="tsx" setup>
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import BannerCanvas from "@/pages/draw/ba-banner/comps/BannerCanvas.vue";
-import AdvancedOptContainer from "@/components/menu/AdvOptContainer.vue";
 import { CopyIcon, DownloadIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
 
@@ -40,7 +38,7 @@ const handleDownloadImage = async () => {
 </script>
 
 <template>
-  <ContentLayout title="BA横幅" :subtitle="subtitle">
+  <content-layout title="BA横幅" :subtitle="subtitle">
     <div class="mb-3 mt-1 r-d-bb-canvas-container">
       <div>
         <BannerCanvas
@@ -65,11 +63,11 @@ const handleDownloadImage = async () => {
         <t-switch v-model="tBg" @change="handleUpdate" />
       </t-form-item>
       <t-form-item label="高级选项">
-        <AdvancedOptContainer>
+        <adv-opt-container>
           <t-tag class="r-no-select" content="光环位置" />
           <t-input-number v-model="offsetX" size="small" @change="handleUpdate" />
           <t-input-number v-model="offsetY" size="small" @change="handleUpdate" />
-        </AdvancedOptContainer>
+        </adv-opt-container>
       </t-form-item>
       <t-form-item label="立即重绘">
         <t-button shape="circle" @click="handleUpdate">
@@ -87,7 +85,7 @@ const handleDownloadImage = async () => {
         </t-space>
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <style scoped>

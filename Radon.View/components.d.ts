@@ -8,9 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AdvOptContainer: typeof import('./src/components/menu/AdvOptContainer.vue')['default']
-    ButtonClear: typeof import('./src/components/btn/ButtonClear.vue')['default']
-    ButtonCopy: typeof import('./src/components/btn/ButtonCopy.vue')['default']
-    ButtonRead: typeof import('./src/components/btn/ButtonRead.vue')['default']
+    BaseLayout: typeof import('./src/layout/frame/BaseLayout.vue')['default']
+    BtnClear: typeof import('./src/components/btn/BtnClear.vue')['default']
+    BtnCopy: typeof import('./src/components/btn/BtnCopy.vue')['default']
+    BtnRead: typeof import('./src/components/btn/BtnRead.vue')['default']
+    ContentLayout: typeof import('./src/layout/frame/ContentLayout.vue')['default']
     LoadStatus: typeof import('./src/components/utility/LoadStatus.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

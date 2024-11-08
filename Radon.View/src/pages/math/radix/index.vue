@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import AdvancedOptContainer from "@/components/menu/AdvOptContainer.vue";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import { radixVal } from "@/pages/math/radix/scripts/radix";
 import { ArrowRightCircleIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -58,7 +56,7 @@ const handleCharsetOutputReset = () => {
 </script>
 
 <template>
-  <ContentLayout title="进制转换" subtitle="注意输入内容符合字符集">
+  <content-layout title="进制转换" subtitle="注意输入内容符合字符集">
     <t-form label-align="top">
       <t-form-item label="数字">
         <t-space align="center">
@@ -75,7 +73,7 @@ const handleCharsetOutputReset = () => {
         </t-space>
       </t-form-item>
       <t-form-item label="高级">
-        <AdvancedOptContainer>
+        <adv-opt-container>
           <t-space :size="4" direction="vertical" align="center">
             <t-space :size="4">
               <t-tooltip placement="top" content="按顺序定义基数字符，不允许重复">
@@ -106,10 +104,10 @@ const handleCharsetOutputReset = () => {
               @change="handleCharsetChange"
             />
           </t-space>
-        </AdvancedOptContainer>
+        </adv-opt-container>
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <style scoped>

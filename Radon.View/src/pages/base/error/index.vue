@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import CardLayout from "@/layout/frame/ContentLayout.vue";
-
-const router = useRouter();
+const { push } = useRouter();
 const { t } = useI18n();
 </script>
 
 <template>
-  <CardLayout title="404">
+  <content-layout title="404">
     <div class="r-err-container mt-2">
       <t-space direction="vertical" :size="24">
         <t-text class="r-err-desc">{{ t("st") }}</t-text>
@@ -16,12 +14,12 @@ const { t } = useI18n();
           shape="round"
           style="width: 400px; min-height: 200px; height: fit-content; max-height: 850px"
         />
-        <t-button theme="warning" shape="round" variant="base" @click="router.push('/')">
+        <t-button theme="warning" shape="round" variant="base" @click="push('/')">
           {{ t("back") }}
         </t-button>
       </t-space>
     </div>
-  </CardLayout>
+  </content-layout>
 </template>
 
 <style scoped lang="less">

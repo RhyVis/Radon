@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { CopyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import useClipboard from "vue-clipboard3";
 
 const props = defineProps({
   target: {
@@ -12,13 +11,13 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const { toClipboard } = useClipboard();
+const { copy } = useClipboard();
 
 const action = async () => {
   const { target } = props;
   if (target.length > 0) {
     try {
-      await toClipboard(target);
+      await copy(target);
       await MessagePlugin.success(t("copySuccess"));
     } catch (e) {
       console.error(e);

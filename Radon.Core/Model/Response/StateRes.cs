@@ -3,13 +3,13 @@
 namespace Radon.Core.Model.Response;
 
 /// <summary>
-/// The data is 0 or -1, 0 means success, -1 means failure.
+/// The data is true or false, true means success, false means failure.
 /// </summary>
-public class StateRes : BaseApiRes<int>
+public class StateRes : BaseApiRes<bool>
 {
     public StateRes(bool success)
-        : base(success ? 0 : -1) { }
+        : base(success) { }
 
     public StateRes()
-        : base(0) { }
+        : base(true) { }
 }

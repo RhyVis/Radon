@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
 import CLinkN from "@/pages/base/credits/comps/CLinkN.vue";
 import CLinkPri from "@/pages/base/credits/comps/CLinkPri.vue";
 import { useGlobalStore } from "@/store/global";
@@ -16,7 +15,7 @@ const counterIncrement = () => {
 </script>
 
 <template>
-  <ContentLayout title="Credits">
+  <content-layout title="Credits">
     <t-paragraph>
       <t-title level="h4"> Radon </t-title>
       <t-text>
@@ -122,5 +121,5 @@ const counterIncrement = () => {
         <HomeIcon />
       </t-button>
     </template>
-  </ContentLayout>
+  </content-layout>
 </template>

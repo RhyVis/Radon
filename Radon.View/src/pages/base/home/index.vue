@@ -1,15 +1,12 @@
 <script lang="ts" setup>
-import LoadStatus from "@/components/utility/LoadStatus.vue";
-import VersionCheck from "@/components/utility/VersionCheck.vue";
-import CardLayout from "@/layout/frame/ContentLayout.vue";
 import { useGlobalStore } from "@/store/global";
 
-const global = useGlobalStore();
+const { fontLoaded } = storeToRefs(useGlobalStore());
 const { t } = useI18n();
 </script>
 
 <template>
-  <CardLayout :title="t('title')">
+  <content-layout :title="t('title')">
     <t-title level="h4">{{ t("description.tt") }}</t-title>
     <t-paragraph>
       <t-text>{{ t("description.content") }}</t-text>
@@ -20,17 +17,17 @@ const { t } = useI18n();
     </t-paragraph>
     <t-title level="h4">{{ t("loading-status.tt") }}</t-title>
     <t-paragraph>
-      <LoadStatus :loading="!global.fontLoaded" :label="t('loading-status.font')" name="font" />
+      <load-status :loading="!fontLoaded" :label="t('loading-status.font')" name="font" />
     </t-paragraph>
     <t-title level="h4">{{ t("version.tt") }}</t-title>
     <t-paragraph>
-      <VersionCheck />
+      <version-check />
     </t-paragraph>
     <t-paragraph>
       <t-title level="h6" :content="t('version.why')" />
       <t-text>{{ t("version.reason") }}</t-text>
     </t-paragraph>
-  </CardLayout>
+  </content-layout>
 </template>
 
 <i18n locale="en">

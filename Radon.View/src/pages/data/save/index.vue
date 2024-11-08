@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import ButtonClear from "@/components/btn/ButtonClear.vue";
-import ButtonCopy from "@/components/btn/ButtonCopy.vue";
-import ButtonRead from "@/components/btn/ButtonRead.vue";
-import ContentLayout from "@/layout/frame/ContentLayout.vue";
-import { apiPost, apiPut } from "@/lib/common/apiMethods";
 import type { SaveEntry } from "@/pages/data/save/scripts/entryType";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
@@ -34,13 +29,12 @@ const handleStore = async () => {
   } else {
     loading.value = true;
     try {
-      const dt = (await apiPost("/api/text-store", query)).data;
-      if (dt === 0) {
+      const dt = (await apiPostState("/api/text-store", query)).data;
+      if (dt) {
         result.sign = t("msg.store");
         saveStore.update(query.id);
         await MessagePlugin.success(t("msg.store"));
       } else {
-        console.error(dt);
         result.sign = t("msg.storeFail");
         await MessagePlugin.error(t("msg.storeFail"));
       }
@@ -60,7 +54,7 @@ const handleSelect = async () => {
       query.id = 0;
       await MessagePlugin.error(t("msg.id"));
     } else {
-      const r = (await apiPut("/api/text-store", query)).data as SaveEntry;
+      const r = (await apiPut<SaveEntry>("/api/text-store", query)).data;
       const { id, text, note } = r;
       if (id < 0) {
         result.sign = t("msg.selectFail");
@@ -88,7 +82,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContentLayout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :title="t('tt')" :subtitle="t('st')">
     <t-form>
       <t-form-item :label="t('form.store')">
         <t-textarea v-model="query.text" :autosize="true" placeholder="" />
@@ -120,13 +114,13 @@ onMounted(() => {
       </t-form-item>
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
-          <ButtonCopy :target="result.text" />
-          <ButtonRead v-model:target="query.text" />
-          <ButtonClear v-model:target="query.text" />
+          <btn-copy :target="result.text" />
+          <btn-read v-model="query.text" />
+          <btn-clear v-model="query.text" />
         </t-space>
       </t-form-item>
     </t-form>
-  </ContentLayout>
+  </content-layout>
 </template>
 
 <i18n locale="en">

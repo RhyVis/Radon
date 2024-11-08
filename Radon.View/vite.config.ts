@@ -77,6 +77,7 @@ export default defineConfig({
       },
     }),
     Components({
+      dirs: ["src/components", "src/layout/frame"],
       resolvers: [
         IconsResolver(),
         TDesignResolver({

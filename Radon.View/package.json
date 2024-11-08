@@ -28,7 +28,6 @@
     "tdesign-icons-vue-next": "^0.2.6",
     "tdesign-vue-next": "^1.10.2",
     "vue": "^3.5.11",
-    "vue-clipboard3": "^2.0.0",
     "vue-i18n": "^10.0.4",
     "vue-router": "^4.4.5"
   },
