@@ -27,6 +27,7 @@ axiosInstance.interceptors.response.use(
   async (error: AxiosError) => {
     const errData = (error.response?.data as ErrResponse) ?? { code: -1, msg: "Unknown Error", data: "" };
     await MessagePlugin.error(`ERR(${errData.code}): ${errData.msg}`);
+    console.error(JSON.parse(errData.data));
     return Promise.reject(error);
   },
 );

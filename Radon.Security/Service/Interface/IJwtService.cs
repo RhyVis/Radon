@@ -17,6 +17,8 @@ public interface IJwtService
     /// </summary>
     /// <param name="token">JWT</param>
     /// <param name="checkSession">Check if the session exists</param>
+    /// <exception cref="Radon.Security.Exceptions.SessionNotExistException">Session not exists in db</exception>
+    /// <exception cref="Radon.Security.Exceptions.InvalidCredentialException">Not passed</exception>
     /// <returns>Username</returns>
     string CheckToken(string token, bool checkSession = true);
 

@@ -2,4 +2,4 @@
 
 namespace Radon.Core.Model.Response;
 
-public class ExceptionRes : BaseApiRes<string> { }
+public class ExceptionRes : BaseApiRes<object> { }

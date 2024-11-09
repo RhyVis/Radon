@@ -1,4 +1,3 @@
-import { authValidateWithRefresh } from "@/lib/common/authMethods";
 import HomeView from "@/pages/base/home/index.vue";
 import { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -41,18 +40,11 @@ const records: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes: records,
-  scrollBehavior(_to, _from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0 };
-    }
-  },
 });
 
 router.beforeEach(async (to, _, next) => {
   if (to.meta.auth) {
-    const b = await authValidateWithRefresh();
+    const b = await authValidate();
     if (b) {
       next();
     } else {

@@ -28,7 +28,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status401Unauthorized,
             Msg = "Mismatched username or password.",
-            Data = exception.Message,
+            Data = JsonSerializer.Serialize(exception),
         };
         return WriteResponseAsync(context, response, StatusCodes.Status401Unauthorized);
     }
@@ -39,7 +39,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status500InternalServerError,
             Msg = "An error occurred while processing your request.",
-            Data = exception.Message,
+            Data = JsonSerializer.Serialize(exception),
         };
         return WriteResponseAsync(context, response);
     }

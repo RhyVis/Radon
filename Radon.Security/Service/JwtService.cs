@@ -58,10 +58,10 @@ public class JwtService(IRedisClient cli) : IJwtService
             _logger.Warn("Invalid token rejected by session check");
             throw;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             _logger.Warn("Invalid token rejected by validation");
-            throw new InvalidCredentialException("Invalid token");
+            throw new InvalidCredentialException("Invalid token", ex);
         }
     }
 

@@ -29,7 +29,7 @@ async function authLogin(pair: UsernamePair): Promise<boolean> {
  */
 async function authValidate(): Promise<boolean> {
   try {
-    const { status } = await axiosInstance.post("/api/auth/validate", { data: localStorage.getItem("token") });
+    const { status } = await axiosInstance.post("/api/auth/validate", { data: localStorage.getItem("token") ?? "" });
     return status === 204;
   } catch (e) {
     console.warn(e);
@@ -55,8 +55,12 @@ async function authValidateWithRefresh(): Promise<boolean> {
 async function authRefresh(): Promise<boolean> {
   try {
     const { data } = await apiPostStr("/api/auth/refresh", localStorage.getItem("token") ?? "");
-    localStorage.setItem("token", data);
-    return true;
+    if (data != null && data.length > 0) {
+      localStorage.setItem("token", data);
+      return true;
+    } else {
+      return false;
+    }
   } catch (e) {
     console.warn(e);
     return false;
