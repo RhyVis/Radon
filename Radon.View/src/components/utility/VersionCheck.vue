@@ -54,13 +54,15 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    fetch(`/index.html?v=${moment().utc().toString()}`, { cache: "no-store" })
+    fetch(`/index.html?v=${moment().toDate().getTime()}`, { cache: "no-store" })
       .then(response => response.text())
       .then(html => {
         document.open();
         document.write(html);
         document.close();
-        window.location.replace(window.location.href);
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
       });
   }
   showDialog.value = false;

@@ -1,4 +1,5 @@
 ﻿import axiosInstance from "@/lib/common/apiHttp";
+import { MessagePlugin } from "tdesign-vue-next";
 
 type UsernamePair = {
   username: string;
@@ -12,7 +13,7 @@ type UsernamePair = {
 async function authLogin(pair: UsernamePair): Promise<boolean> {
   try {
     const { code, data } = await apiPostStr("/api/auth/login", pair);
-    if (code === 100) {
+    if (code === 200) {
       localStorage.setItem("token", data);
       return true;
     } else {
@@ -28,8 +29,13 @@ async function authLogin(pair: UsernamePair): Promise<boolean> {
  * Validate the token stored in localStorage.
  */
 async function authValidate(): Promise<boolean> {
+  const token = localStorage.getItem("token");
+  if (token == null || token.length === 0) {
+    await MessagePlugin.warning("令牌不存在");
+    return false;
+  }
   try {
-    const { status } = await axiosInstance.post("/api/auth/validate", { data: localStorage.getItem("token") ?? "" });
+    const { status } = await axiosInstance.post("/api/auth/validate", { data: token });
     return status === 204;
   } catch (e) {
     console.warn(e);
