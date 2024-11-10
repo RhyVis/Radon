@@ -8,10 +8,11 @@ import useStatic from "@/lib/util/useStatic";
 
 const loading = ref(true);
 const { t } = useI18n();
+const { fontFamily } = useStatic();
 
 const versionFont = ref({
   fontWeight: "bold",
-  fontFamily: useStatic().fontFamily,
+  fontFamily: fontFamily,
 });
 
 const vLocal = VersionView.compileTime;
@@ -54,16 +55,7 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    fetch(`/index.html?v=${moment().toDate().getTime()}`, { cache: "no-store" })
-      .then(response => response.text())
-      .then(html => {
-        document.open();
-        document.write(html);
-        document.close();
-        setTimeout(() => {
-          location.reload();
-        }, 1000);
-      });
+    location.replace(`/index.html?v=${new Date().getTime()}`);
   }
   showDialog.value = false;
 };

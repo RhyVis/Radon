@@ -48,7 +48,7 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
 
     public Passport Refresh(string token)
     {
-        var username = jwt.CheckToken(token, true);
+        var username = jwt.CheckToken(token);
         var user = repo.FindByUsername(username);
         jwt.InvalidateToken(token);
         return jwt.GenerateToken(user);

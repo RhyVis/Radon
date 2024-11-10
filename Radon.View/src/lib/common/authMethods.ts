@@ -48,8 +48,7 @@ async function authValidate(): Promise<boolean> {
  */
 async function authValidateWithRefresh(): Promise<boolean> {
   if (await authValidate()) {
-    void authRefresh();
-    return true;
+    return authRefresh().then(() => true);
   } else {
     return false;
   }

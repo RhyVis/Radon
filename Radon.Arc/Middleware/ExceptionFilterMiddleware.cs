@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Radon.Core.Model.Response;
 using Radon.Security.Exceptions;
 
@@ -59,5 +60,35 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
     }
 
     private static readonly JsonSerializerOptions _jsonSerializerOptions =
-        new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new ExceptionConverter() },
+        };
+
+    private class ExceptionConverter : JsonConverter<Exception>
+    {
+        public override Exception Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options
+        )
+        {
+            return new Exception();
+        }
+
+        public override void Write(
+            Utf8JsonWriter writer,
+            Exception value,
+            JsonSerializerOptions options
+        )
+        {
+            writer.WriteStartObject();
+            writer.WriteString("type", value.GetType().ToString());
+            writer.WriteString("message", value.Message);
+            writer.WriteString("stackTrace", value.StackTrace);
+            writer.WriteString("innerException", value.InnerException?.Message);
+            writer.WriteEndObject();
+        }
+    }
 }
