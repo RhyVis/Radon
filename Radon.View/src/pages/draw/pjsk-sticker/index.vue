@@ -58,6 +58,15 @@ const proxyDraw = () => {
   stickerCanvasKey.value = new Date().getTime();
 };
 
+const handleText = () => {
+  if (currentConf.text.includes("\n")) {
+    const match = currentConf.text.match(/\n/g)?.length ?? 0;
+    currentConf.spaceSize = 52 * match;
+    proxyDraw();
+  } else {
+    proxyDraw();
+  }
+}
 const handleSelect = (index: number) => {
   currentConf.charaID = index;
   updateCurrentConf(index);
@@ -111,13 +120,13 @@ onMounted(() => {
         </t-space>
       </t-form-item>
       <t-form-item label="显示文字">
-        <t-textarea v-model="currentConf.text" :maxlength="30" :autosize="true" @change="proxyDraw" />
+        <t-textarea v-model="currentConf.text" :maxlength="30" :autosize="true" @change="handleText" />
       </t-form-item>
       <t-form-item label="字体尺寸">
         <t-slider v-model="currentConf.fontSize" :input-number-props="true" :max="100" :min="5" @change="proxyDraw" />
       </t-form-item>
       <t-form-item v-if="textMultipleLines" label="行间距">
-        <t-slider v-model="currentConf.spaceSize" :input-number-props="true" :max="80" :min="1" @change="proxyDraw" />
+        <t-slider v-model="currentConf.spaceSize" :input-number-props="true" :max="120" :min="1" @change="proxyDraw" />
       </t-form-item>
       <t-form-item label="旋转">
         <t-slider v-model="currentConf.rotate" :input-number-props="true" :max="63" :min="0" @change="proxyDraw" />
