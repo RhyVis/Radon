@@ -29,7 +29,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status401Unauthorized,
             Msg = "Mismatched username or password.",
-            Data = JsonSerializer.Serialize(exception),
+            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions),
         };
         return WriteResponseAsync(context, response, StatusCodes.Status401Unauthorized);
     }
@@ -40,7 +40,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status500InternalServerError,
             Msg = "An error occurred while processing your request.",
-            Data = JsonSerializer.Serialize(exception),
+            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions),
         };
         return WriteResponseAsync(context, response);
     }
@@ -87,7 +87,11 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
             writer.WriteString("type", value.GetType().ToString());
             writer.WriteString("message", value.Message);
             writer.WriteString("stackTrace", value.StackTrace);
-            writer.WriteString("innerException", value.InnerException?.Message);
+            if (value.InnerException != null)
+            {
+                writer.WritePropertyName("innerException");
+                JsonSerializer.Serialize(writer, value.InnerException, options);
+            }
             writer.WriteEndObject();
         }
     }
