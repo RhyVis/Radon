@@ -4,14 +4,14 @@ import { Content as TContent } from "tdesign-vue-next";
 
 <template>
   <t-layout class="r-footer-override">
-    <t-header>
+    <t-header id="base-header">
       <slot name="header" />
     </t-header>
-    <t-content class="r-limit-height">
+    <t-content class="r-limit-height" id="base-content">
       <slot name="side" />
       <slot />
     </t-content>
-    <t-footer>
+    <t-footer id="base-footer">
       <slot name="footer" />
     </t-footer>
   </t-layout>
@@ -28,7 +28,6 @@ import { Content as TContent } from "tdesign-vue-next";
   max-height: 100vh;
   overflow: hidden;
   overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
 }
 </style>

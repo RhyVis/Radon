@@ -92,7 +92,7 @@ export default defineConfig({
           library: "vue-next",
         }),
       ],
-      dirs: ["./src/lib/common"],
+      dirs: ["./src/lib/common", "./src/lib/composable"],
     }),
     Icon(),
   ],

@@ -38,6 +38,11 @@ public static class InitApplication
 
         app.MapFallbackToFile("/index.html");
 
+        if (app.Environment.IsDevelopment())
+        {
+            app.DevTest();
+        }
+
         return app;
     }
 
@@ -66,6 +71,22 @@ public static class InitApplication
         catch (Exception ex)
         {
             _logger.Error(ex, "Initializer Error on Startup");
+        }
+        finally
+        {
+            scope.Dispose();
+        }
+    }
+
+    private static void DevTest(this IApplicationBuilder app)
+    {
+        _logger.Info("Starting tester");
+        var scope = app.ApplicationServices.CreateScope();
+        try { }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Test err");
+            throw;
         }
         finally
         {

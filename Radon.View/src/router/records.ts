@@ -142,6 +142,15 @@ const utilRecords: RouterRecordAssemble[] = [
       icon: "file-code-1",
     },
   },
+  {
+    path: "/pdx",
+    name: "PDX Parser",
+    component: () => import("@/pages/util/pdx-parser/index.vue"),
+    meta: {
+      title: "PDX Parser",
+      icon: "ruler",
+    },
+  },
 ];
 
 export { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords };

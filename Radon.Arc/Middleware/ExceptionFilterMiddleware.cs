@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using NLog;
 using Radon.Core.Model.Response;
 using Radon.Security.Exceptions;
 
@@ -7,6 +8,8 @@ namespace Radon.Arc.Middleware;
 
 public class ExceptionFilterMiddleware(RequestDelegate next)
 {
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -15,10 +18,12 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         }
         catch (BaseSecurityException ex)
         {
+            _logger.Error(ex, "User authentication failed.");
             await HandleAuthenticationAsync(context, ex);
         }
         catch (Exception ex)
         {
+            _logger.Error(ex, "An error occurred while processing requests.");
             await HandleUnknownAsync(context, ex);
         }
     }
