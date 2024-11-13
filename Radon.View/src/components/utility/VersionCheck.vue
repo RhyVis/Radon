@@ -55,7 +55,7 @@ const showDialog = ref(false);
 
 const handleUpdate = () => {
   if (vState.value != 0) {
-    location.replace(`/index.html?v=${new Date().getTime()}`);
+    location.replace(`/?v=${new Date().getTime()}`);
   }
   showDialog.value = false;
 };

@@ -35,7 +35,7 @@ const renderText = (raw: string) => {
     .replace(/§([beghlmprstwy])/gi, (_, p1) => `<span class='r-pdx-c-${p1.toLowerCase()}'>`)
     .replace(/§!/g, "</span>")
     .replace(/\$(\w+)\$/g, (_, key) => `<span style="font-weight: bold">${replacer.value[key] ?? key}</span>`)
-    .replace(/\[(.+?)]/g, (_, key) => `<span style="font-style: italic">${replacer.value[key] ?? key}</span>`);
+    .replace(/\[(.+?)]/g, (_, key) => `<span>${replacer.value[key] ?? key}</span>`);
 };
 
 onMounted(() => {
