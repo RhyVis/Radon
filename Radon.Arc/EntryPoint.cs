@@ -4,7 +4,7 @@ namespace Radon.Arc;
 
 public static class EntryPoint
 {
-    public static void Setup(string[] args)
+    public static void Exec(string[] args)
     {
         WebApplication
             .CreateBuilder(args)

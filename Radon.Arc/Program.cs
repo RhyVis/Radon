@@ -23,4 +23,4 @@ Console.WriteLine(
 
 // Resharper restore StringLiteralTypo
 
-EntryPoint.Setup(args);
+EntryPoint.Exec(args);

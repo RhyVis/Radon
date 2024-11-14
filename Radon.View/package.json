@@ -1,6 +1,6 @@
 {
   "name": "radon-view",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,8 +15,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@volar/language-server": "2.4.6",
-    "@vue/language-server": "2.1.6",
     "@vueuse/core": "^11.2.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
@@ -32,6 +30,8 @@
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@volar/language-server": "2.4.10",
+    "@vue/language-server": "2.1.10",
     "@iconify/json": "^2.2.262",
     "@intlify/unplugin-vue-i18n": "^5.2.0",
     "@tsconfig/node20": "^20.1.4",

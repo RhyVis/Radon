@@ -18,6 +18,7 @@ public static class InitApplication
         app.SetupInitializer();
 
         app.UseMiddleware<ExceptionFilterMiddleware>();
+        app.UseMiddleware<CacheControlMiddleware>();
         app.UseStaticFiles();
         app.UseRouting();
         app.MapControllers();

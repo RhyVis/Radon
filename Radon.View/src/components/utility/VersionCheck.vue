@@ -53,11 +53,23 @@ const vDisplay = computed<{
 });
 const showDialog = ref(false);
 
-const handleUpdate = () => {
+const handleUpdate = async () => {
   if (vState.value != 0) {
-    location.replace(`/?v=${new Date().getTime()}`);
+    try {
+      const f = await fetch("/index.html", { cache: "reload" });
+      const text = await f.text();
+      document.open();
+      document.write(text);
+      document.close();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      showDialog.value = false;
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
   }
-  showDialog.value = false;
 };
 
 onMounted(async () => {
