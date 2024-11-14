@@ -5,6 +5,7 @@
   },
   common: {
     fetchError: "获取数据失败",
+    syncSuccess: "同步成功",
   },
   auth: {
     message: {

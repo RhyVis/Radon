@@ -31,6 +31,10 @@ async function apiGet<T>(url: string): Promise<ApiResponse<T>> {
   return responseData as ApiResponse<T>;
 }
 
+async function apiGetStr(url: string): Promise<ApiResponse<string>> {
+  return await apiGet<string>(url);
+}
+
 /**
  * Post Method
  * @param url
@@ -108,6 +112,6 @@ async function getVersion(): Promise<number> {
 
 export { apiDelete, apiGet, apiPost, apiPut };
 
-export { apiPostState, apiPostStr, apiPutState };
+export { apiGetStr, apiPostState, apiPostStr, apiPutState };
 
 export { getVersion };

@@ -10,6 +10,7 @@ declare global {
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const apiDelete: typeof import('./src/lib/common/apiMethods')['apiDelete']
   const apiGet: typeof import('./src/lib/common/apiMethods')['apiGet']
+  const apiGetStr: typeof import('./src/lib/common/apiMethods')['apiGetStr']
   const apiHttp: typeof import('./src/lib/common/apiHttp')['default']
   const apiPost: typeof import('./src/lib/common/apiMethods')['apiPost']
   const apiPostState: typeof import('./src/lib/common/apiMethods')['apiPostState']

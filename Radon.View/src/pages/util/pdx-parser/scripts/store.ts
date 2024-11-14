@@ -1,5 +1,9 @@
-﻿import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
+﻿import i18n from "@/locale";
+import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
 import type { TreeProps } from "tdesign-vue-next";
+import { MessagePlugin } from "tdesign-vue-next";
+
+const { t } = i18n.global;
 
 interface ReplaceEntry {
   [key: string]: string;
@@ -58,6 +62,25 @@ export const usePdxStore = defineStore("pdx-parser", {
       this.replacer[this.addReplacerKey] = this.addReplacerValue;
       this.addReplacerKey = "";
       this.addReplacerValue = "";
+    },
+    getSyncReplacer() {
+      try {
+        apiGetStr("api/pdx/parse/lang/replacer")
+          .then(res => {
+            this.replacer = JSON.parse(res.data);
+          })
+          .then(() => {
+            void MessagePlugin.success(t("common.syncSuccess"));
+          });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    setSyncReplacer() {
+      const json = JSON.stringify(this.replacer);
+      apiPutState("api/pdx/parse/lang/replacer", json).then(() => {
+        void MessagePlugin.success(t("common.syncSuccess"));
+      });
     },
   },
   persist: {

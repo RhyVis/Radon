@@ -5,6 +5,7 @@
   },
   common: {
     fetchError: "Failed to fetch data",
+    syncSuccess: "Sync successful",
   },
   auth: {
     message: {

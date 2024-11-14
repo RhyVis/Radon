@@ -3,10 +3,20 @@ import axiosInstance from "@/lib/common/apiHttp";
 import type { ApiResponse } from "@/lib/type/typeApi";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
+import { useGlobalStore } from "@/store/global";
 import { set } from "@vueuse/core";
-import { AddIcon, HomeIcon, RefreshIcon, SettingIcon, UploadIcon } from "tdesign-icons-vue-next";
+import {
+  AddIcon,
+  DownloadIcon,
+  HomeIcon,
+  RefreshIcon,
+  SettingIcon,
+  Upload1Icon,
+  UploadIcon,
+} from "tdesign-icons-vue-next";
 import type { RequestMethodResponse, TreeNodeValue, UploadFile } from "tdesign-vue-next";
 
+const global = useGlobalStore();
 const regQuote = /\\"/g;
 const treeVal = ref<TreeNodeValue[]>([]);
 const uploadMenuVisible = ref(false);
@@ -34,8 +44,11 @@ const renderText = (raw: string) => {
   return raw
     .replace(/§([beghlmprstwy])/gi, (_, p1) => `<span class='r-pdx-c-${p1.toLowerCase()}'>`)
     .replace(/§!/g, "</span>")
-    .replace(/\$(\w+)\$/g, (_, key) => `<span style="font-weight: bold">${replacer.value[key] ?? key}</span>`)
-    .replace(/\[(.+?)]/g, (_, key) => `<span>${replacer.value[key] ?? key}</span>`);
+    .replace(
+      /\$(\w+)\$/g,
+      (_, key) => `<span style="font-weight: bold">${replacer.value[key] ?? "(" + key + ")"}</span>`,
+    )
+    .replace(/\[(.+?)]/g, (_, key) => `<span>${replacer.value[key] ?? "[" + key + "]"}</span>`);
 };
 
 onMounted(() => {
@@ -94,8 +107,16 @@ onMounted(() => {
     </template>
     <t-dialog v-model:visible="uploadMenuVisible" header="上传" :footer="false" width="85%">
       <t-space direction="vertical" align="baseline">
-        <t-upload :request-method="requestMethod" theme="file-input" placeholder="解析Paradox Yaml Lang" />
-        <t-text>支持YAML，不要反复上传文件，你的浏览器把持不住</t-text>
+        <t-upload
+          :request-method="requestMethod"
+          theme="file-input"
+          placeholder="Paradox Yaml Lang"
+          tips="支持YAML，不要反复上传文件，你的浏览器把持不住"
+        >
+          <t-button variant="outline" theme="default" shape="circle">
+            <Upload1Icon />
+          </t-button>
+        </t-upload>
       </t-space>
     </t-dialog>
     <t-dialog v-model:visible="replaceMenuVisible" header="替换值" width="85%">
@@ -115,10 +136,18 @@ onMounted(() => {
             <t-form-item label="值">
               <t-input v-model="addReplacerValue" />
             </t-form-item>
-            <t-form-item label="添加/修改">
-              <t-button shape="circle" @click="store.updateReplacer()">
-                <AddIcon />
-              </t-button>
+            <t-form-item :label="global.authPassed ? '修改 / 上传 / 读取' : '修改'">
+              <t-space :size="6">
+                <t-button shape="circle" @click="store.updateReplacer()">
+                  <AddIcon />
+                </t-button>
+                <t-button v-if="global.authPassed" shape="circle" @click="store.setSyncReplacer()">
+                  <UploadIcon />
+                </t-button>
+                <t-button v-if="global.authPassed" shape="circle" @click="store.getSyncReplacer()">
+                  <DownloadIcon />
+                </t-button>
+              </t-space>
             </t-form-item>
           </t-form>
         </div>
