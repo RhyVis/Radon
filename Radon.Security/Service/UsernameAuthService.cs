@@ -38,7 +38,7 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
 
             return jwt.GenerateToken(user);
         }
-        catch (Exceptions.InvalidCredentialException)
+        catch (Exceptions.CredentialRejectionException)
         {
             _logger.Warn($"Password does not match for user {username}");
             throw;
@@ -47,8 +47,8 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
 
     public Passport Refresh(string token)
     {
-        var username = jwt.CheckToken(token);
-        var user = repo.FindByUsername(username);
+        var userId = jwt.CheckToken(token);
+        var user = repo.FindByUserId(userId);
         jwt.InvalidateToken(token);
         return jwt.GenerateToken(user);
     }
@@ -65,7 +65,7 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
     {
         if (!OpenBsdBCrypt.CheckPassword(hash, password.ToCharArray()))
         {
-            throw new Exceptions.InvalidCredentialException("Password does not match");
+            throw new Exceptions.CredentialRejectionException("Password does not match");
         }
     }
 }

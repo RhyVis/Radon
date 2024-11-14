@@ -5,6 +5,10 @@ type ApiResponse<T> = {
   code: number;
   msg: string;
   data: T;
+  status: {
+    responseCode: number;
+    responseText: string;
+  };
 };
 
 /**

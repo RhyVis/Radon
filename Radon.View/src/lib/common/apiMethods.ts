@@ -22,7 +22,13 @@ type ReqData = string | object;
  * @param url
  */
 async function apiGet<T>(url: string): Promise<ApiResponse<T>> {
-  return (await axiosInstance.get(url)).data as ApiResponse<T>;
+  const response = await axiosInstance.get(url);
+  const responseData = response.data;
+  responseData.status = {
+    responseCode: response.status,
+    responseText: response.statusText,
+  };
+  return responseData as ApiResponse<T>;
 }
 
 /**
@@ -31,7 +37,13 @@ async function apiGet<T>(url: string): Promise<ApiResponse<T>> {
  * @param data
  */
 async function apiPost<T>(url: string, data: ReqData): Promise<ApiResponse<T>> {
-  return (await axiosInstance.post(url, new Req(data))).data as ApiResponse<T>;
+  const response = await axiosInstance.post(url, new Req(data));
+  const responseData = response.data;
+  responseData.status = {
+    responseCode: response.status,
+    responseText: response.statusText,
+  };
+  return responseData as ApiResponse<T>;
 }
 
 /**
@@ -40,7 +52,7 @@ async function apiPost<T>(url: string, data: ReqData): Promise<ApiResponse<T>> {
  * @param data
  */
 async function apiPostStr(url: string, data: ReqData): Promise<ApiResponse<string>> {
-  return (await axiosInstance.post(url, new Req(data))).data as ApiResponse<string>;
+  return await apiPost<string>(url, data);
 }
 
 /**
@@ -49,7 +61,7 @@ async function apiPostStr(url: string, data: ReqData): Promise<ApiResponse<strin
  * @param data
  */
 async function apiPostState(url: string, data: ReqData): Promise<ApiResponse<boolean>> {
-  return (await axiosInstance.post(url, new Req(data))).data as ApiResponse<boolean>;
+  return await apiPost<boolean>(url, data);
 }
 
 /**
@@ -58,7 +70,13 @@ async function apiPostState(url: string, data: ReqData): Promise<ApiResponse<boo
  * @param data
  */
 async function apiPut<T>(url: string, data: ReqData): Promise<ApiResponse<T>> {
-  return (await axiosInstance.put(url, new Req(data))).data as ApiResponse<T>;
+  const response = await axiosInstance.put(url, new Req(data));
+  const responseData = response.data;
+  responseData.status = {
+    responseCode: response.status,
+    responseText: response.statusText,
+  };
+  return responseData as ApiResponse<T>;
 }
 
 /**
@@ -67,7 +85,7 @@ async function apiPut<T>(url: string, data: ReqData): Promise<ApiResponse<T>> {
  * @param data
  */
 async function apiPutState(url: string, data: ReqData): Promise<ApiResponse<boolean>> {
-  return (await axiosInstance.put(url, new Req(data))).data as ApiResponse<boolean>;
+  return await apiPut<boolean>(url, data);
 }
 
 /**
@@ -75,7 +93,13 @@ async function apiPutState(url: string, data: ReqData): Promise<ApiResponse<bool
  * @param url
  */
 async function apiDelete<T>(url: string): Promise<ApiResponse<T>> {
-  return (await axiosInstance.delete(url)).data as ApiResponse<T>;
+  const response = await axiosInstance.delete(url);
+  const responseData = response.data;
+  responseData.status = {
+    responseCode: response.status,
+    responseText: response.statusText,
+  };
+  return responseData as ApiResponse<T>;
 }
 
 async function getVersion(): Promise<number> {

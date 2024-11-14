@@ -1,4 +1,5 @@
 ﻿using Radon.Security.Data.Entity;
+using Radon.Security.Exceptions;
 using Radon.Security.Model;
 
 namespace Radon.Security.Service.Interface;
@@ -18,9 +19,9 @@ public interface IJwtService
     /// <param name="token">JWT</param>
     /// <param name="checkSession">Check if the session exists</param>
     /// <exception cref="Radon.Security.Exceptions.SessionNotExistException">Session not exists in db</exception>
-    /// <exception cref="Radon.Security.Exceptions.InvalidCredentialException">Not passed</exception>
+    /// <exception cref="CredentialRejectionException">Not passed</exception>
     /// <returns>Username</returns>
-    string CheckToken(string token, bool checkSession = true);
+    long CheckToken(string token, bool checkSession = true);
 
     /// <summary>
     /// Invalidate the token

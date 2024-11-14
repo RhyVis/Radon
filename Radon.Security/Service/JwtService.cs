@@ -26,7 +26,7 @@ public class JwtService(IRedisClient cli) : IJwtService
         return p;
     }
 
-    public string CheckToken(string token, bool checkSession = true)
+    public long CheckToken(string token, bool checkSession = true)
     {
         var conf = AppSettings.Get().Security.Jwt;
         var handler = new JwtSecurityTokenHandler();
@@ -50,8 +50,15 @@ public class JwtService(IRedisClient cli) : IJwtService
             {
                 throw new SessionNotExistException();
             }
+            var userId =
+                principal.FindFirst("userId")?.Value.ToInt64(long.MaxValue)
+                ?? throw new CredentialRejectionException("User ID not found in token");
+            if (userId == long.MaxValue)
+            {
+                throw new CredentialRejectionException("Invalid user ID in token");
+            }
 
-            return principal.FindFirst("username")?.Value ?? "anonymous";
+            return userId;
         }
         catch (SessionNotExistException)
         {
@@ -61,7 +68,7 @@ public class JwtService(IRedisClient cli) : IJwtService
         catch (Exception ex)
         {
             _logger.Warn("Invalid token rejected by validation");
-            throw new InvalidCredentialException("Invalid token", ex);
+            throw new CredentialRejectionException("Invalid token", ex);
         }
     }
 

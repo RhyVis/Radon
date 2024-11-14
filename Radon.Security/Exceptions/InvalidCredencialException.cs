@@ -1,13 +1,21 @@
 ﻿namespace Radon.Security.Exceptions;
 
-public class InvalidCredentialException : BaseSecurityException
+public class CredentialRejectionException : BaseSecurityException
 {
-    public InvalidCredentialException()
+    public CredentialRejectionException()
         : base("Invalid credential") { }
 
-    public InvalidCredentialException(string message)
+    public CredentialRejectionException(string message)
         : base(message) { }
 
-    public InvalidCredentialException(string message, Exception inner)
+    public CredentialRejectionException(string message, Exception inner)
         : base(message, inner) { }
+
+    public static void CheckId(long id)
+    {
+        if (id == long.MaxValue)
+        {
+            throw new CredentialRejectionException("Bad ID found in credencials.");
+        }
+    }
 }
