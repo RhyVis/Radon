@@ -16,9 +16,9 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
 
     public void Register(string username, string password)
     {
-        var user = new User { Username = username, Password = GenHash(password) };
         try
         {
+            var user = new User { Username = username, Password = GenHash(password) };
             repo.Insert(user);
             _logger.Info($"New user {username} registered");
         }
@@ -31,19 +31,18 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
 
     public Passport Authenticate(string username, string password)
     {
-        var user = repo.FindByUsername(username);
-
         try
         {
+            var user = repo.FindByUsername(username);
             CheckHash(user.Password, password);
+
+            return jwt.GenerateToken(user);
         }
         catch (Exceptions.InvalidCredentialException)
         {
             _logger.Warn($"Password does not match for user {username}");
             throw;
         }
-
-        return jwt.GenerateToken(user);
     }
 
     public Passport Refresh(string token)

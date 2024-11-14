@@ -9,7 +9,7 @@ const query = reactive({
 });
 const loading = ref(false);
 
-const handleSpam = async () => {
+const handleEscape = async () => {
   if (query.text.length === 0) {
     await MessagePlugin.warning("不要什么都不输入");
   } else {
@@ -79,7 +79,7 @@ const result = ref("");
           </t-loading>
         </t-form-item>
         <t-form-item label="操作">
-          <t-button shape="round" :disabled="loading" @click="handleSpam">
+          <t-button shape="round" :disabled="loading" @click="handleEscape">
             <SendIcon />
           </t-button>
         </t-form-item>

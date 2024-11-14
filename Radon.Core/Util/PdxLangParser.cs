@@ -54,6 +54,7 @@ public class PdxLangParser
     public List<PdxLangParsedItem> Parse()
     {
         return _lines
+            .Skip(1)
             .Where(l => !(string.IsNullOrWhiteSpace(l) || l.TrimStart().StartsWith('#')))
             .Select(l => l.Split(':', 2))
             .Where(pts => pts.Length == 2)

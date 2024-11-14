@@ -65,7 +65,7 @@ const tryRefreshToken = () => {
         MessagePlugin.success(t("auth.message.tokenValidAndRefreshed"));
       } else {
         global.authPassed = false;
-        MessagePlugin.error(t("auth.message.tokenInvalid"));
+        MessagePlugin.warning(t("auth.message.tokenInvalid"));
         setTimeout(() => {
           router.push("/auth");
         }, 1420);

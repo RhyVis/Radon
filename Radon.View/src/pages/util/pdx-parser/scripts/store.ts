@@ -58,7 +58,7 @@ export const usePdxStore = defineStore("pdx-parser", {
       this.replacer[this.addReplacerKey] = this.addReplacerValue;
       this.addReplacerKey = "";
       this.addReplacerValue = "";
-    }
+    },
   },
   persist: {
     pick: ["replacer"],

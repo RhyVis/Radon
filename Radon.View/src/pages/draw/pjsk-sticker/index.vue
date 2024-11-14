@@ -66,7 +66,7 @@ const handleText = () => {
   } else {
     proxyDraw();
   }
-}
+};
 const handleSelect = (index: number) => {
   currentConf.charaID = index;
   updateCurrentConf(index);

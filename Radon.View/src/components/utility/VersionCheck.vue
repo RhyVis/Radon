@@ -4,7 +4,7 @@ import { ArrowLeftIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
 import VersionView from "@/assets/local/version.json";
 import moment from "moment";
-import useStatic from "@/lib/util/useStatic";
+import { useStatic } from "@/lib/composable/useStatic";
 
 const loading = ref(true);
 const { t } = useI18n();

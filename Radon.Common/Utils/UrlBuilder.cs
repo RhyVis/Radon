@@ -20,6 +20,16 @@ public partial class UrlBuilder
     [GeneratedRegex("(?<!:)/{2,}")]
     private static partial Regex MultiSep();
 
+    public static UrlBuilder operator +(UrlBuilder builder, string path)
+    {
+        return builder.Append(path);
+    }
+
+    public static UrlBuilder operator +(UrlBuilder builder, string[] paths)
+    {
+        return builder.Append(paths);
+    }
+
     public UrlBuilder Append(string path)
     {
         _builder.Append(SEP).Append(path);
