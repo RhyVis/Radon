@@ -1,10 +1,7 @@
 ﻿<script setup lang="tsx">
-import axiosInstance from "@/lib/common/apiHttp";
-import type { ApiResponse } from "@/lib/type/typeApi";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
 import { useGlobalStore } from "@/store/global";
-import { set } from "@vueuse/core";
 import {
   AddIcon,
   DownloadIcon,
@@ -17,23 +14,24 @@ import {
 import type { RequestMethodResponse, TreeNodeValue, UploadFile } from "tdesign-vue-next";
 
 const global = useGlobalStore();
-const regQuote = /\\"/g;
-const treeVal = ref<TreeNodeValue[]>([]);
-const uploadMenuVisible = ref(false);
-const replaceMenuVisible = ref(false);
-const replaceMenuAddVisible = ref(false);
 const store = usePdxStore();
+const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
+const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
+const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
 const { initialized, replacer, parseLangResult, addReplacerKey, addReplacerValue } = storeToRefs(store);
+const treeVal = ref<TreeNodeValue[]>([]);
+const regQuote = /\\"/g;
 
 const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> => {
   try {
-    const formData = new FormData();
-    formData.append("file", new Blob([file.raw!], { type: file.type }));
-    const res = await axiosInstance.post("api/pdx/parse/lang", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    store.updateParsedLang((res.data as ApiResponse<PdxParsedLangItem[]>).data);
-    set(uploadMenuVisible, false);
+    const response = await apiPostWithFile<PdxParsedLangItem[]>(
+      "api/pdx/parse/lang",
+      new Blob([file.raw!], { type: file.type }),
+    );
+
+    store.updateParsedLang(response.data);
+    setMenuUploadVisible(false);
+
     return { status: "success", response: { success: true } };
   } catch (e) {
     console.error(e);
@@ -69,7 +67,7 @@ onMounted(() => {
                 v-for="(item, index) in (treeVal[0] ?? '')
                   .toString()
                   .replace(regQuote, '')
-                  .replace('\\n\\n', '\\n')
+                  .replace(/(\\n)+/, '\\n')
                   .split('\\n')"
                 v-html="renderText(item)"
                 :key="index"
@@ -93,10 +91,10 @@ onMounted(() => {
       </div>
     </div>
     <template #actions>
-      <t-button variant="text" theme="primary" shape="circle" size="small" @click="replaceMenuVisible = true">
+      <t-button variant="text" theme="primary" shape="circle" size="small" @click="setMenuReplaceVisible()">
         <RefreshIcon />
       </t-button>
-      <t-button variant="text" theme="primary" shape="circle" size="small" @click="uploadMenuVisible = true">
+      <t-button variant="text" theme="primary" shape="circle" size="small" @click="setMenuUploadVisible()">
         <UploadIcon />
       </t-button>
       <RouterLink to="/">
@@ -105,7 +103,8 @@ onMounted(() => {
         </t-button>
       </RouterLink>
     </template>
-    <t-dialog v-model:visible="uploadMenuVisible" header="上传" :footer="false" width="85%">
+    <!-- Upload Dialog -->
+    <t-dialog v-model:visible="menuUploadVisible" header="上传" :footer="false" width="85%">
       <t-space direction="vertical" align="baseline">
         <t-upload
           :request-method="requestMethod"
@@ -119,41 +118,42 @@ onMounted(() => {
         </t-upload>
       </t-space>
     </t-dialog>
-    <t-dialog v-model:visible="replaceMenuVisible" header="替换值" width="85%">
-      <t-list :stripe="true" :split="true" style="max-height: 250px" size="small">
-        <template #header> 用于替换默认的键值对 </template>
-        <t-list-item v-for="(_, key) in replacer" :key="key">
-          <t-list-item-meta :title="key.toString()" :description="replacer[key]" />
-        </t-list-item>
-      </t-list>
-      <Transition name="move">
-        <div v-if="replaceMenuAddVisible">
-          <t-divider />
-          <t-form label-align="top">
-            <t-form-item label="键">
-              <t-input v-model="addReplacerKey" />
-            </t-form-item>
-            <t-form-item label="值">
-              <t-input v-model="addReplacerValue" />
-            </t-form-item>
-            <t-form-item :label="global.authPassed ? '修改 / 上传 / 读取' : '修改'">
-              <t-space :size="6">
-                <t-button shape="circle" @click="store.updateReplacer()">
-                  <AddIcon />
-                </t-button>
-                <t-button v-if="global.authPassed" shape="circle" @click="store.setSyncReplacer()">
-                  <UploadIcon />
-                </t-button>
-                <t-button v-if="global.authPassed" shape="circle" @click="store.getSyncReplacer()">
-                  <DownloadIcon />
-                </t-button>
-              </t-space>
-            </t-form-item>
-          </t-form>
-        </div>
-      </Transition>
+    <!-- Replace Dialog -->
+    <t-dialog v-model:visible="menuReplaceVisible" header="替换值" width="85%">
+      <div v-if="!menuReplaceAddVisible">
+        <t-list :stripe="true" :split="true" style="max-height: 300px" size="small">
+          <template #header> 用于替换默认的键值对 </template>
+          <t-list-item v-for="key in replacer" :key="key">
+            <t-list-item-meta :title="key.toString()" :description="replacer[key]" />
+          </t-list-item>
+        </t-list>
+      </div>
+      <div v-else>
+        <t-divider />
+        <t-form label-align="top">
+          <t-form-item label="键">
+            <t-input v-model="addReplacerKey" />
+          </t-form-item>
+          <t-form-item label="值">
+            <t-input v-model="addReplacerValue" />
+          </t-form-item>
+          <t-form-item :label="global.authPassed ? '修改 / 上传 / 读取' : '修改'">
+            <t-space :size="6">
+              <t-button shape="circle" @click="store.updateReplacer()">
+                <AddIcon />
+              </t-button>
+              <t-button v-if="global.authPassed" shape="circle" @click="store.setSyncReplacer()">
+                <UploadIcon />
+              </t-button>
+              <t-button v-if="global.authPassed" shape="circle" @click="store.getSyncReplacer()">
+                <DownloadIcon />
+              </t-button>
+            </t-space>
+          </t-form-item>
+        </t-form>
+      </div>
       <template #footer>
-        <t-button theme="default" shape="circle" @click="replaceMenuAddVisible = !replaceMenuAddVisible">
+        <t-button theme="default" shape="circle" @click="setMenuReplaceAddVisible()">
           <SettingIcon />
         </t-button>
       </template>

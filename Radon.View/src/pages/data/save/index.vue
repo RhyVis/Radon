@@ -1,108 +1,78 @@
 <script lang="ts" setup>
-import type { SaveEntry } from "@/pages/data/save/scripts/entryType";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 
-const saveStore = useSaveStore();
+const store = useSaveStore();
 const { t } = useI18n();
-
-const query = reactive({
-  id: 0,
-  text: "",
-  note: "",
-});
-const result = reactive({
-  text: "",
-  note: "",
-  sign: "---",
-});
-const loading = ref(false);
+const { loading, id, qText, qNote, rText, rNote } = storeToRefs(store);
 
 const handleStore = async () => {
-  result.sign = "---";
-  if (query.text.length === 0) {
+  if (qText.value.length === 0) {
     await MessagePlugin.warning(t("msg.empty"));
-  } else if (query.id < 0) {
-    query.id = 0;
-    await MessagePlugin.warning(t("msg.id"));
-  } else {
-    loading.value = true;
-    try {
-      const dt = (await apiPostState("/api/text-store", query)).data;
-      if (dt) {
-        result.sign = t("msg.store");
-        saveStore.update(query.id);
-        await MessagePlugin.success(t("msg.store"));
-      } else {
-        result.sign = t("msg.storeFail");
-        await MessagePlugin.error(t("msg.storeFail"));
-      }
-    } catch (e) {
-      console.error(e);
-      result.sign = t("msg.storeFail");
+    return;
+  }
+  loading.value = true;
+  try {
+    const b = await apiPutState("/api/text-store", store.query);
+    if (b) {
+      await MessagePlugin.success(t("msg.store"));
+    } else {
       await MessagePlugin.error(t("msg.storeFail"));
-    } finally {
-      loading.value = false;
     }
+  } catch (e) {
+    console.error(e);
+    await MessagePlugin.error(t("msg.storeFail"));
+  } finally {
+    loading.value = false;
   }
 };
 const handleSelect = async () => {
   loading.value = true;
   try {
-    if (query.id < 0) {
-      query.id = 0;
-      await MessagePlugin.error(t("msg.id"));
-    } else {
-      const r = (await apiPut<SaveEntry>("/api/text-store", query)).data;
-      const { id, text, note } = r;
-      if (id < 0) {
-        result.sign = t("msg.selectFail");
-        await MessagePlugin.error(t("msg.selectFail"));
-      } else {
-        result.text = query.text = text;
-        result.note = query.note = note;
-        result.sign = t("msg.select");
-        saveStore.update(query.id);
-        await MessagePlugin.success(t("msg.select"));
-      }
-    }
+    const data = (
+      await apiPost<{
+        id: number;
+        text: string;
+        note: string;
+      }>("/api/text-store", store.query)
+    ).data;
+
+    rText.value = qText.value = data.text;
+    rNote.value = qNote.value = data.note;
+
+    await MessagePlugin.success(t("msg.select"));
   } catch (e) {
     console.error(e);
-    result.sign = t("msg.selectFail");
     await MessagePlugin.error(t("msg.selectFail"));
   } finally {
     loading.value = false;
   }
 };
-
-onMounted(() => {
-  query.id = saveStore.id;
-});
 </script>
 
 <template>
   <content-layout :title="t('tt')" :subtitle="t('st')">
     <t-form>
       <t-form-item :label="t('form.store')">
-        <t-textarea v-model="query.text" :autosize="true" placeholder="" />
+        <t-textarea v-model="qText" :autosize="true" placeholder="" />
       </t-form-item>
       <t-form-item :label="t('form.note')">
-        <t-input v-model="query.note" placeholder="" />
+        <t-input v-model="qNote" placeholder="" />
       </t-form-item>
       <t-form-item :label="t('form.read')">
-        <t-textarea :autosize="true" :readonly="true" :value="result.text" placeholder="" />
+        <t-textarea :autosize="true" :readonly="true" :value="rText" placeholder="" />
       </t-form-item>
       <t-form-item :label="t('form.readNote')">
-        <t-input :value="result.note" :readonly="true" placeholder="" />
+        <t-input :value="rNote" :readonly="true" placeholder="" />
       </t-form-item>
       <t-divider />
       <t-form-item label="ID">
-        <t-input-number v-model="query.id" :auto-width="true" :min="0" size="small" />
+        <t-input-number v-model="id" :auto-width="true" :min="0" size="small" />
       </t-form-item>
       <t-form-item :label="t('form.operation')">
         <t-loading :loading="loading" size="small">
-          <t-space>
+          <t-space :size="6">
             <t-button shape="circle" theme="primary" @click="handleStore">
               <UploadIcon />
             </t-button>
@@ -114,9 +84,9 @@ onMounted(() => {
       </t-form-item>
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
-          <btn-copy :target="result.text" />
-          <btn-read v-model="query.text" />
-          <btn-clear v-model="query.text" />
+          <btn-copy :target="rText" />
+          <btn-read v-model="qText" />
+          <btn-clear v-model="qText" />
         </t-space>
       </t-form-item>
     </t-form>

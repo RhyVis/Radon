@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Radon.Arc.Util;
 using Radon.Core.Model.Request;
 using Radon.Core.Model.Response;
 using Radon.Security.Service.Interface;
 
 namespace Radon.Arc.Controller;
 
+[Authorize]
 [ApiController]
 [Route("api/auth")]
 public class AuthenticationController(IUsernameAuthService service, IJwtService jwt)
     : ControllerBase
 {
+    [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(typeof(PlainTextRes), StatusCodes.Status200OK)]
     public IActionResult Login(UsernameReq req)
@@ -19,7 +22,16 @@ public class AuthenticationController(IUsernameAuthService service, IJwtService 
         return Ok(new PlainTextRes(p.Token));
     }
 
-    [Authorize]
+    [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult Logout()
+    {
+        var userId = HttpContext.GetAuthenticatedUserId();
+        service.LogoutById(userId);
+
+        return NoContent();
+    }
+
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult Register(UsernameReq req)
@@ -30,17 +42,15 @@ public class AuthenticationController(IUsernameAuthService service, IJwtService 
 
     [HttpPost("validate")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Validate(PlainTextReq req)
-    {
-        jwt.CheckToken(req.Data);
-        return NoContent();
-    }
+    public IActionResult Validate() => NoContent();
 
     [HttpPost("refresh")]
     [ProducesResponseType(typeof(PlainTextRes), StatusCodes.Status200OK)]
-    public IActionResult Refresh(PlainTextReq req)
+    public IActionResult Refresh()
     {
-        var p = service.Refresh(req.Data);
+        var token = HttpContext.GetAuthenticatedToken();
+        var userID = HttpContext.GetAuthenticatedUserId();
+        var p = service.Refresh(token, userID);
         return Ok(new PlainTextRes(p.Token));
     }
 }

@@ -11,7 +11,6 @@ using Radon.Security.Data.Entity;
 using Radon.Security.Exceptions;
 using Radon.Security.Model;
 using Radon.Security.Service.Interface;
-using RoleType = Radon.Security.Enums.RoleType;
 
 namespace Radon.Security.Service;
 
@@ -27,7 +26,7 @@ public class JwtService(IRedisClient cli) : IJwtService
         return p;
     }
 
-    public long CheckToken(string token, bool checkSession = true)
+    public long CheckToken(string token, bool checkSession = true, bool checkLifetime = true)
     {
         var conf = AppSettings.Get().Security.Jwt;
         var handler = new JwtSecurityTokenHandler();
@@ -39,7 +38,7 @@ public class JwtService(IRedisClient cli) : IJwtService
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = checkLifetime,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = conf.Issuer,
                     ValidAudience = conf.Audience,
@@ -54,10 +53,7 @@ public class JwtService(IRedisClient cli) : IJwtService
             var userId =
                 principal.FindFirst("userId")?.Value.ToInt64(long.MaxValue)
                 ?? throw new CredentialRejectionException("User ID not found in token");
-            if (userId == long.MaxValue)
-            {
-                throw new CredentialRejectionException("Invalid user ID in token");
-            }
+            CredentialRejectionException.CheckId(userId);
 
             return userId;
         }
@@ -77,8 +73,7 @@ public class JwtService(IRedisClient cli) : IJwtService
 
     public void InvalidateAllToken(long userId)
     {
-        var find = cli.ScamByVal(userId);
-        if (find.Count > 0)
+        if (cli.ScamByVal(userId, out var find))
         {
             find.ForEach(key => cli.Del(key));
         }

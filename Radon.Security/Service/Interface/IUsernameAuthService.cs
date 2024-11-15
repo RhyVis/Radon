@@ -22,7 +22,17 @@ public interface IUsernameAuthService
     /// <summary>
     /// Clear token of a user
     /// </summary>
-    void Logout(string username);
+    void LogoutById(long userId);
+
+    /// <summary>
+    /// Clear token of a user
+    /// </summary>
+    void LogoutByName(string username);
+
+    /// <summary>
+    /// Clear token of a user
+    /// </summary>
+    void LogoutByToken(string token);
 
     /// <summary>
     /// Check the username and password and return a Passport with JWT
@@ -35,4 +45,10 @@ public interface IUsernameAuthService
     /// </summary>
     /// <returns>New Passport with JWT</returns>
     Passport Refresh(string token);
+
+    /// <summary>
+    /// Check the token and return a new Passport with JWT, with old one removing in session
+    /// </summary>
+    /// <returns>New Passport with JWT</returns>
+    Passport Refresh(string token, long userId);
 }

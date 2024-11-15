@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { authLogin, authRefresh, authValidate } from "@/lib/common/authMethods";
-import { ArrowUpDown2Icon, DeleteIcon, Fingerprint2Icon } from "tdesign-icons-vue-next";
+import { ArrowUpDown2Icon, DeleteIcon, Fingerprint2Icon, LoginIcon, LogoutIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { useGlobalStore } from "@/store/global";
 
@@ -46,6 +46,15 @@ const handleLogin = async () => {
     await MessagePlugin.warning(t("msg.noEmpty"));
   }
 };
+const handleLogout = async () => {
+  if (await authLogout()) {
+    global.authPassed = false;
+    setTimeout(() => router.push("/"), 2000);
+    await MessagePlugin.success(t("msg.logoutSuccess"));
+  } else {
+    await MessagePlugin.warning(t("msg.logoutFailed"));
+  }
+};
 const handleTokenStateCheck = async () => {
   tokenValidSign.value = 0;
   const b = await authValidate();
@@ -66,11 +75,6 @@ const handleRefreshToken = async () => {
   }
   setTimeout(() => location.reload(), 2000);
 };
-const handleClearToken = () => {
-  storageToken.value = "";
-  MessagePlugin.info(t("msg.tokenCleared"));
-  setTimeout(() => location.reload(), 2000);
-};
 </script>
 
 <template>
@@ -84,7 +88,12 @@ const handleClearToken = () => {
       </t-form-item>
       <t-form-item :label="t('input.login')">
         <t-button shape="round" theme="primary" @click="handleLogin" :loading="loginLoading">
-          <ArrowUpDown2Icon />
+          <LoginIcon />
+        </t-button>
+      </t-form-item>
+      <t-form-item v-if="global.authPassed" :label="t('input.logout')" @click="handleLogout">
+        <t-button shape="round" theme="warning">
+          <LogoutIcon />
         </t-button>
       </t-form-item>
       <t-divider />
@@ -105,13 +114,6 @@ const handleClearToken = () => {
           </t-button>
         </t-popup>
       </t-form-item>
-      <t-form-item :label="t('input.clearToken')">
-        <t-popconfirm :content="t('msg.tokenConfirm')" theme="warning" @confirm="handleClearToken">
-          <t-button shape="round" theme="default">
-            <DeleteIcon />
-          </t-button>
-        </t-popconfirm>
-      </t-form-item>
     </t-form>
   </content-layout>
 </template>
@@ -123,6 +125,7 @@ input:
   username: Username
   password: Password
   login: Login
+  logout: Logout
   tokenState: Token State
   refreshToken: Refresh Token
   showToken: Show Token
@@ -131,6 +134,8 @@ msg:
   noEmpty: Do not leave input empty
   loginSuccess: Login Success
   loginFailed: Login Failed
+  logoutSuccess: Logout Success
+  logoutFailed: Logout Failed
   tokenValid: Token Valid
   tokenInvalid: Token Invalid
   refreshTokenSuccess: Refresh Token Success
@@ -146,6 +151,7 @@ input:
   username: 用户名
   password: 密码
   login: 登陆
+  logout: 登出
   tokenState: 令牌状态
   refreshToken: 刷新令牌
   showToken: 显示令牌
@@ -154,6 +160,8 @@ msg:
   noEmpty: 请不要留空
   loginSuccess: 登陆成功
   loginFailed: 登陆失败
+  logoutSuccess: 登出成功
+  logoutFailed: 登出失败
   tokenValid: 令牌有效
   tokenInvalid: 令牌无效
   refreshTokenSuccess: 刷新令牌成功

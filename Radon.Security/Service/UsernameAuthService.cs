@@ -70,12 +70,11 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
         }
     }
 
-    public void Logout(string username)
-    {
-        var userId = repo.FindByUsername(username).Id;
+    public void LogoutById(long userId) => jwt.InvalidateAllToken(userId);
 
-        jwt.InvalidateAllToken(userId);
-    }
+    public void LogoutByName(string username) => LogoutById(repo.FindByUsername(username).Id);
+
+    public void LogoutByToken(string token) => LogoutById(jwt.CheckToken(token, false, false));
 
     public Passport Authenticate(string username, string password)
     {
@@ -96,9 +95,15 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
     public Passport Refresh(string token)
     {
         var userId = jwt.CheckToken(token);
+
+        return Refresh(token, userId);
+    }
+
+    public Passport Refresh(string token, long userId)
+    {
         var user = repo.FindByUserId(userId);
 
-        jwt.InvalidateAllToken(userId);
+        jwt.InvalidateToken(token);
 
         return jwt.GenerateToken(user);
     }

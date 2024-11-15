@@ -18,10 +18,11 @@ public interface IJwtService
     /// </summary>
     /// <param name="token">JWT</param>
     /// <param name="checkSession">Check if the session exists</param>
+    /// <param name="checkLifetime">Check if expired</param>
     /// <exception cref="Radon.Security.Exceptions.SessionNotExistException">Session not exists in db</exception>
     /// <exception cref="CredentialRejectionException">Not passed</exception>
     /// <returns>Username</returns>
-    long CheckToken(string token, bool checkSession = true);
+    long CheckToken(string token, bool checkSession = true, bool checkLifetime = true);
 
     /// <summary>
     /// Invalidate the token

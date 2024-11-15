@@ -34,4 +34,18 @@ public static class AuthExtension
         var userId = context.GetAuthenticatedUserId();
         return repo.FindByUserId(userId);
     }
+
+    /// <summary>
+    /// Get authenticated token from headers.
+    /// </summary>
+    /// <exception cref="CredentialRejectionException">No token found</exception>
+    public static string GetAuthenticatedToken(this HttpContext context)
+    {
+        var header = context.Request.Headers.Authorization.FirstOrDefault();
+        if (header.IsNullOrEmpty() || !header!.StartsWith("Bearer "))
+        {
+            throw new CredentialRejectionException("No token found in headers.");
+        }
+        return header!["Bearer ".Length..];
+    }
 }

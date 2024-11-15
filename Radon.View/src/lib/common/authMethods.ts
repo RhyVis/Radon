@@ -26,6 +26,20 @@ async function authLogin(pair: UsernamePair): Promise<boolean> {
 }
 
 /**
+ * Logout, clear the token stored in localStorage.
+ */
+async function authLogout() {
+  try {
+    const response = await apiPost("/api/auth/logout");
+    localStorage.removeItem("token");
+    return response.status.responseCode === 204;
+  } catch (e) {
+    console.warn(e);
+    return false;
+  }
+}
+
+/**
  * Validate the token stored in localStorage.
  */
 async function authValidate(): Promise<boolean> {
@@ -35,7 +49,7 @@ async function authValidate(): Promise<boolean> {
     return false;
   }
   try {
-    const { status } = await axiosInstance.post("/api/auth/validate", { data: token });
+    const { status } = await axiosInstance.post("/api/auth/validate");
     return status === 204;
   } catch (e) {
     console.warn(e);
@@ -59,7 +73,7 @@ async function authValidateWithRefresh(): Promise<boolean> {
  */
 async function authRefresh(): Promise<boolean> {
   try {
-    const { data } = await apiPostStr("/api/auth/refresh", localStorage.getItem("token") ?? "");
+    const { data } = await apiPostStr("/api/auth/refresh");
     if (data != null && data.length > 0) {
       localStorage.setItem("token", data);
       return true;
@@ -72,4 +86,4 @@ async function authRefresh(): Promise<boolean> {
   }
 }
 
-export { authLogin, authRefresh, authValidate, authValidateWithRefresh };
+export { authLogin, authLogout, authRefresh, authValidate, authValidateWithRefresh };
