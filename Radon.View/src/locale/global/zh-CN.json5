@@ -5,6 +5,8 @@
   },
   common: {
     fetchError: "获取数据失败",
+    serverError: "服务器错误",
+    networkError: "网络错误",
     syncSuccess: "同步成功",
   },
   auth: {

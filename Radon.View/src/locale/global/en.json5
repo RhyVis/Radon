@@ -5,6 +5,8 @@
   },
   common: {
     fetchError: "Failed to fetch data",
+    serverError: "Server Error",
+    networkError: "Network Error",
     syncSuccess: "Sync successful",
   },
   auth: {

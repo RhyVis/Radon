@@ -1,4 +1,9 @@
-const fontList = [
+type FontInfo = {
+  name: string;
+  url: string;
+};
+
+const fontList: FontInfo[] = [
   {
     name: "YurukaStd",
     url: "/font/YurukaStd.woff2",

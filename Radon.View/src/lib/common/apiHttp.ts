@@ -1,7 +1,10 @@
 import type { ErrResponse } from "@/lib/type/typeApi";
+import i18n from "@/locale";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
 import { MessagePlugin } from "tdesign-vue-next";
+
+const { t } = i18n.global;
 
 const axiosInstance = axios.create();
 
@@ -25,9 +28,17 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const errData = (error.response?.data as ErrResponse) ?? { code: -1, msg: "Unknown Error", data: "" };
-    await MessagePlugin.error(`ERR(${errData.code}): ${errData.msg}`);
-    console.error(JSON.parse(errData.data));
+    const errData = error.response?.data as ErrResponse;
+    if (errData != null) {
+      await MessagePlugin.error(`${t("common.serverError")}(${errData.code}): ${errData.msg}`);
+      console.error(error);
+      console.error(JSON.parse(errData.data));
+    } else {
+      await MessagePlugin.error(
+        `${t("common.networkError")}(${error.response?.status}): ${error.response?.statusText}`,
+      );
+      console.error(error);
+    }
     return Promise.reject(error);
   },
 );
