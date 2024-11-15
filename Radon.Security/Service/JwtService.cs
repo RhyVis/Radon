@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
+using Radon.Data.Util;
 using Radon.Security.Data.Entity;
 using Radon.Security.Exceptions;
 using Radon.Security.Model;
@@ -73,6 +74,15 @@ public class JwtService(IRedisClient cli) : IJwtService
     }
 
     public void InvalidateToken(string token) => cli.Del(token);
+
+    public void InvalidateAllToken(long userId)
+    {
+        var find = cli.ScamByVal(userId);
+        if (find.Count > 0)
+        {
+            find.ForEach(key => cli.Del(key));
+        }
+    }
 
     private static Passport GenPassport(User user)
     {

@@ -28,4 +28,10 @@ public interface IJwtService
     /// </summary>
     /// <param name="token">JWT</param>
     void InvalidateToken(string token);
+
+    /// <summary>
+    /// Invalidate all tokens of the user
+    /// </summary>
+    /// <param name="userId">User's id</param>
+    void InvalidateAllToken(long userId);
 }

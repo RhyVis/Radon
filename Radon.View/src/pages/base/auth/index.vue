@@ -20,12 +20,13 @@ const storageToken = computed({
 const loginLoading = ref(false);
 const tokenValidSign = ref(0);
 const tokenValidDisplay = computed(() => {
-  if (tokenValidSign.value === 0) {
-    return <t-icon name="lock-time" />;
-  } else if (tokenValidSign.value === 1) {
-    return <t-icon name="lock-off" />;
-  } else {
-    return <t-icon name="lock-on" />;
+  switch (tokenValidSign.value) {
+    case 0:
+      return <t-icon name="lock-time" />;
+    case 1:
+      return <t-icon name="lock-off" />;
+    default:
+      return <t-icon name="lock-on" />;
   }
 });
 

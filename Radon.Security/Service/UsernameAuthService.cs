@@ -22,11 +22,59 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
             repo.Insert(user);
             _logger.Info($"New user {username} registered");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            _logger.Error(ex, $"Failed to register user {username}");
+            _logger.Error(e, $"Failed to register user {username}");
             throw;
         }
+    }
+
+    public void Unregister(string username)
+    {
+        try
+        {
+            var user = repo.FindByUsername(username);
+            repo.Delete(user);
+
+            try
+            {
+                jwt.InvalidateAllToken(user.Id);
+            }
+            catch (Exception) // Just skip
+            {
+                _logger.Warn("Failed to invalidate token for user {username}");
+            }
+
+            _logger.Info($"User {username} unregistered");
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, $"Failed to unregister user {username}");
+            throw;
+        }
+    }
+
+    public void ChangePassword(string username, string newPassword)
+    {
+        try
+        {
+            var user = repo.FindByUsername(username);
+            user.Password = GenHash(newPassword);
+            repo.Update(user);
+            _logger.Info($"Password changed for user {username}");
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, $"Failed to change password for user {username}");
+            throw;
+        }
+    }
+
+    public void Logout(string username)
+    {
+        var userId = repo.FindByUsername(username).Id;
+
+        jwt.InvalidateAllToken(userId);
     }
 
     public Passport Authenticate(string username, string password)
@@ -49,7 +97,9 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
     {
         var userId = jwt.CheckToken(token);
         var user = repo.FindByUserId(userId);
-        jwt.InvalidateToken(token);
+
+        jwt.InvalidateAllToken(userId);
+
         return jwt.GenerateToken(user);
     }
 

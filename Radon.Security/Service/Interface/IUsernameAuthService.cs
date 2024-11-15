@@ -10,6 +10,21 @@ public interface IUsernameAuthService
     void Register(string username, string password);
 
     /// <summary>
+    /// Unregister a user from database
+    /// </summary>
+    void Unregister(string username);
+
+    /// <summary>
+    /// Change the password of a user
+    /// </summary>
+    void ChangePassword(string username, string newPassword);
+
+    /// <summary>
+    /// Clear token of a user
+    /// </summary>
+    void Logout(string username);
+
+    /// <summary>
     /// Check the username and password and return a Passport with JWT
     /// </summary>
     /// <returns>Passport with JWT</returns>
