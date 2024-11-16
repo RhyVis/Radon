@@ -3,10 +3,11 @@ import { apiPostWithFile } from "@/lib/common/apiMethods";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
 import { useGlobalStore } from "@/store/global";
-import { useToggle } from "@vueuse/core";
+import { get, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import {
   AddIcon,
+  DeleteIcon,
   DownloadIcon,
   HomeIcon,
   RefreshIcon,
@@ -23,6 +24,7 @@ const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
 const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
 const { initialized, replacer, parseLangResult, addReplacerKey, addReplacerValue } = storeToRefs(store);
+const { authPassed } = storeToRefs(global);
 const treeVal = ref<TreeNodeValue[]>([]);
 const regQuote = /\\"/g;
 
@@ -54,7 +56,7 @@ const renderText = (raw: string) => {
 };
 
 onMounted(() => {
-  if (!initialized.value) {
+  if (!get(initialized)) {
     store.init();
   }
 });
@@ -125,15 +127,24 @@ onMounted(() => {
     <!-- Replace Dialog -->
     <t-dialog v-model:visible="menuReplaceVisible" header="替换值" width="85%">
       <div v-if="!menuReplaceAddVisible">
-        <t-list :stripe="true" :split="true" style="max-height: 300px" size="small">
-          <template #header> 用于替换默认的键值对 </template>
-          <t-list-item v-for="key in replacer" :key="key">
-            <t-list-item-meta :title="key.toString()" :description="replacer[key]" />
+        <t-list :stripe="true" :split="true" style="max-height: 280px" size="small">
+          <t-list-item v-for="(value, key) in replacer" :key="key">
+            <t-list-item-meta :title="key.toString()" :description="value" />
+            <template #action>
+              <t-button
+                shape="circle"
+                theme="warning"
+                variant="outline"
+                size="small"
+                @click="store.removeReplacer(key.toString())"
+              >
+                <DeleteIcon />
+              </t-button>
+            </template>
           </t-list-item>
         </t-list>
       </div>
       <div v-else>
-        <t-divider />
         <t-form label-align="top">
           <t-form-item label="键">
             <t-input v-model="addReplacerKey" />
@@ -141,15 +152,15 @@ onMounted(() => {
           <t-form-item label="值">
             <t-input v-model="addReplacerValue" />
           </t-form-item>
-          <t-form-item :label="global.authPassed ? '修改 / 上传 / 读取' : '修改'">
+          <t-form-item :label="authPassed ? '修改 / 上传 / 读取' : '修改'">
             <t-space :size="6">
               <t-button shape="circle" @click="store.updateReplacer()">
                 <AddIcon />
               </t-button>
-              <t-button v-if="global.authPassed" shape="circle" @click="store.setSyncReplacer()">
+              <t-button v-if="authPassed" shape="circle" @click="store.setSyncReplacer()">
                 <UploadIcon />
               </t-button>
-              <t-button v-if="global.authPassed" shape="circle" @click="store.getSyncReplacer()">
+              <t-button v-if="authPassed" shape="circle" @click="store.getSyncReplacer()">
                 <DownloadIcon />
               </t-button>
             </t-space>

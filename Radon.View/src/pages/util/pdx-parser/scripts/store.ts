@@ -61,9 +61,16 @@ export const usePdxStore = defineStore("pdx-parser", {
       this.parseLangResult = buildTree(data);
     },
     updateReplacer() {
+      if (this.addReplacerKey.length === 0 || this.addReplacerValue.length === 0)
+        return MessagePlugin.warning(t("common.noEmpty"));
       this.replacer[this.addReplacerKey] = this.addReplacerValue;
       this.addReplacerKey = "";
       this.addReplacerValue = "";
+    },
+    removeReplacer(key: string) {
+      const copy = JSON.parse(JSON.stringify(this.replacer));
+      delete copy[key];
+      this.replacer = copy;
     },
     getSyncReplacer() {
       try {

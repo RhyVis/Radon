@@ -8,6 +8,7 @@
     serverError: "Server Error",
     networkError: "Network Error",
     syncSuccess: "Sync successful",
+    noEmpty: "Should not be empty",
   },
   auth: {
     message: {

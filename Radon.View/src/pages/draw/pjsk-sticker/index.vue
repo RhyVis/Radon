@@ -5,10 +5,12 @@ import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
 import CharacterList from "@/assets/conf/characters.json";
 import StickerCanvas from "@/pages/draw/pjsk-sticker/comps/StickerCanvas.vue";
 import SelectChara from "@/pages/draw/pjsk-sticker/comps/SelectChara.vue";
-import type { CharacterDefinition, DrawConf } from "@/lib/type/typeSticker";
+import type { CharacterDefinition } from "@/lib/type/typeSticker";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
-import { onMounted, reactive, ref, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useKeyUpdate } from "@/lib/composable/useKeyUpdate";
+import { storeToRefs } from "pinia";
+import { get, set } from "@vueuse/core";
 
 const charaList: CharacterDefinition[] = CharacterList;
 
@@ -25,55 +27,44 @@ const subtitle = () => {
 const subtitleLinkIcon = () => <t-icon name="jump" />;
 
 const store = usePjskStore();
+const { charaId, fontSize, spaceSize, rotate, x, y, text, curve, useCommercialFonts } = storeToRefs(store);
 
-const currentConf = reactive<DrawConf>({
-  charaID: 0,
-  fontSize: 1,
-  spaceSize: 1,
-  rotate: 0,
-  x: 0,
-  y: 0,
-  text: "",
-  curve: false,
-  useCommercialFonts: true,
+const yProxy = computed({
+  get: () => 360 - get(y),
+  set: value => {
+    set(y, 360 - value);
+  },
 });
-const currentConfYProxy = ref(360);
 
 const stickerCanvasRef = ref();
-const { key, updateKey } = useKeyUpdate();
+const { key } = useKeyUpdate();
 
-const textMultipleLines = computed(() => currentConf.text.includes("\n"));
+const textMultipleLines = computed(() => text.value.includes("\n"));
 
 const updateCurrentConf = (id: number) => {
   const chara = charaList[id];
-  currentConf.fontSize = chara.defaultText.s;
-  currentConf.rotate = chara.defaultText.r;
-  currentConf.x = chara.defaultText.x;
-  currentConf.y = chara.defaultText.y;
-  currentConfYProxy.value = 360 - chara.defaultText.y;
-  currentConf.text = chara.defaultText.text;
+  store.$patch({
+    charaId: id,
+    fontSize: chara.defaultText.s,
+    rotate: chara.defaultText.r,
+    x: chara.defaultText.x,
+    y: chara.defaultText.y,
+    text: chara.defaultText.text,
+  });
 };
 
 const proxyDraw = () => {
-  store.$patch({ charaId: currentConf.charaID, useCommercialFonts: currentConf.useCommercialFonts });
-  updateKey();
+  //updateKey();
 };
-
 const handleText = () => {
-  if (currentConf.text.includes("\n")) {
-    currentConf.spaceSize = 52;
-    proxyDraw();
-  } else {
-    proxyDraw();
+  if (textMultipleLines.value) {
+    set(spaceSize, 52);
   }
-};
-const handleSelect = (index: number) => {
-  currentConf.charaID = index;
-  updateCurrentConf(index);
   proxyDraw();
 };
-const handleYProxy = () => {
-  currentConf.y = 360 - currentConfYProxy.value;
+const handleSelect = (index: number) => {
+  set(charaId, index);
+  updateCurrentConf(index);
   proxyDraw();
 };
 const handleCopyImage = async () => {
@@ -82,13 +73,11 @@ const handleCopyImage = async () => {
 };
 const handleDownloadImage = async () => {
   const canvas = document.getElementById("sticker-canvas") as HTMLCanvasElement;
-  await downloadImage(canvas.toDataURL(), `${charaList[currentConf.charaID].name}_sticker.png`);
+  await downloadImage(canvas.toDataURL(), `${charaList[get(charaId)].name}_sticker.png`);
 };
 
 onMounted(() => {
-  currentConf.charaID = store.charaId;
-  currentConf.useCommercialFonts = store.useCommercialFonts;
-  updateCurrentConf(currentConf.charaID);
+  updateCurrentConf(get(charaId));
 });
 </script>
 
@@ -98,11 +87,11 @@ onMounted(() => {
       <t-space :size="8" direction="vertical">
         <t-space :size="16" direction="horizontal">
           <div style="height: 300px; width: 300px">
-            <StickerCanvas :key="key" :conf="currentConf" ref="stickerCanvasRef" />
+            <StickerCanvas :key="key" ref="stickerCanvasRef" />
           </div>
-          <t-slider v-model="currentConfYProxy" :max="360" layout="vertical" @change="handleYProxy" />
+          <t-slider v-model="yProxy" :max="360" layout="vertical" @change="proxyDraw" />
         </t-space>
-        <t-slider v-model="currentConf.x" :max="360" layout="horizontal" @change="proxyDraw" />
+        <t-slider v-model="x" :max="360" layout="horizontal" @change="proxyDraw" />
       </t-space>
     </div>
     <t-form>
@@ -120,22 +109,22 @@ onMounted(() => {
         </t-space>
       </t-form-item>
       <t-form-item label="显示文字">
-        <t-textarea v-model="currentConf.text" :maxlength="30" :autosize="true" @change="handleText" />
+        <t-textarea v-model="text" :maxlength="30" :autosize="true" @change="handleText" />
       </t-form-item>
       <t-form-item label="字体尺寸">
-        <t-slider v-model="currentConf.fontSize" :input-number-props="true" :max="100" :min="5" @change="proxyDraw" />
+        <t-slider v-model="fontSize" :input-number-props="true" :max="100" :min="5" @change="proxyDraw" />
       </t-form-item>
       <t-form-item v-if="textMultipleLines" label="行间距">
-        <t-slider v-model="currentConf.spaceSize" :input-number-props="true" :max="120" :min="1" @change="proxyDraw" />
+        <t-slider v-model="spaceSize" :input-number-props="true" :max="120" :min="1" @change="proxyDraw" />
       </t-form-item>
       <t-form-item label="旋转">
-        <t-slider v-model="currentConf.rotate" :input-number-props="true" :max="63" :min="0" @change="proxyDraw" />
+        <t-slider v-model="rotate" :input-number-props="true" :max="63" :min="0" @change="proxyDraw" />
       </t-form-item>
       <t-form-item label="曲度" help="非长字符串渲染时使用">
-        <t-switch v-model="currentConf.curve" @change="proxyDraw" />
+        <t-switch v-model="curve" @change="proxyDraw" />
       </t-form-item>
       <t-form-item label="商业字体" help="商业字体仅供非商业用途使用">
-        <t-switch v-model="currentConf.useCommercialFonts" @change="proxyDraw" />
+        <t-switch v-model="useCommercialFonts" @change="proxyDraw" />
       </t-form-item>
     </t-form>
   </content-layout>

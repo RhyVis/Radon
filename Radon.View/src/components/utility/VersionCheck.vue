@@ -3,11 +3,11 @@ import { MessagePlugin, type TNodeReturnValue } from "tdesign-vue-next";
 import { ArrowLeftIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
 import VersionView from "@/assets/local/version.json";
-import moment from "moment";
 import { useStatic } from "@/lib/composable/useStatic";
 import { useI18n } from "vue-i18n";
 import { onMounted, ref, computed } from "vue";
 import { getVersion } from "@/lib/common/apiMethods";
+import { formatFromTimestamp } from "@/lib/util/dateFormatter";
 
 const loading = ref(true);
 const { t } = useI18n();
@@ -134,7 +134,7 @@ onMounted(async () => {
       </div>
       <div>
         <span>{{ t("dialog.time") }}：</span>
-        <t-tag :style="versionFont">{{ moment(vRemote).format("YYYY/MM/DD HH:mm:ss") }}</t-tag>
+        <t-tag :style="versionFont">{{ formatFromTimestamp(vRemote) }}</t-tag>
       </div>
       <div>{{ t("dialog.update") }}</div>
     </t-space>

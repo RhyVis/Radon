@@ -8,6 +8,7 @@
     serverError: "服务器错误",
     networkError: "网络错误",
     syncSuccess: "同步成功",
+    noEmpty: "不能为空",
   },
   auth: {
     message: {

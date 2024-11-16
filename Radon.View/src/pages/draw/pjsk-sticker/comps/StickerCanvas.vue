@@ -1,27 +1,26 @@
 <script lang="ts" setup>
-import type { DrawConf } from "@/lib/type/typeSticker";
 import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/define";
+import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
 import { get, useToggle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { computed, onMounted, ref } from "vue";
 
-const { conf } = defineProps<{
-  conf: DrawConf;
-}>();
+const store = usePjskStore();
+const { charaId, fontSize, spaceSize, rotate, x, y, text, curve, useCommercialFonts } = storeToRefs(store);
 const [loading, setLoading] = useToggle(false);
 
 const canvasRef = ref<HTMLCanvasElement>();
 const imageRef = ref(new Image());
 const fontFamily = computed(() =>
-  conf.useCommercialFonts
+  get(useCommercialFonts)
     ? "YurukaStd, SSFangTangTi, LilitaOne, ChildFunSansFusion-Z"
     : "LilitaOne, ChildFunSansFusion-Z",
 );
 
-const draw = (conf: DrawConf) => {
-  const { charaID, fontSize, spaceSize, rotate, x, y, text, curve } = conf;
+const draw = () => {
   setLoading(true);
 
-  const character = charaList[charaID];
+  const character = charaList[get(charaId)];
   imageRef.value.crossOrigin = "anonymous";
   imageRef.value.src = assembleSrc(character.img);
 
@@ -51,24 +50,24 @@ const draw = (conf: DrawConf) => {
       img.width * aRatio,
       img.height * aRatio,
     );
-    ctx.font = `${fontSize}px ${get(fontFamily)}`;
+    ctx.font = `${get(fontSize)}px ${get(fontFamily)}`;
     ctx.lineWidth = 9;
     ctx.save();
 
-    ctx.translate(x, y);
-    ctx.rotate(rotate / 10);
+    ctx.translate(get(x), get(y));
+    ctx.rotate(get(rotate) / 10);
     ctx.textAlign = "center";
     ctx.strokeStyle = "white";
     ctx.fillStyle = character.color;
 
-    const lines = text.split("\n");
-    const angle = (Math.PI * text.length) / 7;
-    if (curve) {
+    const lines = get(text).split("\n");
+    const angle = (Math.PI * text.value.length) / 7;
+    if (get(curve)) {
       for (const line of lines) {
         for (let i = 0; i < line.length; i++) {
           ctx.rotate(angle / line.length / 2.5);
           ctx.save();
-          ctx.translate(0, -1 * fontSize * 3.5);
+          ctx.translate(0, -1 * get(fontSize) * 3.5);
           ctx.strokeText(line[i], 0, 0);
           ctx.fillText(line[i], 0, 0);
           ctx.restore();
@@ -78,7 +77,7 @@ const draw = (conf: DrawConf) => {
       for (let i = 0, k = 0; i < lines.length; i++) {
         ctx.strokeText(lines[i], 0, k);
         ctx.fillText(lines[i], 0, k);
-        k += spaceSize;
+        k += get(spaceSize);
       }
       ctx.restore();
     }
@@ -87,7 +86,10 @@ const draw = (conf: DrawConf) => {
 };
 
 onMounted(() => {
-  draw(conf);
+  draw();
+});
+store.$subscribe(() => {
+  draw();
 });
 </script>
 
