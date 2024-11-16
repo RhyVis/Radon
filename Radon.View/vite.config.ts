@@ -86,13 +86,11 @@ export default defineConfig({
       ],
     }),
     AutoImport({
-      imports: ["vue", "vue-router", "vue-i18n", "@vueuse/core", "pinia"],
       resolvers: [
         TDesignResolver({
           library: "vue-next",
         }),
       ],
-      dirs: ["./src/lib/common", "./src/lib/composable"],
     }),
     Icon(),
   ],

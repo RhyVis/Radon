@@ -1,7 +1,10 @@
 ﻿<script setup lang="tsx">
+import { apiPostWithFile } from "@/lib/common/apiMethods";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
 import { useGlobalStore } from "@/store/global";
+import { useToggle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import {
   AddIcon,
   DownloadIcon,
@@ -12,6 +15,7 @@ import {
   UploadIcon,
 } from "tdesign-icons-vue-next";
 import type { RequestMethodResponse, TreeNodeValue, UploadFile } from "tdesign-vue-next";
+import { onMounted, ref } from "vue";
 
 const global = useGlobalStore();
 const store = usePdxStore();

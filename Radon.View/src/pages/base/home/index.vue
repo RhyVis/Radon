@@ -1,8 +1,11 @@
 <script lang="ts" setup>
-import { useGlobalStore } from "@/store/global";
+import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
+import { inject } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { fontLoaded } = storeToRefs(useGlobalStore());
+const fontLoader = inject(fontLoaderKey)!;
 const { t } = useI18n();
+const { current, completed, hasError } = fontLoader;
 </script>
 
 <template>
@@ -17,7 +20,13 @@ const { t } = useI18n();
     </t-paragraph>
     <t-title level="h4">{{ t("loading-status.tt") }}</t-title>
     <t-paragraph>
-      <load-status :loading="!fontLoaded" :label="t('loading-status.font')" name="font" />
+      <loader-status
+        name="font"
+        :label="t('loading-status.font')"
+        :current="current"
+        :completed="completed"
+        :has-error="hasError"
+      />
     </t-paragraph>
     <t-title level="h4">{{ t("version.tt") }}</t-title>
     <t-paragraph>

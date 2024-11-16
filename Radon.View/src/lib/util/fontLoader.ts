@@ -1,3 +1,5 @@
+import type { Loader } from "@/lib/composable/useLoader";
+
 type FontInfo = {
   name: string;
   url: string;
@@ -44,21 +46,16 @@ const fontList: FontInfo[] = [
 
 const base = import.meta.env.VITE_RES_ROOT;
 
-async function loadFonts() {
-  try {
-    const loadPromises = fontList.map(async font => {
-      const fontFace = new FontFace(font.name, `url(${base + font.url})`);
-      return fontFace.load().then(loadedFont => {
+const getFontLoaders = (): Loader[] => {
+  return fontList.map(font => {
+    return {
+      name: font.name,
+      action: new FontFace(font.name, `url(${base + font.url})`).load().then(loadedFont => {
         document.fonts.add(loadedFont);
         console.debug(`Successfully loaded ${font.name}`);
-      });
-    });
-    await Promise.all(loadPromises);
-    console.log("Successfully loaded all fonts");
-  } catch (e) {
-    console.error("Failed to load fonts", e);
-    throw e;
-  }
-}
+      }),
+    };
+  });
+};
 
-export { loadFonts };
+export { getFontLoaders };

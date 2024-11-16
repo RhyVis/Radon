@@ -2,6 +2,7 @@
 import { reverseModes } from "@/pages/util/reverse/scripts/reverse";
 import { RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { reactive, ref } from "vue";
 
 const query = reactive({
   text: "",

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { loadAllBaseImg } from "@/pages/draw/ba-banner/scripts/loadBaseImg";
+import { computed, onMounted, ref } from "vue";
 
 const {
   canvasWidth = 900,

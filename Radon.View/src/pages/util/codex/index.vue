@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { apiPostStr } from "@/lib/common/apiMethods";
 import { SendIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { reactive, ref } from "vue";
 
 const query = reactive({
   text: "哦牛",

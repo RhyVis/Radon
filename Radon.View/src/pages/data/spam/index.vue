@@ -5,6 +5,10 @@ import type { TextEntry } from "@/lib/type/typeEntry";
 import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
 import { useGlobalStore } from "@/store/global";
 import { spamTypes, codeTypes } from "@/pages/data/spam/scripts/type";
+import { storeToRefs } from "pinia";
+import { useClipboard } from "@vueuse/core";
+import { ref } from "vue";
+import { apiPost, apiPutState } from "@/lib/common/apiMethods";
 
 const global = useGlobalStore();
 const store = useSpamStore();

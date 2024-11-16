@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useClipboard } from "@vueuse/core";
 import { CopyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   target: {

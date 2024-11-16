@@ -1,5 +1,6 @@
 ﻿import axiosInstance from "@/lib/common/apiHttp";
 import { MessagePlugin } from "tdesign-vue-next";
+import { apiPost, apiPostStr } from "./apiMethods";
 
 type UsernamePair = {
   username: string;

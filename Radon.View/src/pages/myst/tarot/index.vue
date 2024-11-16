@@ -1,10 +1,14 @@
 <script lang="ts" setup>
+import { apiPost } from "@/lib/common/apiMethods";
 import TarotDesc from "@/pages/myst/tarot/comps/TarotDesc.vue";
 import TarotMain from "@/pages/myst/tarot/comps/TarotMain.vue";
 import { useTarotStore } from "@/pages/myst/tarot/scripts/store";
 import type { Card } from "@/pages/myst/tarot/scripts/typeTarot";
+import { storeToRefs } from "pinia";
 import { CardIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const store = useTarotStore();
 const { qDeck, qFull, qSize, activeTab, dShowDesc, dInfoMap, dInfoSelect, dInfoLoaded, results } = storeToRefs(store);

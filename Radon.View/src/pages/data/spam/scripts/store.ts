@@ -1,3 +1,5 @@
+import { defineStore } from "pinia";
+
 type Query = {
   type: string;
   dict: string;

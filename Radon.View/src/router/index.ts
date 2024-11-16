@@ -1,3 +1,4 @@
+import { authValidate } from "@/lib/common/authMethods";
 import HomeView from "@/pages/base/home/index.vue";
 import { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { MessagePlugin } from "tdesign-vue-next";

@@ -1,8 +1,12 @@
 <script setup lang="tsx">
 import { authLogin, authRefresh, authValidate } from "@/lib/common/authMethods";
-import { ArrowUpDown2Icon, DeleteIcon, Fingerprint2Icon, LoginIcon, LogoutIcon } from "tdesign-icons-vue-next";
+import { ArrowUpDown2Icon, Fingerprint2Icon, LoginIcon, LogoutIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { useGlobalStore } from "@/store/global";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { reactive, ref, computed } from "vue";
+import { authLogout } from "@/lib/common/authMethods";
 
 const { t } = useI18n();
 const global = useGlobalStore();
@@ -145,7 +149,7 @@ msg:
 </i18n>
 
 <i18n locale="zh-CN">
-tt: 授权
+tt: 验证
 st: 你来到了神秘的页面
 input:
   username: 用户名

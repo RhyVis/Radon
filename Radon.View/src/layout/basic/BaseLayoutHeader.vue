@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import ProjectIcon from "@/assets/icon.svg";
 import { useGlobalStore } from "@/store/global";
-import { MenuFoldIcon, MenuUnfoldIcon } from "tdesign-icons-vue-next";
+import { storeToRefs } from "pinia";
+import { MenuFoldIcon, MenuUnfoldIcon, UserIcon } from "tdesign-icons-vue-next";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
 
-const store = useGlobalStore();
 const dev = computed(() => import.meta.env.DEV);
-const asideVisible = computed(() => store.asideVisible);
+const router = useRouter();
+const global = useGlobalStore();
+const { asideVisible, authPassed } = storeToRefs(global);
 
-const handleAside = () => (store.asideVisible = !store.asideVisible);
+const handleAside = () => (asideVisible.value = !asideVisible.value);
+const handleAuth = () => router.push("/auth");
 </script>
 
 <template>
@@ -33,6 +38,9 @@ const handleAside = () => (store.asideVisible = !store.asideVisible);
     </div>
     <template #operations>
       <t-space class="r-ct-hd-operations" :size="8">
+        <t-button v-if="authPassed" theme="default" variant="outline" shape="circle" @click="handleAuth">
+          <UserIcon />
+        </t-button>
         <sel-locale />
         <t-button theme="default" variant="outline" shape="circle" @click="handleAside">
           <template #icon>

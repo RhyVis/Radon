@@ -1,4 +1,6 @@
+import { apiGet } from "@/lib/common/apiMethods";
 import type { CardDisplay, DeckInfo, DeckInfoInterface, DeckInfoSelect } from "@/pages/myst/tarot/scripts/typeTarot";
+import { defineStore } from "pinia";
 
 interface TarotStore {
   qDeck: string;

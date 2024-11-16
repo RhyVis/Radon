@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DeleteIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<string>({ required: true });
 const { t } = useI18n();

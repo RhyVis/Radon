@@ -16,6 +16,7 @@
     },
   },
   loader: {
+    loadFailed: "Failed to load {name}",
     message: {
       fontLoadingFailed: "Font loading failed",
     },

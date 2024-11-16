@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
+import { computed, ref } from "vue";
 
 const input = ref(0);
 const roman = computed(() => intToRoman(input.value));

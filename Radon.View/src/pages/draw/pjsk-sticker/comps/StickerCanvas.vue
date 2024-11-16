@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { DrawConf } from "@/lib/type/typeSticker";
 import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/sticker";
+import { computed, onMounted, ref } from "vue";
 
 const props = defineProps<{
   conf: DrawConf;

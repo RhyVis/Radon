@@ -5,6 +5,9 @@ import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
 import VersionView from "@/assets/local/version.json";
 import moment from "moment";
 import { useStatic } from "@/lib/composable/useStatic";
+import { useI18n } from "vue-i18n";
+import { onMounted, ref, computed } from "vue";
+import { getVersion } from "@/lib/common/apiMethods";
 
 const loading = ref(true);
 const { t } = useI18n();

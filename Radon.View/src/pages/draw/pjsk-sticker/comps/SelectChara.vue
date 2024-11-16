@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import { RefreshIcon } from "tdesign-icons-vue-next";
 import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/sticker";
+import { ref } from "vue";
 
 const visible = ref(false);
 

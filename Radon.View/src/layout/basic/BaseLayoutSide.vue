@@ -1,42 +1,34 @@
 <script setup lang="ts">
 import ProjectIcon from "@/assets/icon.svg";
+import SideMenuElement from "@/layout/particial/SideMenuElement.vue";
 import { dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { useGlobalStore } from "@/store/global";
-import {
-  CloseIcon,
-  DataBaseIcon,
-  FileUnknownIcon,
-  HomeIcon,
-  Icon,
-  Numbers01Icon,
-  PenBrushIcon,
-  RelationIcon,
-  ToolsIcon,
-} from "tdesign-icons-vue-next";
-import type { MenuRoute, MenuValue } from "tdesign-vue-next";
+import { set } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { CloseIcon, FileUnknownIcon, HomeIcon } from "tdesign-icons-vue-next";
+import type { MenuRoute } from "tdesign-vue-next";
+import { onMounted } from "vue";
 
 const global = useGlobalStore();
-
-const visible = computed({
-  get() {
-    return global.asideVisible;
-  },
-  set(value) {
-    global.asideVisible = value;
-  },
-});
+const { asideVisible } = storeToRefs(global);
 
 const handleClose = () => {
-  visible.value = false;
+  set(asideVisible, false);
 };
 
 onMounted(() => {
-  global.asideVisible = false;
+  handleClose();
 });
 </script>
 
 <template>
-  <t-drawer class="r-ct-sd r-drawer-no-padding" v-model:visible="visible" placement="left" size="232px" :footer="false">
+  <t-drawer
+    class="r-ct-sd r-drawer-no-padding"
+    v-model:visible="asideVisible"
+    placement="left"
+    size="232px"
+    :footer="false"
+  >
     <t-menu class="r-ct-sd-ht" :expand-mutex="true">
       <!-- Head -->
       <template #logo>
@@ -51,119 +43,15 @@ onMounted(() => {
       </t-menu-item>
 
       <!--Data-->
-      <t-submenu value="data">
-        <template #icon>
-          <DataBaseIcon />
-        </template>
-        <template #title>
-          <span>Data</span>
-        </template>
-        <div v-for="item in dataRecords" :key="item.name">
-          <t-menu-item
-            v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path as MenuRoute"
-            :value="item.name as MenuValue"
-            @click="handleClose"
-          >
-            <template #icon>
-              <icon v-if="item.meta.icon" :name="item.meta.icon" />
-            </template>
-            <span>{{ item.meta.title }}</span>
-          </t-menu-item>
-        </div>
-      </t-submenu>
-
+      <SideMenuElement name="Data" icon-name="data-base" :records="dataRecords" />
       <!--Myst-->
-      <t-submenu value="myst">
-        <template #icon>
-          <RelationIcon />
-        </template>
-        <template #title>
-          <span>Myst</span>
-        </template>
-        <div v-for="item in mystRecords" :key="item.name">
-          <t-menu-item
-            v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path as MenuRoute"
-            :value="item.name as MenuValue"
-            @click="handleClose"
-          >
-            <template #icon>
-              <icon v-if="item.meta.icon" :name="item.meta.icon" />
-            </template>
-            <span>{{ item.meta.title }}</span>
-          </t-menu-item>
-        </div>
-      </t-submenu>
-
+      <SideMenuElement name="Myst" icon-name="relation" :records="mystRecords" />
       <!--Draw-->
-      <t-submenu value="draw">
-        <template #icon>
-          <PenBrushIcon />
-        </template>
-        <template #title>
-          <span>Draw</span>
-        </template>
-        <div v-for="item in drawRecords" :key="item.name">
-          <t-menu-item
-            v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path as MenuRoute"
-            :value="item.name as MenuValue"
-            @click="handleClose"
-          >
-            <template #icon>
-              <icon v-if="item.meta.icon" :name="item.meta.icon" />
-            </template>
-            <span>{{ item.meta.title }}</span>
-          </t-menu-item>
-        </div>
-      </t-submenu>
-
+      <SideMenuElement name="Draw" icon-name="pen-brush" :records="drawRecords" />
       <!--Math-->
-      <t-submenu value="math">
-        <template #icon>
-          <Numbers01Icon />
-        </template>
-        <template #title>
-          <span>Math</span>
-        </template>
-        <div v-for="item in mathRecords" :key="item.name">
-          <t-menu-item
-            v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path as MenuRoute"
-            :value="item.name as MenuValue"
-            @click="handleClose"
-          >
-            <template #icon>
-              <icon v-if="item.meta.icon" :name="item.meta.icon" />
-            </template>
-            <span>{{ item.meta.title }}</span>
-          </t-menu-item>
-        </div>
-      </t-submenu>
-
+      <SideMenuElement name="Math" icon-name="numbers-0-1" :records="mathRecords" />
       <!--Util-->
-      <t-submenu value="util">
-        <template #icon>
-          <ToolsIcon />
-        </template>
-        <template #title>
-          <span>Util</span>
-        </template>
-        <div v-for="item in utilRecords" :key="item.name">
-          <t-menu-item
-            v-if="!(item.meta.auth && !global.authPassed)"
-            :to="item.path as MenuRoute"
-            :value="item.name as MenuValue"
-            @click="handleClose"
-          >
-            <template #icon>
-              <icon v-if="item.meta.icon" :name="item.meta.icon" />
-            </template>
-            <span>{{ item.meta.title }}</span>
-          </t-menu-item>
-        </div>
-      </t-submenu>
+      <SideMenuElement name="Util" icon-name="tools" :records="utilRecords" />
 
       <t-submenu value="extra">
         <template #icon>
@@ -174,13 +62,13 @@ onMounted(() => {
         </template>
         <t-menu-item :to="'/credits' as MenuRoute" value="credits" @click="handleClose">
           <template #icon>
-            <icon name="undertake-delivery" />
+            <t-icon name="undertake-delivery" />
           </template>
           <span>Credits</span>
         </t-menu-item>
         <t-menu-item v-if="global.authShow" :to="'/auth' as MenuRoute" value="auth" @click="handleClose">
           <template #icon>
-            <icon name="lock-on" />
+            <t-icon name="lock-on" />
           </template>
           <span>Auth</span>
         </t-menu-item>

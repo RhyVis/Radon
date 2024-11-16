@@ -16,6 +16,7 @@
     },
   },
   loader: {
+    loadFailed: "加载 {name} 失败",
     message: {
       fontLoadingFailed: "字体加载失败",
     },

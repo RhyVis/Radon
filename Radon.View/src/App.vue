@@ -3,68 +3,40 @@ import ContentFooter from "@/layout/basic/BaseLayoutFooter.vue";
 import ContentHeader from "@/layout/basic/BaseLayoutHeader.vue";
 import ContentSide from "@/layout/basic/BaseLayoutSide.vue";
 import { authValidateWithRefresh } from "@/lib/common/authMethods";
-import { loadFonts } from "@/lib/util/fontLoader";
+import { useLoader } from "@/lib/composable/useLoader";
+import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
+import { getFontLoaders } from "@/lib/util/fontLoader";
 import { useGlobalStore } from "@/store/global";
+import { get, set, syncRef, useTitle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
+import { onMounted, provide, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
 const global = useGlobalStore();
 const router = useRouter();
 const i18n = useI18n();
 const { t } = i18n;
+const { locale, authPassed } = storeToRefs(global);
 
-window.onload = () => {
-  document.addEventListener("touchstart", function (event) {
-    if (event.touches.length > 1) {
-      event.preventDefault();
-    }
-  });
-  document.addEventListener("gesturestart", function (event) {
-    event.preventDefault();
-  });
-  let lastTouchEnd = 0;
-  document.documentElement.addEventListener(
-    "touchend",
-    event => {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    },
-    {
-      passive: false,
-    },
-  );
-};
+const fontLoader = useLoader(getFontLoaders());
+provide(fontLoaderKey, fontLoader);
 
-window.onresize = () => {
-  if (document.body.style.zoom != "1") {
-    console.debug(`Unexpected resize: ${document.body.style.zoom}`);
-    document.body.style.zoom = "1.0";
-  }
-};
+syncRef(locale, i18n.locale);
 
-const syncLocale = () => {
-  i18n.locale.value = global.locale;
-  console.info(`Locale synced: ${global.locale}`);
-};
 const tryLoadFonts = () => {
-  try {
-    if (!global.fontLoaded) {
-      loadFonts().then(() => (global.fontLoaded = true));
-    }
-  } catch (e) {
-    console.error(e);
-    MessagePlugin.error(t("loader.message.fontLoadingFailed"));
+  if (!get(fontLoader.completed)) {
+    fontLoader.load();
   }
 };
 const tryRefreshToken = () => {
-  if (global.authPassed) {
+  if (get(authPassed)) {
     authValidateWithRefresh().then(v => {
       if (v) {
         MessagePlugin.success(t("auth.message.tokenValidAndRefreshed"));
       } else {
-        global.authPassed = false;
+        set(authPassed, false);
         MessagePlugin.warning(t("auth.message.tokenInvalid"));
         setTimeout(() => {
           router.push("/auth");
@@ -75,7 +47,6 @@ const tryRefreshToken = () => {
 };
 
 onMounted(() => {
-  syncLocale();
   tryLoadFonts();
   tryRefreshToken();
 });
@@ -88,12 +59,7 @@ watch(
       useTitle(title);
     }
   },
-);
-watch(
-  () => global.locale,
-  () => {
-    i18n.locale.value = global.locale;
-  },
+  { deep: false },
 );
 </script>
 
@@ -124,10 +90,10 @@ watch(
 }
 
 .route-enter-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
 }
 .route-leave-active {
-  transition: all 0.42s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.16s cubic-bezier(1, 0.5, 0.8, 1);
 }
 .route-enter-from,
 .route-leave-to {

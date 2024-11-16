@@ -1,31 +1,10 @@
 <script lang="tsx" setup>
+import { navColumns } from "@/pages/data/nav/scripts/define";
 import { useNavStore } from "@/pages/data/nav/scripts/store";
-import type { TableProps } from "tdesign-vue-next";
+import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 
-const columns = ref<TableProps["columns"]>([
-  { colKey: "id", title: "ID", width: 40, align: "center" },
-  {
-    colKey: "label",
-    title: "Label",
-    width: 80,
-    align: "center",
-    cell: (_, { row }) => {
-      return <t-tag shape="round" variant="outline" content={row.label} />;
-    },
-  },
-  {
-    colKey: "data",
-    title: "Data",
-    cell: (_, { row }) => {
-      return (
-        <t-link size="small" href={row.data}>
-          {row.data}
-        </t-link>
-      );
-    },
-  },
-  { colKey: "note", title: "Note", width: 100, ellipsis: true },
-]);
 const store = useNavStore();
 const { navDataList, navLoaded } = storeToRefs(store);
 const { t } = useI18n();
@@ -41,7 +20,7 @@ onMounted(() => {
   <content-layout :title="t('tt')" :subtitle="t('st')">
     <t-table
       :bordered="true"
-      :columns="columns"
+      :columns="navColumns"
       :data="navDataList"
       :loading="!navLoaded"
       :hover="true"

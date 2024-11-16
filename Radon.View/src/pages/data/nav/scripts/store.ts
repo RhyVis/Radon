@@ -1,5 +1,8 @@
-﻿import type { NavData } from "@/pages/data/nav/scripts/navType";
+﻿import { apiGet } from "@/lib/common/apiMethods";
+import type { NavData } from "@/pages/data/nav/scripts/define";
+import { defineStore } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
+import { useI18n } from "vue-i18n";
 
 interface NavState {
   navDataList: NavData[];

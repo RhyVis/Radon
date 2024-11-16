@@ -7,6 +7,7 @@ import StickerCanvas from "@/pages/draw/pjsk-sticker/comps/StickerCanvas.vue";
 import SelectChara from "@/pages/draw/pjsk-sticker/comps/SelectChara.vue";
 import type { CharacterDefinition, DrawConf } from "@/lib/type/typeSticker";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
+import { onMounted, reactive, ref, computed } from "vue";
 
 const subtitle = () => {
   return (

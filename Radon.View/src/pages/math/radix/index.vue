@@ -2,6 +2,7 @@
 import { radixVal } from "@/pages/math/radix/scripts/radix";
 import { ArrowRightCircleIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { computed, reactive, ref } from "vue";
 
 const defaultCharset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const query = reactive({

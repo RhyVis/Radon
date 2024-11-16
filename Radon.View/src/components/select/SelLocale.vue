@@ -3,6 +3,7 @@ import { useGlobalStore } from "@/store/global";
 import { EarthIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
 const global = useGlobalStore();

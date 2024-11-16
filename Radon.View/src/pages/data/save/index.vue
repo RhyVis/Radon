@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import { apiPost, apiPutState } from "@/lib/common/apiMethods";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
+import { storeToRefs } from "pinia";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
+import { useI18n } from "vue-i18n";
 
 const store = useSaveStore();
 const { t } = useI18n();
@@ -72,11 +75,11 @@ const handleSelect = async () => {
       </t-form-item>
       <t-form-item :label="t('form.operation')">
         <t-loading :loading="loading" size="small">
-          <t-space :size="6">
-            <t-button shape="circle" theme="primary" @click="handleStore">
+          <t-space :size="12">
+            <t-button shape="rectangle" theme="primary" @click="handleStore">
               <UploadIcon />
             </t-button>
-            <t-button shape="circle" theme="primary" @click="handleSelect">
+            <t-button shape="rectangle" theme="primary" @click="handleSelect">
               <DownloadIcon />
             </t-button>
           </t-space>

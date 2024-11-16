@@ -2,6 +2,7 @@
 import BannerCanvas from "@/pages/draw/ba-banner/comps/BannerCanvas.vue";
 import { CopyIcon, DownloadIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
+import { ref } from "vue";
 
 const subtitle = () => {
   return (
