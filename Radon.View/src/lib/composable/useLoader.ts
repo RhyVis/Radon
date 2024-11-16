@@ -1,5 +1,5 @@
 ﻿import i18n from "@/locale";
-import { useToggle } from "@vueuse/core";
+import { get, set, useToggle } from "@vueuse/core";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, ref } from "vue";
 
@@ -19,7 +19,7 @@ export const useLoader = (loaders: Loader[]) => {
 
   const load = async () => {
     for (const loader of loaders) {
-      current.value = loader.name;
+      set(current, loader.name);
       try {
         await loader.action;
       } catch (e) {
@@ -28,8 +28,8 @@ export const useLoader = (loaders: Loader[]) => {
         await MessagePlugin.warning(t("loader.loadFailed", { name: loader.name }));
       }
     }
-    current.value = hasError.value ? `×[${error.value.join("|")}]` : "√";
-    setCompleted(true);
+    current.value = get(hasError) ? `×[${error.value.join("|")}]` : "√";
+    setCompleted(!get(hasError));
   };
 
   return { load, current, completed, error, hasError };

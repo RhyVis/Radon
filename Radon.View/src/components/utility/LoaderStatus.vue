@@ -1,5 +1,4 @@
 ﻿<script lang="tsx" setup>
-import { CheckCircleIcon, HelpCircleIcon } from "tdesign-icons-vue-next";
 import { computed } from "vue";
 
 const {
@@ -16,13 +15,21 @@ const {
   hasError?: boolean;
 }>();
 
-const id = computed(() => `loading-tag-${name}`);
+const id = computed(() => `loader-${name}`);
 const theme = computed(() => {
   if (hasError) return "danger";
   if (completed) return "success";
   return "default";
 });
-const tag = computed(() => `${label}: ${current}`);
+const tag = computed(() => {
+  if (!completed) return `${label}: ${current}`;
+  return label;
+});
+const icon = computed(() => {
+  if (hasError) return "error-circle";
+  if (!completed) return "help-circle";
+  return "check-circle";
+});
 </script>
 
 <template>
@@ -30,8 +37,7 @@ const tag = computed(() => `${label}: ${current}`);
     <t-loading size="small" :delay="100" :loading="!completed">
       <t-tag :theme="theme" variant="light">
         <template #icon>
-          <HelpCircleIcon v-if="!completed" />
-          <CheckCircleIcon v-else />
+          <t-icon :name="icon" />
         </template>
         <span class="r-no-select">{{ tag }}</span>
       </t-tag>
