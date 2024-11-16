@@ -1,24 +1,25 @@
 <script lang="ts" setup>
 import type { DrawConf } from "@/lib/type/typeSticker";
-import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/sticker";
+import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/define";
+import { get, useToggle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 
-const props = defineProps<{
+const { conf } = defineProps<{
   conf: DrawConf;
 }>();
-const loading = ref(false);
+const [loading, setLoading] = useToggle(false);
 
 const canvasRef = ref<HTMLCanvasElement>();
 const imageRef = ref(new Image());
 const fontFamily = computed(() =>
-  props.conf.useCommercialFonts
+  conf.useCommercialFonts
     ? "YurukaStd, SSFangTangTi, LilitaOne, ChildFunSansFusion-Z"
     : "LilitaOne, ChildFunSansFusion-Z",
 );
 
 const draw = (conf: DrawConf) => {
   const { charaID, fontSize, spaceSize, rotate, x, y, text, curve } = conf;
-  loading.value = true;
+  setLoading(true);
 
   const character = charaList[charaID];
   imageRef.value.crossOrigin = "anonymous";
@@ -50,7 +51,7 @@ const draw = (conf: DrawConf) => {
       img.width * aRatio,
       img.height * aRatio,
     );
-    ctx.font = `${fontSize}px ${fontFamily.value}`;
+    ctx.font = `${fontSize}px ${get(fontFamily)}`;
     ctx.lineWidth = 9;
     ctx.save();
 
@@ -81,12 +82,12 @@ const draw = (conf: DrawConf) => {
       }
       ctx.restore();
     }
-    loading.value = false;
+    setLoading(false);
   };
 };
 
 onMounted(() => {
-  draw(props.conf);
+  draw(conf);
 });
 </script>
 

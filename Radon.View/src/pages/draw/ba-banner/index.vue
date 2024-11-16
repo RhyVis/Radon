@@ -3,6 +3,8 @@ import BannerCanvas from "@/pages/draw/ba-banner/comps/BannerCanvas.vue";
 import { CopyIcon, DownloadIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
 import { ref } from "vue";
+import { get } from "@vueuse/core";
+import { useKeyUpdate } from "@/lib/composable/useKeyUpdate";
 
 const subtitle = () => {
   return (
@@ -16,25 +18,21 @@ const subtitle = () => {
 };
 const subtitleLinkIcon = () => <t-icon name="jump" />;
 
-const canvasKey = ref(0);
 const textL = ref("Blue");
 const textR = ref("Archive");
 const offsetX = ref(-15);
 const offsetY = ref(0);
 const tBg = ref(false);
-
 const bannerCanvasRef = ref();
+const { key, updateKey } = useKeyUpdate();
 
-const handleUpdate = () => {
-  canvasKey.value = new Date().getTime();
-};
 const handleCopyImage = async () => {
   const blob = await bannerCanvasRef.value.generateOutputImage();
   await copyImage(blob);
 };
 const handleDownloadImage = async () => {
   const blob = await bannerCanvasRef.value.generateOutputImage();
-  await downloadImage(blob, `${textL.value + textR.value}-ba-banner.png`);
+  await downloadImage(blob, `${get(textL) + get(textR)}-ba-banner.png`);
 };
 </script>
 
@@ -43,7 +41,7 @@ const handleDownloadImage = async () => {
     <div class="mb-3 mt-1 r-d-bb-canvas-container">
       <div>
         <BannerCanvas
-          :key="canvasKey"
+          :key="key"
           :graph-offset-x="offsetX"
           :graph-offset-y="offsetY"
           :text-left="textL"
@@ -56,22 +54,22 @@ const handleDownloadImage = async () => {
     <t-form>
       <t-form-item label="左/右标题">
         <t-space align="center" direction="vertical">
-          <t-input v-model="textL" @change="handleUpdate" />
-          <t-input v-model="textR" @change="handleUpdate" />
+          <t-input v-model="textL" @change="updateKey" />
+          <t-input v-model="textR" @change="updateKey" />
         </t-space>
       </t-form-item>
       <t-form-item label="透明背景">
-        <t-switch v-model="tBg" @change="handleUpdate" />
+        <t-switch v-model="tBg" @change="updateKey" />
       </t-form-item>
       <t-form-item label="高级选项">
         <adv-opt-container>
           <t-tag class="r-no-select" content="光环位置" />
-          <t-input-number v-model="offsetX" size="small" @change="handleUpdate" />
-          <t-input-number v-model="offsetY" size="small" @change="handleUpdate" />
+          <t-input-number v-model="offsetX" size="small" @change="updateKey" />
+          <t-input-number v-model="offsetY" size="small" @change="updateKey" />
         </adv-opt-container>
       </t-form-item>
       <t-form-item label="立即重绘">
-        <t-button shape="circle" @click="handleUpdate">
+        <t-button shape="circle" @click="updateKey">
           <RefreshIcon />
         </t-button>
       </t-form-item>

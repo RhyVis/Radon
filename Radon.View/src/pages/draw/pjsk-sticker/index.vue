@@ -8,6 +8,9 @@ import SelectChara from "@/pages/draw/pjsk-sticker/comps/SelectChara.vue";
 import type { CharacterDefinition, DrawConf } from "@/lib/type/typeSticker";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
 import { onMounted, reactive, ref, computed } from "vue";
+import { useKeyUpdate } from "@/lib/composable/useKeyUpdate";
+
+const charaList: CharacterDefinition[] = CharacterList;
 
 const subtitle = () => {
   return (
@@ -20,8 +23,6 @@ const subtitle = () => {
   );
 };
 const subtitleLinkIcon = () => <t-icon name="jump" />;
-
-const charaList = CharacterList as CharacterDefinition[];
 
 const store = usePjskStore();
 
@@ -39,7 +40,7 @@ const currentConf = reactive<DrawConf>({
 const currentConfYProxy = ref(360);
 
 const stickerCanvasRef = ref();
-const stickerCanvasKey = ref(0);
+const { key, updateKey } = useKeyUpdate();
 
 const textMultipleLines = computed(() => currentConf.text.includes("\n"));
 
@@ -54,15 +55,13 @@ const updateCurrentConf = (id: number) => {
 };
 
 const proxyDraw = () => {
-  store.charaId = currentConf.charaID;
-  store.useCommercialFonts = currentConf.useCommercialFonts;
-  stickerCanvasKey.value = new Date().getTime();
+  store.$patch({ charaId: currentConf.charaID, useCommercialFonts: currentConf.useCommercialFonts });
+  updateKey();
 };
 
 const handleText = () => {
   if (currentConf.text.includes("\n")) {
-    const match = currentConf.text.match(/\n/g)?.length ?? 0;
-    currentConf.spaceSize = 52 * match;
+    currentConf.spaceSize = 52;
     proxyDraw();
   } else {
     proxyDraw();
@@ -99,7 +98,7 @@ onMounted(() => {
       <t-space :size="8" direction="vertical">
         <t-space :size="16" direction="horizontal">
           <div style="height: 300px; width: 300px">
-            <StickerCanvas :key="stickerCanvasKey" :conf="currentConf" ref="stickerCanvasRef" />
+            <StickerCanvas :key="key" :conf="currentConf" ref="stickerCanvasRef" />
           </div>
           <t-slider v-model="currentConfYProxy" :max="360" layout="vertical" @change="handleYProxy" />
         </t-space>

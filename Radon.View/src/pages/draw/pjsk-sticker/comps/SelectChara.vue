@@ -1,21 +1,18 @@
 <script setup lang="tsx">
 import { RefreshIcon } from "tdesign-icons-vue-next";
-import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/sticker";
-import { ref } from "vue";
+import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/define";
+import { useToggle } from "@vueuse/core";
 
-const visible = ref(false);
+const emit = defineEmits(["select"]);
 
+const [visible, setVisible] = useToggle(false);
 const renderIcon = () => <RefreshIcon />;
 
-const handleDrawer = () => {
-  visible.value = !visible.value;
-};
+const handleDrawer = () => setVisible();
 const handleSelect = (index: number) => {
   emit("select", index);
   handleDrawer();
 };
-
-const emit = defineEmits(["select"]);
 </script>
 
 <template>
