@@ -5,9 +5,11 @@ import ContentSide from "@/layout/basic/BaseLayoutSide.vue";
 import { authValidateWithRefresh } from "@/lib/common/authMethods";
 import { useLoader } from "@/lib/composable/useLoader";
 import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
+import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { getFontLoaders } from "@/lib/util/fontLoader";
+import { setupWindowListener } from "@/lib/util/windowListener";
 import { useGlobalStore } from "@/store/global";
-import { get, set, syncRef, useTitle } from "@vueuse/core";
+import { get, set, syncRef, useDark, useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
 import { onMounted, provide, watch } from "vue";
@@ -24,6 +26,17 @@ const fontLoader = useLoader(getFontLoaders());
 provide(fontLoaderKey, fontLoader);
 
 syncRef(locale, i18n.locale);
+
+const dark = useDark({
+  onChanged: v => {
+    if (v) {
+      document.documentElement.setAttribute("theme-mode", "dark");
+    } else {
+      document.documentElement.removeAttribute("theme-mode");
+    }
+  },
+});
+provide(darkModeKey, dark);
 
 const tryLoadFonts = () => {
   if (!get(fontLoader.completed)) {
@@ -47,6 +60,7 @@ const tryRefreshToken = () => {
 };
 
 onMounted(() => {
+  setupWindowListener();
   tryLoadFonts();
   tryRefreshToken();
 });

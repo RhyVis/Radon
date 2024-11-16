@@ -3,16 +3,12 @@ import "@/assets/style/style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "tdesign-vue-next/es/style/index.css";
 
-import { setupWindowListener } from "@/lib/util/windowListener";
-
 import { createApp } from "vue";
 
 import App from "@/App.vue";
 import i18n from "@/locale";
 import router from "@/router";
 import store from "@/store";
-
-setupWindowListener();
 
 const app = createApp(App);
 

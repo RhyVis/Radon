@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ProjectIcon from "@/assets/icon.svg";
+import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { useGlobalStore } from "@/store/global";
+import { useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { MenuFoldIcon, MenuUnfoldIcon, UserIcon } from "tdesign-icons-vue-next";
-import { computed } from "vue";
+import { MenuFoldIcon, MenuUnfoldIcon, MoonIcon, SunnyIcon, UserIcon } from "tdesign-icons-vue-next";
+import { computed, inject } from "vue";
 import { useRouter } from "vue-router";
 
 const dev = computed(() => import.meta.env.DEV);
@@ -13,6 +15,9 @@ const { asideVisible, authPassed } = storeToRefs(global);
 
 const handleAside = () => (asideVisible.value = !asideVisible.value);
 const handleAuth = () => router.push("/auth");
+
+const dark = inject(darkModeKey)!;
+const toggleDark = useToggle(dark);
 </script>
 
 <template>
@@ -38,10 +43,18 @@ const handleAuth = () => router.push("/auth");
     </div>
     <template #operations>
       <t-space class="r-ct-hd-operations" :size="8">
+        <!-- Auth -->
         <t-button v-if="authPassed" theme="default" variant="outline" shape="circle" @click="handleAuth">
           <UserIcon />
         </t-button>
+        <!-- Locale -->
         <sel-locale />
+        <!-- Dark -->
+        <t-button theme="default" variant="outline" shape="circle" @click="toggleDark()">
+          <MoonIcon v-if="dark" />
+          <SunnyIcon v-else />
+        </t-button>
+        <!-- Sidebar -->
         <t-button theme="default" variant="outline" shape="circle" @click="handleAside">
           <template #icon>
             <MenuUnfoldIcon v-if="asideVisible" />
