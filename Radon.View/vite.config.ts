@@ -69,7 +69,7 @@ export default defineConfig({
             options: {
               cacheName: "font-cache",
               expiration: {
-                maxEntries: 20,
+                maxEntries: 50,
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
               },
             },

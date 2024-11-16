@@ -7,7 +7,7 @@ const { t } = i18n.global;
 
 export type Loader = {
   name: string;
-  action: Promise<unknown>;
+  action: Promise<void>;
 };
 
 export const useLoader = (loaders: Loader[]) => {
