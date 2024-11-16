@@ -68,9 +68,6 @@ const handleUpdate = async () => {
       console.error(e);
     } finally {
       showDialog.value = false;
-      setTimeout(() => {
-        location.reload();
-      }, 1000);
     }
   }
 };

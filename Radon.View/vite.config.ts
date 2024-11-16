@@ -62,6 +62,7 @@ export default defineConfig({
           { urlPattern: /^\/api\//, handler: "NetworkOnly" },
           { urlPattern: /^\/dev_local/, handler: "NetworkOnly" },
           { urlPattern: "/index.html", handler: "NetworkOnly" },
+          { urlPattern: "/", handler: "NetworkOnly" },
           {
             urlPattern: /\.(?:ttf|otf|woff|woff2)$/,
             handler: "CacheFirst",
