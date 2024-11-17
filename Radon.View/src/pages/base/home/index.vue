@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
+import { useGlobalStore } from "@/store/global";
+import { storeToRefs } from "pinia";
 import { inject } from "vue";
 import { useI18n } from "vue-i18n";
 
 const fontLoader = inject(fontLoaderKey)!;
 const { t } = useI18n();
 const { current, completed, hasError } = fontLoader;
+const { needUpdate } = storeToRefs(useGlobalStore());
 </script>
 
 <template>
@@ -14,10 +17,12 @@ const { current, completed, hasError } = fontLoader;
     <t-paragraph>
       <t-text>{{ t("description.content") }}</t-text>
     </t-paragraph>
+
     <t-title level="h4">{{ t("hint.tt") }}</t-title>
     <t-paragraph>
       <t-text>{{ t("hint.font-hint") }}</t-text>
     </t-paragraph>
+
     <t-title level="h4">{{ t("loading-status.tt") }}</t-title>
     <t-paragraph>
       <loader-status
@@ -28,13 +33,14 @@ const { current, completed, hasError } = fontLoader;
         :has-error="hasError"
       />
     </t-paragraph>
-    <t-title level="h4">{{ t("version.tt") }}</t-title>
+
+    <t-title level="h4">{{ t("check.tt") }}</t-title>
+    <t-space align="center" :size="6">
+      <prompt-online />
+      <prompt-version-check />
+    </t-space>
     <t-paragraph>
-      <version-check />
-    </t-paragraph>
-    <t-paragraph>
-      <t-title level="h6" :content="t('version.why')" />
-      <t-text>{{ t("version.reason") }}</t-text>
+      <t-text v-if="needUpdate">{{ t("check.hint") }}</t-text>
     </t-paragraph>
   </content-layout>
 </template>
@@ -51,10 +57,9 @@ hint:
 loading-status:
   tt: Loading Status
   font: Font
-version:
+check:
   tt: "Version Check"
-  why: "Why version check?"
-  reason: "Because I can't handle the server-side page cache settings, sometimes it works and sometimes it doesn't, I'm 🤗"
+  hint: "If prompted to update the version, wait for the pop-up prompt and update"
 </i18n>
 
 <i18n locale="zh-CN">
@@ -68,8 +73,7 @@ hint:
 loading-status:
   tt: 加载状态
   font: 字体
-version:
-  tt: "版本检查"
-  why: "为什么会有版本检查？"
-  reason: "因为我玩不转服务端页面缓存设置，有时候管用有时候又不管用，摆了🤗"
+check:
+  tt: "检查"
+  hint: "如果提示版本更新，等待弹窗提示并更新"
 </i18n>

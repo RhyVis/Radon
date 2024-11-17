@@ -1,3 +1,4 @@
+import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
 import { defineStore } from "pinia";
 
 export type GlobalStore = {
@@ -5,6 +6,8 @@ export type GlobalStore = {
   authShow: boolean;
   authPassed: boolean;
   fontLoaded: boolean;
+  vRemote: number;
+  vState: number;
   locale: string;
 };
 
@@ -14,8 +17,14 @@ export const useGlobalStore = defineStore("global", {
     authShow: false,
     authPassed: false,
     fontLoaded: false,
+    vRemote: -1,
+    vState: -2,
     locale: "zh-CN",
   }),
+  getters: {
+    vRemoteShort: state => (state.vRemote === -1 ? "?" : decimalRadixValExtended(state.vRemote)),
+    needUpdate: state => state.vState > 0,
+  },
   persist: {
     pick: ["authPassed", "locale"],
   },

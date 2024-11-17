@@ -80,7 +80,7 @@ onMounted(async () => {
       console.log(`vR: ${v} | vL: ${vLocal}`);
       if (v != vLocal) {
         vState.value = 1;
-        showDialog.value = true;
+        //showDialog.value = true;
         await MessagePlugin.warning(t("message.update"));
       } else {
         vState.value = 0;

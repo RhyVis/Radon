@@ -2,13 +2,17 @@
 import CLinkN from "@/pages/base/credits/comps/CLinkN.vue";
 import CLinkPri from "@/pages/base/credits/comps/CLinkPri.vue";
 import { useGlobalStore } from "@/store/global";
+import { vOnLongPress } from "@vueuse/components";
+import { get, set } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { HomeIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 
 const global = useGlobalStore();
-const counterIncrement = () => {
-  if (!global.authShow) {
-    global.authShow = true;
+const { authShow } = storeToRefs(global);
+const handleAuthEntry = () => {
+  if (!get(authShow)) {
+    set(authShow, true);
     MessagePlugin.info("Something went wrong...");
   }
 };
@@ -112,11 +116,11 @@ const counterIncrement = () => {
     <template #actions>
       <t-button
         class="r-no-select"
+        v-on-long-press="handleAuthEntry"
         variant="text"
         theme="primary"
         shape="circle"
         size="small"
-        @click="counterIncrement"
       >
         <HomeIcon />
       </t-button>

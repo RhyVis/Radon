@@ -9,7 +9,7 @@ import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { getFontLoaders } from "@/lib/util/fontLoader";
 import { setupWindowListener } from "@/lib/util/windowListener";
 import { useGlobalStore } from "@/store/global";
-import { get, set, syncRef, useDark, useTitle } from "@vueuse/core";
+import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
 import { onMounted, provide, watch } from "vue";
@@ -23,10 +23,6 @@ const { t } = i18n;
 const { locale, authPassed } = storeToRefs(global);
 
 const fontLoader = useLoader(getFontLoaders());
-provide(fontLoaderKey, fontLoader);
-
-syncRef(locale, i18n.locale);
-
 const dark = useDark({
   onChanged: v => {
     if (v) {
@@ -36,7 +32,7 @@ const dark = useDark({
     }
   },
 });
-provide(darkModeKey, dark);
+const { idle } = useIdle();
 
 const tryLoadFonts = () => {
   if (!get(fontLoader.completed)) {
@@ -58,6 +54,21 @@ const tryRefreshToken = () => {
     });
   }
 };
+const updateTitle = () => {
+  const title = router.currentRoute.value.meta.title as string | null;
+  if (title) {
+    useTitle(title);
+  }
+};
+
+// Provide & sync section
+
+syncRef(locale, i18n.locale);
+
+provide(fontLoaderKey, fontLoader);
+provide(darkModeKey, dark);
+
+// Hook section
 
 onMounted(() => {
   setupWindowListener();
@@ -67,13 +78,19 @@ onMounted(() => {
 
 watch(
   () => router.currentRoute.value.path,
-  () => {
-    const title = router.currentRoute.value.meta.title as string | null;
-    if (title) {
-      useTitle(title);
+  () => updateTitle(),
+  { deep: false },
+);
+watch(
+  () => idle.value,
+  v => {
+    if (v) {
+      useTitle("...Zzz");
+    } else {
+      updateTitle();
     }
   },
-  { deep: false },
+  { immediate: true, deep: false },
 );
 </script>
 
@@ -86,6 +103,7 @@ watch(
       <ContentHeader />
     </template>
     <template #default>
+      <prompt-update />
       <RouterView v-slot="{ Component }">
         <Transition name="route" mode="out-in">
           <Component :is="Component" />

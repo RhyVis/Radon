@@ -35,7 +35,7 @@ const icon = computed(() => {
 <template>
   <div class="r-ls-div" :id="id">
     <t-loading size="small" :delay="100" :loading="!completed">
-      <t-tag :theme="theme" variant="light">
+      <t-tag :theme="theme" variant="light" size="small">
         <template #icon>
           <t-icon :name="icon" />
         </template>

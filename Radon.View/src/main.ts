@@ -9,6 +9,9 @@ import App from "@/App.vue";
 import i18n from "@/locale";
 import router from "@/router";
 import store from "@/store";
+import { registerSW } from "virtual:pwa-register";
+
+registerSW({ immediate: true });
 
 const app = createApp(App);
 
