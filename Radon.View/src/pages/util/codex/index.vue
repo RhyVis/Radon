@@ -1,21 +1,29 @@
 <script setup lang="ts">
 import { apiPostStr } from "@/lib/common/apiMethods";
+import { useToggle } from "@vueuse/core";
 import { SendIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { reactive, ref } from "vue";
 
+enum CodeType {
+  NMSL = "nmsl",
+  TRAD = "trad",
+  SPRK = "sprk",
+  DIFF = "diff",
+}
+
 const query = reactive({
   text: "哦牛",
-  type: "nmsl",
+  type: CodeType.NMSL,
   decode: false,
 });
-const loading = ref(false);
+const [loading, setLoading] = useToggle(false);
 
 const handleEscape = async () => {
   if (query.text.length === 0) {
     await MessagePlugin.warning("不要什么都不输入");
   } else {
-    loading.value = true;
+    setLoading(true);
     try {
       result.value = (
         await apiPostStr("/api/escape", {
@@ -28,9 +36,12 @@ const handleEscape = async () => {
       console.error(e);
       await MessagePlugin.error("与服务器通信失败");
     } finally {
-      loading.value = false;
+      setLoading(false);
     }
   }
+};
+const handleChange = () => {
+  query.decode = false;
 };
 
 const result = ref("");
@@ -39,9 +50,9 @@ const result = ref("");
 <template>
   <content-layout title="抽象翻译器" subtitle="玩抽象的这辈子有了">
     <t-form>
-      <t-tabs v-model:value="query.type" @change="query.decode = false">
+      <t-tabs v-model:value="query.type" @change="handleChange">
         <!-- 玩抽象的这辈子有了 -->
-        <t-tab-panel class="mt-2" label="抽象转换" value="nmsl">
+        <t-tab-panel class="mt-2" label="抽象转换" :value="CodeType.NMSL">
           <t-form-item label="原始文本">
             <t-textarea v-model="query.text" auto-size />
           </t-form-item>
@@ -50,7 +61,7 @@ const result = ref("");
           </t-form-item>
         </t-tab-panel>
         <!-- 繁体 -->
-        <t-tab-panel class="mt-2" label="繁体转换" value="trad">
+        <t-tab-panel class="mt-2" label="繁体转换" :value="CodeType.TRAD">
           <t-form-item label="原始文本">
             <t-textarea v-model="query.text" auto-size />
           </t-form-item>
@@ -59,7 +70,7 @@ const result = ref("");
           </t-form-item>
         </t-tab-panel>
         <!-- 火星文 -->
-        <t-tab-panel class="mt-2" label="火星文化" value="sprk">
+        <t-tab-panel class="mt-2" label="火星文化" :value="CodeType.SPRK">
           <t-form-item label="原始文本">
             <t-textarea v-model="query.text" auto-size />
           </t-form-item>
@@ -68,7 +79,7 @@ const result = ref("");
           </t-form-item>
         </t-tab-panel>
         <!-- 形近字 -->
-        <t-tab-panel class="mt-2" label="形近转换" value="diff">
+        <t-tab-panel class="mt-2" label="形近转换" :value="CodeType.DIFF">
           <t-form-item label="原始文本">
             <t-textarea v-model="query.text" auto-size />
           </t-form-item>

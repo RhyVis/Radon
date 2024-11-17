@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import { get } from "@vueuse/core";
 import { Base64 } from "js-base64";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-const inputRef = ref("");
-const inputStatusRef = computed(() => {
-  if (modeRef.value == "decode") {
-    if (Base64.isValid(inputRef.value)) {
+
+enum Mode {
+  Encode = "encode",
+  Decode = "decode",
+}
+
+const input = ref("");
+const inputState = computed(() => {
+  if (mode.value == Mode.Decode) {
+    if (Base64.isValid(input.value)) {
       return "success";
     } else {
       return "error";
@@ -16,44 +23,49 @@ const inputStatusRef = computed(() => {
     return "default";
   }
 });
-const outputRef = computed(() => {
+const output = computed(() => {
   try {
-    switch (modeRef.value) {
-      case "encode":
-        return Base64.encode(inputRef.value);
-      case "decode":
-        return Base64.decode(inputRef.value);
+    switch (get(mode)) {
+      case Mode.Encode:
+        return Base64.encode(input.value);
+      case Mode.Decode: {
+        if (Base64.isValid(input.value)) {
+          return Base64.decode(input.value);
+        } else {
+          return t("form.invalid");
+        }
+      }
       default:
-        return inputRef.value;
+        return input.value;
     }
   } catch (e) {
     console.error(e);
-    return "Exception";
+    return "×";
   }
 });
-const modeRef = ref("encode");
+const mode = ref(Mode.Encode);
 </script>
 
 <template>
   <content-layout title="BASE64" :subtitle="t('st')">
     <t-form>
       <t-form-item :label="t('form.input')">
-        <t-textarea v-model="inputRef" :status="inputStatusRef" :autosize="true" />
+        <t-textarea v-model="input" :status="inputState" :autosize="true" />
       </t-form-item>
       <t-form-item :label="t('form.mode.label')">
-        <t-radio-group v-model="modeRef">
+        <t-radio-group v-model="mode">
           <t-radio-button :label="t('form.mode.encode')" value="encode" />
           <t-radio-button :label="t('form.mode.decode')" value="decode" />
         </t-radio-group>
       </t-form-item>
       <t-form-item :label="t('form.output')">
-        <t-textarea :value="outputRef" :autosize="true" />
+        <t-textarea :value="output" :autosize="true" />
       </t-form-item>
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
-          <btn-copy :target="outputRef" />
-          <btn-read v-model="inputRef" />
-          <btn-clear v-model="inputRef" />
+          <btn-copy :target="output" />
+          <btn-read v-model="input" />
+          <btn-clear v-model="input" />
         </t-space>
       </t-form-item>
     </t-form>
@@ -70,6 +82,7 @@ form:
     decode: "Decode"
   output: "Output"
   tool: "Tool"
+  invalid: "Invalid Base64 string"
 </i18n>
 
 <i18n locale="zh-CN">
@@ -82,4 +95,5 @@ form:
     decode: "解码"
   output: "输出"
   tool: "工具"
+  invalid: "无效的 Base64 字符串"
 </i18n>

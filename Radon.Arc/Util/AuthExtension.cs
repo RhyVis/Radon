@@ -46,6 +46,6 @@ public static class AuthExtension
         {
             throw new CredentialRejectionException("No token found in headers.");
         }
-        return header!["Bearer ".Length..];
+        return header["Bearer ".Length..];
     }
 }

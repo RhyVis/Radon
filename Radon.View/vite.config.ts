@@ -63,9 +63,12 @@ export default defineConfig({
           { urlPattern: /^\/dev_local/, handler: "NetworkOnly" },
           {
             urlPattern: /\.(?:ttf|otf|woff|woff2)$/,
-            handler: "CacheFirst",
+            handler: "StaleWhileRevalidate",
             options: {
               cacheName: "font-cache",
+              cacheableResponse: {
+                statuses: [0, 200, 206],
+              },
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
