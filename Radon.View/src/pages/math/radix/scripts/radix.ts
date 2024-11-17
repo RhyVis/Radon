@@ -8,32 +8,34 @@ const latinSupplementCharset = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØ
 
 const mixedLatinCharset = latinExtendedCharset + latinSupplementCharset;
 
-const basicCharset = numberSet + alphabetCharset;
-const extendedCharset = numberSet + alphabetCharset + greekCharset + russianCharset + mixedLatinCharset;
+export const basicCharset = numberSet + alphabetCharset;
+export const extendedCharset = numberSet + alphabetCharset + greekCharset + russianCharset + mixedLatinCharset;
 
-function radixVal(
+export const radixVal = (
   input: string,
   iRadix: number,
   oRadix: number,
   iCharset: string = basicCharset,
   oCharset: string = basicCharset,
-) {
+) => {
   try {
     if (iCharset.length < 2 || oCharset.length < 2) return "基数过小";
     if (iRadix > iCharset.length || oRadix > oCharset.length) return "字符集过短";
-    let decimalVal = 0;
+
+    let decimalVal: bigint = BigInt(0);
     for (let i = 0; i < input.length; i++) {
-      decimalVal = decimalVal * iRadix + iCharset.indexOf(input[i]);
+      decimalVal = decimalVal * BigInt(iRadix) + BigInt(iCharset.indexOf(input[i]));
     }
 
     let result = "";
-    if (decimalVal === 0) {
+    if (decimalVal === BigInt(0)) {
       return oCharset[0];
     }
 
     while (decimalVal > 0) {
-      result = oCharset[decimalVal % oRadix] + result;
-      decimalVal = Math.floor(decimalVal / oRadix);
+      const remainder = decimalVal % BigInt(oRadix);
+      result = oCharset[Number(remainder)] + result;
+      decimalVal = decimalVal / BigInt(oRadix);
     }
 
     return result;
@@ -41,24 +43,11 @@ function radixVal(
     console.error(e);
     return "转换失败";
   }
-}
+};
 
-function decimalRadixVal(
-  input: number,
-  radix: number = basicCharset.length,
-  iCharset: string = numberSet,
-  oCharset: string = basicCharset,
-) {
-  return radixVal(input.toString(), 10, radix, iCharset, oCharset);
-}
-
-function decimalRadixValExtended(
+export const radixValExtended = (
   input: number,
   radix: number = extendedCharset.length,
   iCharset: string = numberSet,
   oCharset: string = extendedCharset,
-) {
-  return radixVal(input.toString(), 10, radix, iCharset, oCharset);
-}
-
-export { basicCharset, decimalRadixVal, decimalRadixValExtended, extendedCharset, radixVal };
+) => radixVal(input.toString(), 10, radix, iCharset, oCharset);

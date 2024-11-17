@@ -1,4 +1,4 @@
-import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
+import { radixValExtended } from "@/pages/math/radix/scripts/radix";
 import { defineStore } from "pinia";
 
 export type GlobalStore = {
@@ -22,7 +22,7 @@ export const useGlobalStore = defineStore("global", {
     locale: "zh-CN",
   }),
   getters: {
-    vRemoteShort: state => (state.vRemote === -1 ? "?" : decimalRadixValExtended(state.vRemote)),
+    vRemoteShort: state => (state.vRemote === -1 ? "?" : radixValExtended(state.vRemote)),
     needUpdate: state => state.vState > 0,
   },
   persist: {

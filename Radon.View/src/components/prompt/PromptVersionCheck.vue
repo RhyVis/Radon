@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VersionView from "@/assets/local/version.json";
 import { getVersion } from "@/lib/common/apiMethods";
-import { decimalRadixValExtended } from "@/pages/math/radix/scripts/radix";
+import { radixValExtended } from "@/pages/math/radix/scripts/radix";
 import { useGlobalStore } from "@/store/global";
 import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
@@ -15,8 +15,8 @@ const { vRemote, vState } = storeToRefs(global);
 
 const vLocal = VersionView.compileTime;
 
-const vLocalShort = computed(() => decimalRadixValExtended(vLocal));
-const vRemoteShort = computed(() => decimalRadixValExtended(get(vRemote)));
+const vLocalShort = computed(() => radixValExtended(vLocal));
+const vRemoteShort = computed(() => radixValExtended(get(vRemote)));
 
 const tagTheme = computed(() => {
   switch (get(vState)) {
