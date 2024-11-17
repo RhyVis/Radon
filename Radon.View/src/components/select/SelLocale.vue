@@ -1,26 +1,29 @@
 ﻿<script setup lang="ts">
 import { useGlobalStore } from "@/store/global";
+import { get, set } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { EarthIcon } from "tdesign-icons-vue-next";
-import { MessagePlugin } from "tdesign-vue-next";
+import { type DropdownOption, MessagePlugin } from "tdesign-vue-next";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
 const global = useGlobalStore();
+const { locale } = storeToRefs(global);
 
-const options = [
+const options: DropdownOption[] = [
   { content: "English", value: "en" },
   { content: "简体中文", value: "zh-CN" },
 ];
-const handleChange = (data: unknown) => {
-  global.locale = (data as { value: string }).value;
+const handleChange = (data: DropdownOption) => {
+  set(locale, data.value);
 };
 
 watch(
-  () => i18n.locale.value,
+  () => i18n.locale,
   () => {
-    const langPresent = options.find(o => o.value === i18n.locale.value)?.content ?? i18n.t("sel-locale.unknown");
-    MessagePlugin.success(i18n.t("sel-locale.msg", { lang: langPresent }));
+    const langPresent = options.find(o => o.value === get(i18n.locale))?.content ?? i18n.t("unknown");
+    MessagePlugin.success(i18n.t("msg", { lang: langPresent }));
   },
 );
 </script>
@@ -34,19 +37,11 @@ watch(
 </template>
 
 <i18n lang="yaml" locale="en">
-lang:
-  en: English
-  zh-CN: 简体中文
-sel-locale:
-  unknown: Unknown Language
-  msg: Selected {lang}
+unknown: Unknown Language
+msg: Selected {lang}
 </i18n>
 
 <i18n lang="yaml" locale="zh-CN">
-lang:
-  en: English
-  zh-CN: 简体中文
-sel-locale:
-  unknown: 未知语言
-  msg: 切换至{lang}
+unknown: 未知语言
+msg: 切换至{lang}
 </i18n>

@@ -87,7 +87,7 @@ onMounted(async () => {
     <template #icon>
       <t-icon :name="tagIcon" />
     </template>
-    {{ tagValue }}
+    <span class="r-no-select">{{ tagValue }}</span>
   </t-tag>
 </template>
 

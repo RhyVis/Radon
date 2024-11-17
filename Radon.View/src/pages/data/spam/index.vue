@@ -1,58 +1,29 @@
-<script setup lang="tsx">
-import { MessagePlugin, type TableProps } from "tdesign-vue-next";
-import { useSpamStore } from "@/pages/data/spam/scripts/store";
-import type { TextEntry } from "@/lib/type/typeEntry";
-import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
-import { useGlobalStore } from "@/store/global";
-import { spamTypes, codeTypes } from "@/pages/data/spam/scripts/type";
-import { storeToRefs } from "pinia";
-import { useClipboard } from "@vueuse/core";
-import { ref } from "vue";
+<script setup lang="ts">
 import { apiPost, apiPutState } from "@/lib/common/apiMethods";
+import { codeTypes, spamColumns, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
+import { useSpamStore } from "@/pages/data/spam/scripts/store";
+import { useGlobalStore } from "@/store/global";
+import { set, useClipboard, useToggle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
+import { MessagePlugin } from "tdesign-vue-next";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const global = useGlobalStore();
 const store = useSpamStore();
 const { qType, qDict, qSize, aType, aText, activeTab } = storeToRefs(store);
 const { copy } = useClipboard();
+const { t } = useI18n();
+const [resultLoading, setResultLoading] = useToggle(false);
+const [appendLoading, setAppendLoading] = useToggle(false);
+const [appendDialog, setAppendDialog] = useToggle(false);
 
-const resultLoading = ref(false);
-
-const result = ref([
+const result = ref<TextEntry[]>([
   { id: 666, text: "快乐生活每一天，请不要用这个工具的结果来攻击他人哦😊" },
   { id: 999, text: "仅供学习交流使用，由您不当使用造成的后果，将由您承担" },
 ]);
-
-const columns = ref<TableProps["columns"]>([
-  {
-    colKey: "id",
-    title: "ID",
-    width: 60,
-    cell: (_, { row }) => {
-      return (
-        <div class="r-sp-column-tag" onClick={() => handleCopy(row.text)}>
-          <t-tag shape="round" variant="outline">
-            {row.id}
-          </t-tag>
-        </div>
-      );
-    },
-  },
-  {
-    colKey: "text",
-    title: "内容",
-    cell: (_, { row }) => {
-      return (
-        <t-space direction="vertical" size={2}>
-          {(row.text as string).split(/[\n\r]|\r\n|\\r\\n/).map((t, i) => (
-            <t-text key={i}>{t}</t-text>
-          ))}
-        </t-space>
-      );
-    },
-  },
-]);
-const showAppendingDialog = ref(false);
-const appendLoading = ref(false);
+const columns = computed(() => spamColumns(handleCopy));
 
 const handleTabChange = (key: string | number) => {
   switch (key) {
@@ -70,29 +41,29 @@ const handleTabChange = (key: string | number) => {
 };
 const handleCopy = (s: string) => {
   try {
-    copy(s.replace(/[\n\r]|\r\n|\\r\\n/, "")).then(() => MessagePlugin.success("复制成功"));
+    copy(s.replace(/[\r\n]|\r\n|\\r\\n/, "")).then(() => MessagePlugin.success("复制成功"));
   } catch (e) {
     console.error(e);
     MessagePlugin.error("复制失败");
   }
 };
 const handleSpam = async () => {
-  resultLoading.value = true;
+  setResultLoading(true);
   try {
-    result.value = (await apiPost<TextEntry[]>("/api/spam", store.query)).data;
+    set(result, (await apiPost<TextEntry[]>("/api/spam", store.query)).data);
   } catch (e) {
     console.error(e);
     await MessagePlugin.error("获取信息失败");
   } finally {
-    resultLoading.value = false;
+    setResultLoading(false);
   }
 };
 const handleAppend = async (repeat: boolean = false) => {
   if (aText.value.length === 0) {
-    await MessagePlugin.error("内容不能为空");
+    await MessagePlugin.warning(t("common.noEmpty"));
     return;
   }
-  appendLoading.value = true;
+  setAppendLoading(true);
   try {
     const r = (await apiPutState("/api/spam", store.queryAppend)).data;
     if (r) {
@@ -105,9 +76,9 @@ const handleAppend = async (repeat: boolean = false) => {
     console.error(e);
     await MessagePlugin.error("追加失败");
   } finally {
-    appendLoading.value = false;
+    setAppendLoading(false);
     if (!repeat) {
-      setTimeout(() => (showAppendingDialog.value = false), 666);
+      setTimeout(() => setAppendDialog(false), 666);
     }
   }
 };
@@ -178,7 +149,7 @@ const handleAppend = async (repeat: boolean = false) => {
         <t-form-item label="开火！">
           <t-space>
             <t-button shape="round" theme="warning" variant="outline" @click="handleSpam">😤</t-button>
-            <btn-copy :target="result.map(t => t.text).join('\n')" />
+            <btn-copy :target="result.map(e => (e as TextEntry).text).join('\n')" />
           </t-space>
         </t-form-item>
       </div>
@@ -204,7 +175,7 @@ const handleAppend = async (repeat: boolean = false) => {
         shape="circle"
         theme="primary"
         size="small"
-        @click="showAppendingDialog = true"
+        @click="setAppendDialog(true)"
       >
         <ToolsIcon />
       </t-button>
@@ -214,7 +185,7 @@ const handleAppend = async (repeat: boolean = false) => {
         </t-button>
       </RouterLink>
     </template>
-    <t-dialog v-model:visible="showAppendingDialog" header="追加内容" width="75%" @close="store.clearAppendQuery()">
+    <t-dialog v-model:visible="appendDialog" header="追加内容" width="75%" @close="store.clearAppendQuery()">
       <t-form label-align="top">
         <t-form-item label="类型">
           <SelSimple v-model="aType" :options="spamTypes" />
@@ -226,7 +197,7 @@ const handleAppend = async (repeat: boolean = false) => {
       <template #footer>
         <t-space>
           <btn-read v-model="aText" />
-          <t-button theme="default" shape="round" @click="showAppendingDialog = false">
+          <t-button theme="default" shape="round" @click="setAppendDialog(false)">
             <CloseIcon />
           </t-button>
           <t-button theme="primary" shape="round" @click="handleAppend()" :loading="appendLoading">

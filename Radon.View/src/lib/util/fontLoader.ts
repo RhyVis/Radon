@@ -1,4 +1,4 @@
-import type { Loader } from "@/lib/composable/useLoader";
+import type { Loader } from "@/composable/useLoader";
 import { downloadChunked } from "@/lib/util/chunkFetch";
 
 type FontInfo = {

@@ -41,7 +41,7 @@ const handleAuthEntry = () => {
           )
         </li>
         <li>Cloudflare - Free static resource cache</li>
-        <li>https://img.r10086.com - Random anime pictures</li>
+        <li>img.r10086.com - Random anime pictures</li>
       </ul>
     </t-paragraph>
     <t-paragraph>
@@ -106,6 +106,9 @@ const handleAuthEntry = () => {
               <c-link-n href="https://www.typebank.co.jp">RoGSanSrfStd</c-link-n>
             </li>
           </ul>
+        </li>
+        <li>
+          Images provided in Tarot page does not belong to the project, and are only used for demonstration purposes.
         </li>
         <li>
           Other assets, such as images and other media, are licensed under the

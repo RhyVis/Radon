@@ -1,21 +1,18 @@
 <script setup lang="ts">
+import { useToggle } from "@vueuse/core";
 import { SwapLeftIcon, SwapRightIcon } from "tdesign-icons-vue-next";
-import { ref } from "vue";
 
-const showAdv = ref(false);
-const handleAdv = () => {
-  showAdv.value = !showAdv.value;
-};
+const [show, setShow] = useToggle(false);
 </script>
 
 <template>
   <t-space>
-    <t-button shape="circle" @click="handleAdv">
-      <SwapLeftIcon v-if="showAdv" />
+    <t-button shape="circle" @click="setShow()">
+      <SwapLeftIcon v-if="show" />
       <SwapRightIcon v-else />
     </t-button>
     <Transition name="move">
-      <div v-if="showAdv">
+      <div v-if="show">
         <t-space align="center" direction="vertical">
           <slot />
         </t-space>

@@ -1,5 +1,4 @@
 import axiosInstance from "@/lib/common/apiHttp";
-import type { ApiResponse } from "@/lib/type/typeApi";
 import type { AxiosRequestConfig } from "axios";
 
 /**
@@ -17,6 +16,24 @@ class Req {
 }
 
 type ReqData = string | object;
+
+/**
+ * @description Refer to ApiResBase defined in core
+ */
+type ApiResponse<T> = {
+  code: number;
+  msg: string;
+  data: T;
+  status: {
+    responseCode: number;
+    responseText: string;
+  };
+};
+
+/**
+ * @description Refer to ExceptionRes defined in core, data is JSON serialized exception object
+ */
+type ErrResponse = ApiResponse<string>;
 
 /**
  * Get Method
@@ -200,3 +217,5 @@ export { apiDelete, apiGet, apiPost, apiPut };
 export { apiGetStr, apiPostState, apiPostStr, apiPostWithFile, apiPutState };
 
 export { getVersion };
+
+export type { ApiResponse, ErrResponse };

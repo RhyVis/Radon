@@ -1,13 +1,13 @@
 <script lang="ts" setup>
+import { useLoader } from "@/composable/useLoader";
 import ContentFooter from "@/layout/basic/BaseLayoutFooter.vue";
 import ContentHeader from "@/layout/basic/BaseLayoutHeader.vue";
 import ContentSide from "@/layout/basic/BaseLayoutSide.vue";
 import { authValidateWithRefresh } from "@/lib/common/authMethods";
-import { useLoader } from "@/lib/composable/useLoader";
 import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
 import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { getFontLoaders } from "@/lib/util/fontLoader";
-import { setupWindowListener } from "@/lib/util/windowListener";
+import { changeMetaColor } from "@/lib/util/themeUtil";
 import { useGlobalStore } from "@/store/global";
 import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
@@ -22,13 +22,15 @@ const i18n = useI18n();
 const { t } = i18n;
 const { locale, authPassed } = storeToRefs(global);
 
-const fontLoader = useLoader(getFontLoaders());
+const fontLoader = useLoader(getFontLoaders(), "FontLoader");
 const dark = useDark({
   onChanged: v => {
     if (v) {
       document.documentElement.setAttribute("theme-mode", "dark");
+      changeMetaColor("#1f2937");
     } else {
       document.documentElement.removeAttribute("theme-mode");
+      changeMetaColor("#ffffff");
     }
   },
 });
@@ -71,7 +73,6 @@ provide(darkModeKey, dark);
 // Hook section
 
 onMounted(() => {
-  setupWindowListener();
   tryLoadFonts();
   tryRefreshToken();
 });

@@ -14,9 +14,9 @@ declare module 'vue' {
     BtnRead: typeof import('./src/components/btn/BtnRead.vue')['default']
     ContentLayout: typeof import('./src/layout/frame/ContentLayout.vue')['default']
     LoaderStatus: typeof import('./src/components/utility/LoaderStatus.vue')['default']
-    PromptOnline: typeof import('./src/components/utility/PromptOnline.vue')['default']
-    PromptUpdate: typeof import('./src/components/utility/PromptUpdate.vue')['default']
-    PromptVersionCheck: typeof import('./src/components/utility/PromptVersionCheck.vue')['default']
+    PromptOnline: typeof import('./src/components/prompt/PromptOnline.vue')['default']
+    PromptUpdate: typeof import('./src/components/prompt/PromptUpdate.vue')['default']
+    PromptVersionCheck: typeof import('./src/components/prompt/PromptVersionCheck.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelLocale: typeof import('./src/components/select/SelLocale.vue')['default']
@@ -66,6 +66,5 @@ declare module 'vue' {
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
     TTree: typeof import('tdesign-vue-next')['Tree']
     TUpload: typeof import('tdesign-vue-next')['Upload']
-    VersionCheck: typeof import('./src/components/utility/VersionCheck.vue')['default']
   }
 }

@@ -4,35 +4,27 @@ import { CopyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { useI18n } from "vue-i18n";
 
-const props = defineProps({
-  target: {
-    type: String,
-    default: "",
-    required: true,
-  },
-});
-
+const { target = "" } = defineProps<{ target: string }>();
 const { t } = useI18n();
 const { copy } = useClipboard();
 
 const action = async () => {
-  const { target } = props;
   if (target.length > 0) {
     try {
       await copy(target);
-      await MessagePlugin.success(t("copySuccess"));
+      await MessagePlugin.success(t("msg.success"));
     } catch (e) {
       console.error(e);
-      await MessagePlugin.error(t("copyFail"));
+      await MessagePlugin.error(t("msg.failure"));
     }
   } else {
-    await MessagePlugin.error(t("emptyContent"));
+    await MessagePlugin.error(t("msg.emptyContent"));
   }
 };
 </script>
 
 <template>
-  <t-tooltip :content="t('copy')" placement="top">
+  <t-tooltip :content="t('action')" placement="top">
     <t-button theme="default" shape="square" @click="action">
       <CopyIcon />
     </t-button>
@@ -40,15 +32,17 @@ const action = async () => {
 </template>
 
 <i18n locale="en">
-copy: "Copy content"
-copySuccess: "Copy success"
-copyFail: "Copy fail"
-emptyContent: "Can't copy empty content"
+action: "Copy content"
+msg:
+  success: "Copy success"
+  failure: "Copy fail"
+  emptyContent: Can't copy empty content"
 </i18n>
 
 <i18n locale="zh-CN">
-copy: "复制内容"
-copySuccess: "复制成功"
-copyFail: "复制失败"
-emptyContent: "不能复制空内容"
+action: "复制内容"
+msg: 
+  success: "复制成功"
+  failure: "复制失败"
+  emptyContent: "不能复制空内容"
 </i18n>

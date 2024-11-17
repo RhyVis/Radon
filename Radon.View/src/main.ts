@@ -10,6 +10,7 @@ import i18n from "@/locale";
 import router from "@/router";
 import store from "@/store";
 import { registerSW } from "virtual:pwa-register";
+import { setupWindowListener } from "@/lib/util/windowListener";
 
 registerSW({ immediate: true });
 
@@ -20,3 +21,5 @@ app.use(store);
 app.use(i18n);
 
 app.mount("#app");
+
+setupWindowListener();

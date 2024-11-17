@@ -18,6 +18,7 @@
   },
   loader: {
     loadFailed: "Failed to load {name}",
+    notOnline: "Cannot load {name} in offline mode",
     message: {
       fontLoadingFailed: "Font loading failed",
     },

@@ -34,13 +34,13 @@ const { needUpdate } = storeToRefs(useGlobalStore());
       />
     </t-paragraph>
 
-    <t-title level="h4">{{ t("check.tt") }}</t-title>
+    <t-title level="h4">{{ t("status.tt") }}</t-title>
     <t-space align="center" :size="6">
       <prompt-online />
       <prompt-version-check />
     </t-space>
     <t-paragraph>
-      <t-text v-if="needUpdate">{{ t("check.hint") }}</t-text>
+      <t-text v-if="needUpdate">{{ t("status.hint") }}</t-text>
     </t-paragraph>
   </content-layout>
 </template>
@@ -57,8 +57,8 @@ hint:
 loading-status:
   tt: Loading Status
   font: Font
-check:
-  tt: "Version Check"
+status:
+  tt: "Status"
   hint: "If prompted to update the version, wait for the pop-up prompt and update"
 </i18n>
 
@@ -73,7 +73,7 @@ hint:
 loading-status:
   tt: 加载状态
   font: 字体
-check:
-  tt: "检查"
+status:
+  tt: "状态"
   hint: "如果提示版本更新，等待弹窗提示并更新"
 </i18n>

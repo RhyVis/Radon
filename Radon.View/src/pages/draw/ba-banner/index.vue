@@ -1,22 +1,10 @@
-<script lang="tsx" setup>
-import BannerCanvas from "@/pages/draw/ba-banner/comps/BannerCanvas.vue";
-import { CopyIcon, DownloadIcon, RefreshIcon } from "tdesign-icons-vue-next";
+<script lang="ts" setup>
+import { useKeyUpdate } from "@/composable/useKeyUpdate";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
-import { ref } from "vue";
+import BannerCanvas from "@/pages/draw/ba-banner/comps/BannerCanvas.vue";
 import { get } from "@vueuse/core";
-import { useKeyUpdate } from "@/lib/composable/useKeyUpdate";
-
-const subtitle = () => {
-  return (
-    <t-space size={6} class="text-muted">
-      <span>移植自</span>
-      <t-link href="https://tmp.nulla.top/ba-logo/" suffix-icon={subtitleLinkIcon}>
-        蔚蓝档案标题生成器
-      </t-link>
-    </t-space>
-  );
-};
-const subtitleLinkIcon = () => <t-icon name="jump" />;
+import { CopyIcon, DownloadIcon, RefreshIcon } from "tdesign-icons-vue-next";
+import { ref } from "vue";
 
 const textL = ref("Blue");
 const textR = ref("Archive");
@@ -37,7 +25,7 @@ const handleDownloadImage = async () => {
 </script>
 
 <template>
-  <content-layout title="BA横幅" :subtitle="subtitle">
+  <content-layout title="BA横幅" subtitle="移植自蔚蓝档案标题生成器">
     <div class="mb-3 mt-1 r-d-bb-canvas-container">
       <div>
         <BannerCanvas

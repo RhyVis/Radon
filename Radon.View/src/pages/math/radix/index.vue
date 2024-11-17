@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import { radixVal } from "@/pages/math/radix/scripts/radix";
-import { ArrowRightCircleIcon, RefreshIcon } from "tdesign-icons-vue-next";
+import { basicCharset, extendedCharset, radixVal } from "@/pages/math/radix/scripts/radix";
+import { ArrowRightCircleIcon, ChartRingIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, reactive, ref } from "vue";
 
-const defaultCharset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const defaultCharset = basicCharset;
 const query = reactive({
   input: "10",
   iRadix: 10,
   oRadix: 10,
-  iCharset: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-  oCharset: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  iCharset: basicCharset,
+  oCharset: basicCharset,
 });
 const iCharsetInputStatus = ref<"default" | "error">("default");
 const oCharsetInputStatus = ref<"default" | "error">("default");
 const result = computed(() => {
   return radixVal(query.input, query.iRadix, query.oRadix, query.iCharset, query.oCharset);
 });
+const iOpt = computed(() => generateOpt(query.iCharset));
+const oOpt = computed(() => generateOpt(query.oCharset));
+const generateOpt = (charset: string) => {
+  return Array.from({ length: charset.length + 1 }, (_, i) => i)
+    .slice(2)
+    .map(i => ({ label: i.toString(), value: i }));
+};
 
 const handleCharsetChange = () => {
   iCharsetInputStatus.value = "default";
@@ -54,6 +61,10 @@ const handleCharsetOutputReset = () => {
   query.oCharset = defaultCharset;
   query.oRadix = 10;
 };
+const handleExtended = () => {
+  query.iCharset = extendedCharset;
+  query.oCharset = extendedCharset;
+};
 </script>
 
 <template>
@@ -68,9 +79,9 @@ const handleCharsetOutputReset = () => {
       </t-form-item>
       <t-form-item label="进制">
         <t-space align="center">
-          <t-input-number v-model="query.iRadix" :min="2" :max="query.iCharset.length" />
+          <t-select class="r-input-text-align-for-num" v-model="query.iRadix" :options="iOpt" :filterable="true" />
           <ArrowRightCircleIcon />
-          <t-input-number v-model="query.oRadix" :min="2" :max="query.oCharset.length" />
+          <t-select class="r-input-text-align-for-num" v-model="query.oRadix" :options="oOpt" :filterable="true" />
         </t-space>
       </t-form-item>
       <t-form-item label="高级">
@@ -104,6 +115,12 @@ const handleCharsetOutputReset = () => {
               :autosize="true"
               @change="handleCharsetChange"
             />
+            <t-space :size="4">
+              <t-tag class="r-no-select" content="抽象版本" />
+              <t-button size="small" theme="default" @click="handleExtended">
+                <ChartRingIcon />
+              </t-button>
+            </t-space>
           </t-space>
         </adv-opt-container>
       </t-form-item>

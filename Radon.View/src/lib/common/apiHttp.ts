@@ -1,4 +1,4 @@
-import type { ErrResponse } from "@/lib/type/typeApi";
+import type { ErrResponse } from "@/lib/common/apiMethods";
 import i18n from "@/locale";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
@@ -28,17 +28,20 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const errData = error.response?.data as ErrResponse;
-    if (errData != null) {
-      await MessagePlugin.error(`${t("common.serverError")}(${errData.code}): ${errData.msg}`);
-      console.error(error);
-      console.error(JSON.parse(errData.data));
+    const resp = error.response;
+    if (resp) {
+      const errData = resp.data as ErrResponse;
+      if (errData) {
+        await MessagePlugin.error(`${t("common.serverError")}(${errData.code}): ${errData.msg}`);
+        console.error(error);
+        console.error(JSON.parse(errData.data));
+      } else {
+        await MessagePlugin.error(`${t("common.networkError")}(${resp.status}): ${resp.statusText}`);
+      }
     } else {
-      await MessagePlugin.error(
-        `${t("common.networkError")}(${error.response?.status}): ${error.response?.statusText}`,
-      );
-      console.error(error);
+      await MessagePlugin.error(t("common.networkError"));
     }
+
     return Promise.reject(error);
   },
 );

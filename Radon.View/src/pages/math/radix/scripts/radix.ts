@@ -2,9 +2,14 @@ const numberSet = "0123456789";
 const alphabetCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz";
 const greekCharset = "αβγδεζηθικλμνξοπρστυφχψω" + "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ";
 const russianCharset = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" + "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+const latinExtendedCharset =
+  "ĀĂĄĆĈĊČĎĐĒĔĖĘĚĜĞĠĢĤĦĨĪĬĮİĲĴĶĹĻĽĿŁŃŅŇŊŌŎŐŒŔŖŘŚŜŞŠŢŤŦŨŪŬŮŰŲŴŶŸŹŻŽāăąćĉċčďđēĕėęěĝğġģĥħĩīĭįıĳĵķĸĺļľŀłńņňŋōŏőœŕŗřśŝşšţťŧũūŭůűųŵŷÿźżž";
+const latinSupplementCharset = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ";
+
+const mixedLatinCharset = latinExtendedCharset + latinSupplementCharset;
 
 const basicCharset = numberSet + alphabetCharset;
-const extendedCharset = numberSet + alphabetCharset + greekCharset + russianCharset;
+const extendedCharset = numberSet + alphabetCharset + greekCharset + russianCharset + mixedLatinCharset;
 
 function radixVal(
   input: string,
@@ -56,4 +61,4 @@ function decimalRadixValExtended(
   return radixVal(input.toString(), 10, radix, iCharset, oCharset);
 }
 
-export { decimalRadixVal, decimalRadixValExtended, radixVal };
+export { basicCharset, decimalRadixVal, decimalRadixValExtended, extendedCharset, radixVal };
