@@ -10,8 +10,7 @@ namespace Radon.Arc.Controller;
 [Authorize]
 [ApiController]
 [Route("api/auth")]
-public class AuthenticationController(IUsernameAuthService service, IJwtService jwt)
-    : ControllerBase
+public class AuthenticationController(IUsernameAuthService service) : ControllerBase
 {
     [AllowAnonymous]
     [HttpPost("login")]
