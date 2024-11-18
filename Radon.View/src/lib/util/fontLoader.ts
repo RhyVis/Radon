@@ -52,11 +52,22 @@ const getFontLoaders = (): Loader[] => {
       name: font.name,
       action: new Promise<void>(async (resolve, reject) => {
         try {
-          const fontData = await (await fetch(base + font.url)).arrayBuffer();
-          const fontFace = new FontFace(font.name, fontData);
-          const loadedFont = await fontFace.load();
-          document.fonts.add(loadedFont);
-          console.debug(`Successfully loaded ${font.name}`);
+          if (typeof FontFace !== "undefined") {
+            const fontFace = new FontFace(font.name, `url(${base + font.url})`);
+            const loadedFont = await fontFace.load();
+            document.fonts.add(loadedFont);
+            console.debug(`Successfully loaded ${font.name}`);
+          } else {
+            const style = document.createElement("style");
+            style.textContent = `
+              @font-face {
+                font-family: "${font.name}";
+                src: url("${base + font.url}") format("woff2");
+              }
+            `;
+            document.head.appendChild(style);
+            console.debug(`Successfully loaded ${font.name}`);
+          }
           resolve();
         } catch (e) {
           console.error(`Failed to load ${font.name}`);
