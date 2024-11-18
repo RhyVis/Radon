@@ -43,8 +43,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  await authGuard(to, from, async () => {
-    await onlineGuard(to, from, next);
+  await onlineGuard(to, from, async () => {
+    await authGuard(to, from, next);
   });
 });
 

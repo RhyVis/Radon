@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { basicCharset, extendedCharset, radixVal } from "@/pages/math/radix/scripts/radix";
+import { set } from "@vueuse/core";
 import { ArrowRightCircleIcon, ChartRingIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, reactive, ref } from "vue";
-import { set } from "@vueuse/core";
 
 const defaultCharset = basicCharset;
 const query = reactive({
@@ -18,11 +18,10 @@ const oCharsetInputStatus = ref<"default" | "error">("default");
 const result = computed(() => radixVal(query.input, query.iRadix, query.oRadix, query.iCharset, query.oCharset));
 const iOpt = computed(() => generateOpt(query.iCharset));
 const oOpt = computed(() => generateOpt(query.oCharset));
-const generateOpt = (charset: string) => {
-  return Array.from({ length: charset.length + 1 }, (_, i) => i)
+const generateOpt = (charset: string) =>
+  Array.from({ length: charset.length + 1 }, (_, i) => i)
     .slice(2)
     .map(i => ({ label: i.toString(), value: i }));
-};
 
 const handleCharsetChange = () => {
   set(iCharsetInputStatus, "default");

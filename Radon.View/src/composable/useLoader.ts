@@ -23,7 +23,7 @@ export const useLoader = (loaders: Loader[], loaderName: string = "Loader") => {
     if (!get(online)) {
       await MessagePlugin.warning(t("loader.notOnline", { name: loaderName }));
       error.value.push("OFFLINE");
-      set(current, "×");
+      set(current, "× OFFLINE");
       setCompleted(true);
       return;
     }
