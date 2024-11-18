@@ -9,6 +9,7 @@ import Icon from "unplugin-icons/vite";
 import { TDesignResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
+import Version from "vite-plugin-package-version";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
@@ -95,6 +96,7 @@ export default defineConfig({
       ],
     }),
     Icon(),
+    Version(),
   ],
   build: {
     chunkSizeWarningLimit: 850,

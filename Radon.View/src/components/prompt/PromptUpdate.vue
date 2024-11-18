@@ -23,6 +23,9 @@ const dialog = computed({
     if (!v) handleClose();
   },
 });
+const buildVersion = computed(() =>
+  t("buildVersion", { v: `${import.meta.env.PACKAGE_VERSION}.${get(vRemoteShort)}` }),
+);
 const handleClose = () => {
   set(offlineReady, false);
   set(needRefresh, false);
@@ -37,17 +40,20 @@ const handleClose = () => {
     :confirm-btn="t('btn.confirm')"
     :cancel-btn="t('btn.cancel')"
     :close-btn="false"
+    width="75%"
     @confirm="updateServiceWorker()"
     @close="handleClose"
     @overlay-click="() => {}"
   >
     <span class="r-no-select">{{ t("newReady", { v: vRemoteShort }) }}</span>
+    <span class="r-no-select">{{ buildVersion }}</span>
   </t-dialog>
 </template>
 
 <i18n locale="en">
 tt: Update available
 newReady: "New version content is ready: {v}"
+buildVersion: "Build version: {v}"
 btn: 
   confirm: Update
   cancel: Later
@@ -56,6 +62,7 @@ btn:
 <i18n locale="zh-CN">
 tt: 可更新
 newReady: "新版本内容已就绪: {v}"
+buildVersion: "构建版本: {v}"
 btn: 
   confirm: 更新
   cancel: 稍后

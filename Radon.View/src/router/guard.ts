@@ -6,6 +6,24 @@ import type { NavigationGuardNext, RouteLocationNormalizedGeneric, RouteLocation
 
 const { t } = i18n.global;
 
+export const onlineGuard = async (
+  to: RouteLocationNormalizedGeneric,
+  _: RouteLocationNormalizedLoaded,
+  next: NavigationGuardNext,
+) => {
+  if (to.meta.online) {
+    const b = get(useOnline());
+    if (b) {
+      next();
+    } else {
+      await MessagePlugin.warning(t("message.pageNeedNetwork"));
+      next(false);
+    }
+  } else {
+    next();
+  }
+};
+
 export const authGuard = async (
   to: RouteLocationNormalizedGeneric,
   _: RouteLocationNormalizedLoaded,
@@ -18,24 +36,6 @@ export const authGuard = async (
     } else {
       await MessagePlugin.warning(t("message.authInvalid"));
       next("/error");
-    }
-  } else {
-    next();
-  }
-};
-
-export const onlineGuard = async (
-  to: RouteLocationNormalizedGeneric,
-  _: RouteLocationNormalizedLoaded,
-  next: NavigationGuardNext,
-) => {
-  if (to.meta.online) {
-    const b = get(useOnline());
-    if (b) {
-      next();
-    } else {
-      await MessagePlugin.warning(t("message.pageNeedNetwork"));
-      next("/");
     }
   } else {
     next();
