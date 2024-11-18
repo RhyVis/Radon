@@ -10,6 +10,10 @@
     syncSuccess: "同步成功",
     noEmpty: "不能为空",
   },
+  message: {
+      authInvalid: "认证失败",
+      pageNeedNetwork: "此页面需要网络连接",
+  },
   auth: {
     message: {
       tokenValidAndRefreshed: "令牌有效并已刷新",

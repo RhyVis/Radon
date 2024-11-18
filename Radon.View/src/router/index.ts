@@ -1,11 +1,10 @@
-import { authValidate } from "@/lib/common/authMethods";
 import HomeView from "@/pages/base/home/index.vue";
+import { authGuard, onlineGuard } from "@/router/guard";
+import type { RouteRecordAssemble } from "@/router/records";
 import { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
-import { MessagePlugin } from "tdesign-vue-next";
-import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 
-const records: RouteRecordRaw[] = [
+const records: RouteRecordAssemble[] = [
   {
     path: "/",
     name: "Home",
@@ -43,18 +42,10 @@ const router = createRouter({
   routes: records,
 });
 
-router.beforeEach(async (to, _, next) => {
-  if (to.meta.auth) {
-    const b = await authValidate();
-    if (b) {
-      next();
-    } else {
-      await MessagePlugin.warning("令牌校验失败");
-      next("/error");
-    }
-  } else {
-    next();
-  }
+router.beforeEach(async (to, from, next) => {
+  await authGuard(to, from, async () => {
+    await onlineGuard(to, from, next);
+  });
 });
 
 export default router;

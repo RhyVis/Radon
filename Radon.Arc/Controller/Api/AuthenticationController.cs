@@ -8,8 +8,7 @@ using Radon.Security.Service.Interface;
 namespace Radon.Arc.Controller;
 
 [Authorize]
-[ApiController]
-[Route("api/auth")]
+[ApiController, Route("api/auth")]
 public class AuthenticationController(IUsernameAuthService service) : ControllerBase
 {
     [AllowAnonymous]

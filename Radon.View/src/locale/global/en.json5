@@ -10,6 +10,10 @@
     syncSuccess: "Sync successful",
     noEmpty: "Should not be empty",
   },
+  message: {
+    authInvalid: "Authentication failed",
+    pageNeedNetwork: "This page requires network connection",
+  },
   auth: {
     message: {
       tokenValidAndRefreshed: "Token is valid and refreshed",

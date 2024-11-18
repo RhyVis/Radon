@@ -3,6 +3,7 @@ import { basicCharset, extendedCharset, radixVal } from "@/pages/math/radix/scri
 import { ArrowRightCircleIcon, ChartRingIcon, RefreshIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, reactive, ref } from "vue";
+import { set } from "@vueuse/core";
 
 const defaultCharset = basicCharset;
 const query = reactive({
@@ -14,9 +15,7 @@ const query = reactive({
 });
 const iCharsetInputStatus = ref<"default" | "error">("default");
 const oCharsetInputStatus = ref<"default" | "error">("default");
-const result = computed(() => {
-  return radixVal(query.input, query.iRadix, query.oRadix, query.iCharset, query.oCharset);
-});
+const result = computed(() => radixVal(query.input, query.iRadix, query.oRadix, query.iCharset, query.oCharset));
 const iOpt = computed(() => generateOpt(query.iCharset));
 const oOpt = computed(() => generateOpt(query.oCharset));
 const generateOpt = (charset: string) => {
@@ -26,8 +25,8 @@ const generateOpt = (charset: string) => {
 };
 
 const handleCharsetChange = () => {
-  iCharsetInputStatus.value = "default";
-  oCharsetInputStatus.value = "default";
+  set(iCharsetInputStatus, "default");
+  set(oCharsetInputStatus, "default");
   const iL = query.iCharset.length;
   const oL = query.oCharset.length;
   if (query.iRadix > iL && iL > 2) {
@@ -38,19 +37,19 @@ const handleCharsetChange = () => {
   }
   if (iL < 2) {
     MessagePlugin.warning("字符集长度不能小于2");
-    iCharsetInputStatus.value = "error";
+    set(iCharsetInputStatus, "error");
   }
   if (oL < 2) {
     MessagePlugin.warning("字符集长度不能小于2");
-    oCharsetInputStatus.value = "error";
+    set(oCharsetInputStatus, "error");
   }
   if (new Set(query.iCharset).size < iL) {
     MessagePlugin.warning("字符集不允许重复字符");
-    iCharsetInputStatus.value = "error";
+    set(iCharsetInputStatus, "error");
   }
   if (new Set(query.oCharset).size < oL) {
     MessagePlugin.warning("字符集不允许重复字符");
-    oCharsetInputStatus.value = "error";
+    set(oCharsetInputStatus, "error");
   }
 };
 const handleCharsetInputReset = () => {

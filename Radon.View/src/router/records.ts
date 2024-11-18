@@ -1,15 +1,16 @@
 import type { RouteRecordRaw } from "vue-router";
 
-type RouterRecordMeta = {
+type RouteRecordMeta = {
   title: string;
   icon?: string;
   auth?: boolean;
+  online?: boolean;
 };
-type RouterRecordAssemble = RouteRecordRaw & {
-  meta: RouterRecordMeta;
+type RouteRecordAssemble = RouteRecordRaw & {
+  meta: RouteRecordMeta;
 };
 
-const baseRecords: RouterRecordAssemble[] = [
+const baseRecords: RouteRecordAssemble[] = [
   {
     path: "/credits",
     name: "Credits",
@@ -24,11 +25,12 @@ const baseRecords: RouterRecordAssemble[] = [
     component: () => import("@/pages/base/auth/index.vue"),
     meta: {
       title: "Auth",
+      online: true,
     },
   },
 ];
 
-const dataRecords: RouterRecordAssemble[] = [
+const dataRecords: RouteRecordAssemble[] = [
   {
     path: "/spam",
     name: "Spam",
@@ -36,6 +38,7 @@ const dataRecords: RouterRecordAssemble[] = [
     meta: {
       title: "弹药库",
       icon: "loudspeaker",
+      online: true,
     },
   },
   {
@@ -46,6 +49,7 @@ const dataRecords: RouterRecordAssemble[] = [
       title: "字符存储",
       icon: "save",
       auth: true,
+      online: true,
     },
   },
   {
@@ -56,11 +60,12 @@ const dataRecords: RouterRecordAssemble[] = [
       title: "导航",
       icon: "indicator",
       auth: true,
+      online: true,
     },
   },
 ];
 
-const mystRecords: RouterRecordAssemble[] = [
+const mystRecords: RouteRecordAssemble[] = [
   {
     path: "/tarot",
     name: "Tarot",
@@ -68,11 +73,12 @@ const mystRecords: RouterRecordAssemble[] = [
     meta: {
       title: "电子塔罗",
       icon: "card",
+      online: true,
     },
   },
 ];
 
-const mathRecords: RouterRecordAssemble[] = [
+const mathRecords: RouteRecordAssemble[] = [
   {
     path: "/radix",
     name: "Radix",
@@ -93,7 +99,7 @@ const mathRecords: RouterRecordAssemble[] = [
   },
 ];
 
-const drawRecords: RouterRecordAssemble[] = [
+const drawRecords: RouteRecordAssemble[] = [
   {
     path: "/pjsk-sticker",
     name: "PJSK-Sticker",
@@ -101,6 +107,7 @@ const drawRecords: RouterRecordAssemble[] = [
     meta: {
       title: "PJSK表情",
       icon: "edit-2",
+      online: true,
     },
   },
   {
@@ -110,11 +117,12 @@ const drawRecords: RouterRecordAssemble[] = [
     meta: {
       title: "BA横幅",
       icon: "typography",
+      online: true,
     },
   },
 ];
 
-const utilRecords: RouterRecordAssemble[] = [
+const utilRecords: RouteRecordAssemble[] = [
   {
     path: "/codex",
     name: "Codex",
@@ -122,6 +130,7 @@ const utilRecords: RouterRecordAssemble[] = [
     meta: {
       title: "抽象转义",
       icon: "chat-error",
+      online: true,
     },
   },
   {
@@ -149,9 +158,10 @@ const utilRecords: RouterRecordAssemble[] = [
     meta: {
       title: "PDX Parser",
       icon: "ruler",
+      online: true,
     },
   },
 ];
 
 export { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords };
-export type { RouterRecordAssemble };
+export type { RouteRecordAssemble };

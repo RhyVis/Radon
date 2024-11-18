@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import type { RouterRecordAssemble } from "@/router/records";
+import type { RouteRecordAssemble } from "@/router/records";
 import { useGlobalStore } from "@/store/global";
 import { set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
@@ -8,7 +8,7 @@ import type { MenuRoute, MenuValue } from "tdesign-vue-next";
 defineProps<{
   name: string;
   iconName: string;
-  records: RouterRecordAssemble[];
+  records: RouteRecordAssemble[];
 }>();
 
 const global = useGlobalStore();
