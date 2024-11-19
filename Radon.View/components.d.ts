@@ -60,6 +60,7 @@ declare module 'vue' {
     TTabPanel: typeof import('tdesign-vue-next')['TabPanel']
     TTabs: typeof import('tdesign-vue-next')['Tabs']
     TTag: typeof import('tdesign-vue-next')['Tag']
+    TTagInput: typeof import('tdesign-vue-next')['TagInput']
     TText: typeof import('tdesign-vue-next')['Text']
     TTextarea: typeof import('tdesign-vue-next')['Textarea']
     TTitle: typeof import('tdesign-vue-next')['Title']

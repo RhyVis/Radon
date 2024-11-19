@@ -97,7 +97,7 @@ const handleRefreshToken = async () => {
 
 <template>
   <content-layout :title="t('tt')" :subtitle="t('st')">
-    <t-form>
+    <t-form @submit="handleLogin">
       <t-form-item :label="t('input.username')">
         <t-input v-model="query.username" />
       </t-form-item>
@@ -105,7 +105,7 @@ const handleRefreshToken = async () => {
         <t-input v-model="query.password" type="password" />
       </t-form-item>
       <t-form-item :label="t('input.login')">
-        <t-button shape="round" theme="primary" @click="handleLogin" :loading="loading">
+        <t-button shape="round" theme="primary" type="submit" :loading="loading">
           <LoginIcon v-if="!loading" />
         </t-button>
       </t-form-item>

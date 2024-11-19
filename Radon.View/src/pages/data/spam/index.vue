@@ -3,7 +3,7 @@ import { apiPost, apiPutState } from "@/lib/common/apiMethods";
 import { codeTypes, spamColumns, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import { useGlobalStore } from "@/store/global";
-import { set, useClipboard, useToggle } from "@vueuse/core";
+import { get, set, useClipboard, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -12,18 +12,21 @@ import { useI18n } from "vue-i18n";
 
 const global = useGlobalStore();
 const store = useSpamStore();
-const { qType, qDict, qSize, aType, aText, activeTab } = storeToRefs(store);
+const { qType, qDict, qSize, qIds, aType, aText, activeTab } = storeToRefs(store);
 const { copy } = useClipboard();
 const { t } = useI18n();
 const [resultLoading, setResultLoading] = useToggle(false);
 const [appendLoading, setAppendLoading] = useToggle(false);
 const [appendDialog, setAppendDialog] = useToggle(false);
+const precise = ref(false);
+const preciseStatus = ref<"default" | "error">("default");
 
 const result = ref<TextEntry[]>([
   { id: 666, text: "快乐生活每一天，请不要用这个工具的结果来攻击他人哦😊" },
   { id: 999, text: "仅供学习交流使用，由您不当使用造成的后果，将由您承担" },
 ]);
 const columns = computed(() => spamColumns(handleCopy));
+const tagValid = computed(() => get(qIds).every(item => Number.isInteger(Number(item))));
 
 const handleTabChange = (key: string | number) => {
   switch (key) {
@@ -39,6 +42,13 @@ const handleTabChange = (key: string | number) => {
     default:
   }
 };
+const handleTagInput = () => {
+  set(preciseStatus, "default");
+  if (!get(tagValid)) {
+    set(preciseStatus, "error");
+    MessagePlugin.warning("请输入正确的ID");
+  }
+};
 const handleCopy = (s: string) => {
   try {
     copy(s.replace(/[\r\n]|\r\n|\\r\\n/, "")).then(() => MessagePlugin.success("复制成功"));
@@ -48,9 +58,16 @@ const handleCopy = (s: string) => {
   }
 };
 const handleSpam = async () => {
+  const p = get(precise);
+  if (p && !get(tagValid)) {
+    void MessagePlugin.warning("请输入正确的ID");
+    return;
+  }
   setResultLoading(true);
   try {
-    set(result, (await apiPost<TextEntry[]>("/api/spam", store.query)).data);
+    const q = get(precise) ? store.queryPrecise : store.query;
+    const u = get(precise) ? "/api/spam/precise" : "/api/spam";
+    set(result, (await apiPost<TextEntry[]>(u, q)).data);
   } catch (e) {
     console.error(e);
     await MessagePlugin.error("获取信息失败");
@@ -143,8 +160,14 @@ const handleAppend = async (repeat: boolean = false) => {
         <t-form-item label="转义方式">
           <SelSimple v-model="qDict" :options="codeTypes" />
         </t-form-item>
-        <t-form-item label="妙语连珠">
+        <t-form-item v-if="!precise" label="妙语连珠">
           <t-input-number v-model="qSize" :min="1" :max="10" :auto-width="true" :allow-input-over-limit="false" />
+        </t-form-item>
+        <t-form-item v-if="precise" label="ID">
+          <t-tag-input v-model="qIds" :status="preciseStatus" :clearable="true" @change="handleTagInput" />
+        </t-form-item>
+        <t-form-item label="精确ID" help="指定选择的条目ID">
+          <t-switch v-model="precise" />
         </t-form-item>
         <t-form-item label="开火！">
           <t-space>

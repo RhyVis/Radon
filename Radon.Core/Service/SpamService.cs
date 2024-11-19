@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Masuit.Tools;
+using NLog;
 using Radon.Common.Core.DI;
 using Radon.Common.Core.Extension;
 using Radon.Core.Data.Entity;
@@ -55,6 +56,44 @@ public class SpamService(
             SpamType.SN => HandleTransform(mnRepo.FindRand(size), dict),
             SpamType.SX => HandleTransform(mxRepo.FindRand(size), dict),
             _ => SpamRes.FromEntity(new DummySpamEntity()),
+        };
+    }
+
+    public SpamRes FetchPrecise(SpamFetchPreciseReq req)
+    {
+        var type = req.Data.Type.TryParseEnum(SpamType.N);
+        var dict = req.Data.Dict.TryParseEnum(DictType.NONE);
+        var ids = req.Data.Ids;
+        _logger.Info($"Recieved request for [{ids.Join()}] precise spam of type {type}");
+        if (ids.IsNullOrEmpty())
+        {
+            return SpamRes.FromDummy();
+        }
+        if (ids.Length == 1)
+        {
+            var id = ids[0];
+            return type switch
+            {
+                SpamType.AK => HandleTransform(akRepo.Find(id), dict),
+                SpamType.GS => HandleTransform(gsRepo.Find(id), dict),
+                SpamType.ML => HandleTransform(mlRepo.Find(id), dict),
+                SpamType.AC => HandleTransform(acRepo.Find(id), dict),
+                SpamType.DN => HandleTransform(dnRepo.Find(id), dict),
+                SpamType.SN => HandleTransform(mnRepo.Find(id), dict),
+                SpamType.SX => HandleTransform(mxRepo.Find(id), dict),
+                _ => SpamRes.FromDummy(),
+            };
+        }
+        return type switch
+        {
+            SpamType.AK => HandleTransform(akRepo.FindIn(ids), dict),
+            SpamType.GS => HandleTransform(gsRepo.FindIn(ids), dict),
+            SpamType.ML => HandleTransform(mlRepo.FindIn(ids), dict),
+            SpamType.AC => HandleTransform(acRepo.FindIn(ids), dict),
+            SpamType.DN => HandleTransform(dnRepo.FindIn(ids), dict),
+            SpamType.SN => HandleTransform(mnRepo.FindIn(ids), dict),
+            SpamType.SX => HandleTransform(mxRepo.FindIn(ids), dict),
+            _ => SpamRes.FromDummy(),
         };
     }
 
@@ -116,7 +155,7 @@ public class SpamService(
         catch (Exception e)
         {
             _logger.Error(e, $"Failed to append spam for type {type}");
-            throw;
+            return false;
         }
     }
 

@@ -38,4 +38,9 @@ public class SpamRes : BaseApiRes<List<SpamRes.SpamResData>>
     {
         return new SpamRes(entities);
     }
+
+    public static SpamRes FromDummy()
+    {
+        return new SpamRes(new DummySpamEntity());
+    }
 }

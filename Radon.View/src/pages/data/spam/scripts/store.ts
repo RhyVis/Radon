@@ -1,9 +1,24 @@
 import { defineStore } from "pinia";
 
+type SpamStore = {
+  qType: string;
+  qDict: string;
+  qSize: number;
+  qIds: string[];
+  aType: string;
+  aText: string;
+  activeTab: string;
+};
+
 type Query = {
   type: string;
   dict: string;
   size: number;
+};
+type QueryPrecise = {
+  type: string;
+  dict: string;
+  ids: number[];
 };
 type QueryAppend = {
   type: string;
@@ -11,10 +26,11 @@ type QueryAppend = {
 };
 
 export const useSpamStore = defineStore("spam", {
-  state: () => ({
+  state: (): SpamStore => ({
     qType: "sn",
     qDict: "none",
     qSize: 1,
+    qIds: [],
     aType: "sn",
     aText: "",
     activeTab: "spam",
@@ -25,6 +41,13 @@ export const useSpamStore = defineStore("spam", {
         type: state.qType,
         dict: state.qDict,
         size: state.qSize,
+      };
+    },
+    queryPrecise(state): QueryPrecise {
+      return {
+        type: state.qType,
+        dict: state.qDict,
+        ids: state.qIds.map(id => Number(id)),
       };
     },
     queryAppend(state): QueryAppend {
@@ -40,6 +63,6 @@ export const useSpamStore = defineStore("spam", {
     },
   },
   persist: {
-    pick: ["qType", "qDict", "qSize", "aType", "activeTab"],
+    pick: ["qType", "qDict", "qSize", "qIds", "aType", "activeTab"],
   },
 });

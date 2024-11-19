@@ -2,6 +2,8 @@
 
 namespace Radon.Data.Repository;
 
-public abstract class BaseIdRepository<E, K>(IFreeSql fsql) : BaseRepository<E, K>(fsql)
+public abstract class BaseIdRepository<E>(IFreeSql fsql) : BaseRepository<E, long>(fsql)
     where E : BaseIdEntity
-    where K : struct { }
+{
+    public List<E> FindIn(IEnumerable<long> ids) => Select.Where(x => ids.Contains(x.Id)).ToList();
+}

@@ -6,13 +6,16 @@ using Radon.Core.Service.Interface;
 
 namespace Radon.Arc.Controller;
 
-[ApiController]
-[Route("api/spam")]
+[ApiController, Route("api/spam")]
 public class SpamController(ISpamService service) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(SpamRes), StatusCodes.Status200OK)]
     public IActionResult Fetch(SpamFetchReq req) => Ok(service.Fetch(req));
+
+    [HttpPost("precise")]
+    [ProducesResponseType(typeof(SpamRes), StatusCodes.Status200OK)]
+    public IActionResult Precise(SpamFetchPreciseReq req) => Ok(service.FetchPrecise(req));
 
     [Authorize]
     [HttpPut]
