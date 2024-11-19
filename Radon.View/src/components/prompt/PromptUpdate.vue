@@ -1,14 +1,15 @@
 ﻿<script setup lang="ts">
+import { formatFromTimestamp } from "@/lib/util/dateFormatter.ts";
 import { useGlobalStore } from "@/store/global";
-import { get, set } from "@vueuse/core";
+import { get, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-const { vRemoteShort } = storeToRefs(useGlobalStore());
-const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
+const { vRemoteShort, vRemote } = storeToRefs(useGlobalStore());
+const { needRefresh, updateServiceWorker } = useRegisterSW({
   immediate: true,
   onRegisteredSW(_, r) {
     if (r)
@@ -17,18 +18,16 @@ const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
       }, 30000);
   },
 });
+const [dialogPass, setDialogPass] = useToggle(true);
 const dialog = computed({
-  get: () => get(needRefresh),
+  get: () => get(dialogPass) && get(needRefresh),
   set: v => {
     if (!v) handleClose();
   },
 });
-const buildVersion = computed(() =>
-  t("buildVersion", { v: `${import.meta.env.PACKAGE_VERSION}.${get(vRemoteShort)}` }),
-);
+const buildVersion = computed(() => `${import.meta.env.PACKAGE_VERSION}.${get(vRemoteShort)}`);
 const handleClose = () => {
-  set(offlineReady, false);
-  set(needRefresh, false);
+  setDialogPass(false);
 };
 </script>
 
@@ -45,15 +44,27 @@ const handleClose = () => {
     @close="handleClose"
     @overlay-click="() => {}"
   >
-    <span class="r-no-select">{{ t("newReady", { v: vRemoteShort }) }}</span>
-    <span class="r-no-select">{{ buildVersion }}</span>
+    <t-space direction="vertical">
+      <t-text class="r-no-select">
+        {{ t("newReady") }}
+      </t-text>
+      <t-text class="r-no-select">
+        {{ t("buildVersion") }}
+        <t-tag>{{ buildVersion }}</t-tag>
+      </t-text>
+      <t-text class="r-no-select">
+        {{ t("buildTime") }}
+        <t-tag>{{ formatFromTimestamp(get(vRemote)) }}</t-tag>
+      </t-text>
+    </t-space>
   </t-dialog>
 </template>
 
 <i18n locale="en">
 tt: Update available
-newReady: "New version content is ready: {v}"
-buildVersion: "Build version: {v}"
+newReady: "New version content is ready"
+buildVersion: "Build version: "
+buildTime: "Build time: "
 btn: 
   confirm: Update
   cancel: Later
@@ -61,8 +72,9 @@ btn:
 
 <i18n locale="zh-CN">
 tt: 可更新
-newReady: "新版本内容已就绪: {v}"
-buildVersion: "构建版本: {v}"
+newReady: "新版本内容已就绪"
+buildVersion: "构建版本: "
+buildTime: "构建时间: "
 btn: 
   confirm: 更新
   cancel: 稍后

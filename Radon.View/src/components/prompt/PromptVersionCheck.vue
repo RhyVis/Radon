@@ -13,6 +13,7 @@ const global = useGlobalStore();
 const { t } = useI18n();
 const { vRemote, vState } = storeToRefs(global);
 
+const vPackage = computed(() => import.meta.env.PACKAGE_VERSION);
 const vLocal = VersionView.compileTime;
 
 const vLocalShort = computed(() => radixValExtended(vLocal));
@@ -45,9 +46,9 @@ const tagIcon = computed(() => {
 const tagValue = computed(() => {
   switch (get(vState)) {
     case 0:
-      return `${get(vLocalShort)} ${t("display.latest")}`;
+      return `${get(vPackage)}.${get(vLocalShort)} ${t("display.latest")}`;
     case 1:
-      return `${get(vLocalShort)} -> ${get(vRemoteShort)} ${t("display.update")}`;
+      return `${get(vPackage)}.${get(vLocalShort)} -> ${get(vPackage)}.${get(vRemoteShort)} ${t("display.update")}`;
     case -1:
       return t("display.error");
     default:

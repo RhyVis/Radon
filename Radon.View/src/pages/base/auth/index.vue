@@ -7,9 +7,11 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { reactive, ref, computed } from "vue";
 import { authLogout } from "@/lib/common/authMethods";
+import { set, useToggle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 
 const { t } = useI18n();
-const global = useGlobalStore();
+const { authPassed } = storeToRefs(useGlobalStore());
 const router = useRouter();
 const query = reactive({
   username: "",
@@ -20,8 +22,7 @@ const storageToken = computed({
   get: () => localStorage.getItem("token") || "",
   set: (v: string) => localStorage.setItem("token", v),
 });
-
-const loginLoading = ref(false);
+const [loading, setLoading] = useToggle(false);
 const tokenValidSign = ref(0);
 const tokenValidDisplay = computed(() => {
   switch (tokenValidSign.value) {
@@ -36,28 +37,41 @@ const tokenValidDisplay = computed(() => {
 
 const handleLogin = async () => {
   if (query.username.length > 0 && query.password.length > 0) {
-    loginLoading.value = true;
-    const b = await authLogin(query);
-    if (b) {
-      global.authPassed = true;
-      await MessagePlugin.success(t("msg.loginSuccess"));
-    } else {
+    setLoading(true);
+    try {
+      const b = await authLogin(query);
+      if (b) {
+        set(authPassed, true);
+        setTimeout(() => router.push("/"), 2000);
+        await MessagePlugin.success(t("msg.loginSuccess"));
+      } else {
+        await MessagePlugin.warning(t("msg.loginFailed"));
+      }
+    } catch (e) {
+      console.error(e);
       await MessagePlugin.warning(t("msg.loginFailed"));
+    } finally {
+      setLoading(false);
     }
-    loginLoading.value = false;
-    setTimeout(() => router.push("/"), 2000);
   } else {
     await MessagePlugin.warning(t("msg.noEmpty"));
   }
 };
 const handleLogout = async () => {
-  if (await authLogout()) {
-    global.authPassed = false;
-    setTimeout(() => router.push("/"), 2000);
-    await MessagePlugin.success(t("msg.logoutSuccess"));
-  } else {
+  setLoading(true);
+  try {
+    if (await authLogout()) {
+      set(authPassed, false);
+      setTimeout(() => router.push("/"), 2000);
+      await MessagePlugin.success(t("msg.logoutSuccess"));
+    } else {
+      await MessagePlugin.warning(t("msg.logoutFailed"));
+    }
+  } catch (e) {
+    console.error(e);
     await MessagePlugin.warning(t("msg.logoutFailed"));
   }
+  setLoading(false);
 };
 const handleTokenStateCheck = async () => {
   tokenValidSign.value = 0;
@@ -91,33 +105,35 @@ const handleRefreshToken = async () => {
         <t-input v-model="query.password" type="password" />
       </t-form-item>
       <t-form-item :label="t('input.login')">
-        <t-button shape="round" theme="primary" @click="handleLogin" :loading="loginLoading">
-          <LoginIcon />
+        <t-button shape="round" theme="primary" @click="handleLogin" :loading="loading">
+          <LoginIcon v-if="!loading" />
         </t-button>
       </t-form-item>
-      <t-form-item v-if="global.authPassed" :label="t('input.logout')" @click="handleLogout">
-        <t-button shape="round" theme="warning">
-          <LogoutIcon />
-        </t-button>
-      </t-form-item>
-      <t-divider />
-      <t-form-item :label="t('input.tokenState')">
-        <t-button shape="round" theme="default" @click="handleTokenStateCheck">
-          <Component :is="tokenValidDisplay" />
-        </t-button>
-      </t-form-item>
-      <t-form-item :label="t('input.refreshToken')">
-        <t-button shape="round" theme="default" @click="handleRefreshToken">
-          <ArrowUpDown2Icon />
-        </t-button>
-      </t-form-item>
-      <t-form-item :label="t('input.showToken')">
-        <t-popup :content="storageToken" trigger="click" :destroy-on-close="true">
-          <t-button shape="round" theme="default">
-            <Fingerprint2Icon />
+      <template v-if="authPassed">
+        <t-form-item :label="t('input.logout')">
+          <t-button shape="round" theme="warning" @click="handleLogout" :loading="loading">
+            <LogoutIcon v-if="!loading" />
           </t-button>
-        </t-popup>
-      </t-form-item>
+        </t-form-item>
+        <t-divider />
+        <t-form-item :label="t('input.tokenState')">
+          <t-button shape="round" theme="default" @click="handleTokenStateCheck">
+            <Component :is="tokenValidDisplay" />
+          </t-button>
+        </t-form-item>
+        <t-form-item :label="t('input.refreshToken')">
+          <t-button shape="round" theme="default" @click="handleRefreshToken">
+            <ArrowUpDown2Icon />
+          </t-button>
+        </t-form-item>
+        <t-form-item :label="t('input.showToken')">
+          <t-popup :content="storageToken" trigger="click" :destroy-on-close="true">
+            <t-button shape="round" theme="default">
+              <Fingerprint2Icon />
+            </t-button>
+          </t-popup>
+        </t-form-item>
+      </template>
     </t-form>
   </content-layout>
 </template>
