@@ -1,37 +1,38 @@
+import { SpamType } from "@/pages/data/spam/scripts/define.ts";
 import { defineStore } from "pinia";
 
 type SpamStore = {
-  qType: string;
+  qType: SpamType;
   qDict: string;
   qSize: number;
   qIds: string[];
-  aType: string;
+  aType: SpamType;
   aText: string;
   activeTab: string;
 };
 
 type Query = {
-  type: string;
+  type: SpamType;
   dict: string;
   size: number;
 };
 type QueryPrecise = {
-  type: string;
+  type: SpamType;
   dict: string;
   ids: number[];
 };
 type QueryAppend = {
-  type: string;
+  type: SpamType;
   text: string;
 };
 
 export const useSpamStore = defineStore("spam", {
   state: (): SpamStore => ({
-    qType: "sn",
+    qType: SpamType.SpamMin,
     qDict: "none",
     qSize: 1,
     qIds: [],
-    aType: "sn",
+    aType: SpamType.SpamMin,
     aText: "",
     activeTab: "spam",
   }),

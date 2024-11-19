@@ -18,7 +18,7 @@ public class SpamController(ISpamService service) : ControllerBase
     public IActionResult Precise(SpamFetchPreciseReq req) => Ok(service.FetchPrecise(req));
 
     [Authorize]
-    [HttpPut]
+    [HttpPut("append")]
     [ProducesResponseType(typeof(StateRes), StatusCodes.Status200OK)]
     public IActionResult Append(SpamAppendReq req) => Ok(new StateRes(service.Append(req)));
 }

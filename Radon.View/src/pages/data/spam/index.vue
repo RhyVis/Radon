@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { apiPost, apiPutState } from "@/lib/common/apiMethods";
-import { codeTypes, spamColumns, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
+import { codeTypes, spamColumns, SpamType, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import { useGlobalStore } from "@/store/global";
 import { get, set, useClipboard, useToggle } from "@vueuse/core";
@@ -15,7 +15,7 @@ import {
   ToolsIcon,
 } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const global = useGlobalStore();
@@ -40,13 +40,13 @@ const tagValid = computed(() => get(qIds).every(item => Number.isInteger(Number(
 const handleTabChange = (key: string | number) => {
   switch (key) {
     case "spam":
-      set(qType, "sn");
+      set(qType, SpamType.SpamMin);
       break;
     case "mmr":
-      set(qType, "gs");
+      set(qType, SpamType.Genshin);
       break;
     case "meme":
-      set(qType, "ac");
+      set(qType, SpamType.ACGN);
       break;
     default:
   }
@@ -87,7 +87,7 @@ const handleFetch = async () => {
 };
 const handleFetchAgain = async () => {
   if (!get(used)) {
-    await MessagePlugin.warning("请先使用一次");
+    await MessagePlugin.warning("请先获取一次");
     return;
   }
   const ids = get(result).map(e => e.id);
@@ -117,7 +117,7 @@ const handleAppend = async (repeat: boolean = false) => {
   }
   setAppendLoading(true);
   try {
-    const r = (await apiPutState("/api/spam", store.queryAppend)).data;
+    const r = (await apiPutState("/api/spam/append", store.queryAppend)).data;
     if (r) {
       store.clearAppendQuery();
       void MessagePlugin.success("追加成功");
@@ -134,6 +134,11 @@ const handleAppend = async (repeat: boolean = false) => {
     }
   }
 };
+
+watch(
+  () => qType,
+  () => setUsed(false),
+);
 </script>
 
 <template>
