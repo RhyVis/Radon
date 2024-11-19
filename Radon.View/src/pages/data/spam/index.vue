@@ -5,7 +5,15 @@ import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import { useGlobalStore } from "@/store/global";
 import { get, set, useClipboard, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { CloseIcon, HomeIcon, PlayCircleStrokeAddIcon, ReplayIcon, ToolsIcon } from "tdesign-icons-vue-next";
+import {
+  CloseIcon,
+  HomeIcon,
+  LoudspeakerIcon,
+  PlayCircleStrokeAddIcon,
+  RefreshIcon,
+  ReplayIcon,
+  ToolsIcon,
+} from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -18,6 +26,7 @@ const { t } = useI18n();
 const [resultLoading, setResultLoading] = useToggle(false);
 const [appendLoading, setAppendLoading] = useToggle(false);
 const [appendDialog, setAppendDialog] = useToggle(false);
+const [used, setUsed] = useToggle(false);
 const precise = ref(false);
 const preciseStatus = ref<"default" | "error">("default");
 
@@ -31,13 +40,13 @@ const tagValid = computed(() => get(qIds).every(item => Number.isInteger(Number(
 const handleTabChange = (key: string | number) => {
   switch (key) {
     case "spam":
-      qType.value = "sn";
+      set(qType, "sn");
       break;
     case "mmr":
-      qType.value = "gs";
+      set(qType, "gs");
       break;
     case "meme":
-      qType.value = "ac";
+      set(qType, "ac");
       break;
     default:
   }
@@ -57,7 +66,7 @@ const handleCopy = (s: string) => {
     MessagePlugin.error("复制失败");
   }
 };
-const handleSpam = async () => {
+const handleFetch = async () => {
   const p = get(precise);
   if (p && !get(tagValid)) {
     void MessagePlugin.warning("请输入正确的ID");
@@ -68,6 +77,32 @@ const handleSpam = async () => {
     const q = get(precise) ? store.queryPrecise : store.query;
     const u = get(precise) ? "/api/spam/precise" : "/api/spam";
     set(result, (await apiPost<TextEntry[]>(u, q)).data);
+    setUsed(true);
+  } catch (e) {
+    console.error(e);
+    await MessagePlugin.error("获取信息失败");
+  } finally {
+    setResultLoading(false);
+  }
+};
+const handleFetchAgain = async () => {
+  if (!get(used)) {
+    await MessagePlugin.warning("请先使用一次");
+    return;
+  }
+  const ids = get(result).map(e => e.id);
+  setResultLoading(true);
+  try {
+    set(
+      result,
+      (
+        await apiPost<TextEntry[]>("/api/spam/precise", {
+          type: get(qType),
+          dict: get(qDict),
+          ids: ids,
+        })
+      ).data,
+    );
   } catch (e) {
     console.error(e);
     await MessagePlugin.error("获取信息失败");
@@ -85,9 +120,9 @@ const handleAppend = async (repeat: boolean = false) => {
     const r = (await apiPutState("/api/spam", store.queryAppend)).data;
     if (r) {
       store.clearAppendQuery();
-      await MessagePlugin.success("追加成功");
+      void MessagePlugin.success("追加成功");
     } else {
-      await MessagePlugin.error("追加失败");
+      void MessagePlugin.error("追加失败");
     }
   } catch (e) {
     console.error(e);
@@ -171,7 +206,12 @@ const handleAppend = async (repeat: boolean = false) => {
         </t-form-item>
         <t-form-item label="开火！">
           <t-space>
-            <t-button shape="round" theme="warning" variant="outline" @click="handleSpam">😤</t-button>
+            <t-button shape="round" theme="danger" @click="handleFetch" :loading="resultLoading">
+              <LoudspeakerIcon v-if="!resultLoading" />
+            </t-button>
+            <t-button v-if="used" shape="circle" theme="default" @click="handleFetchAgain" :loading="resultLoading">
+              <RefreshIcon v-if="!resultLoading" />
+            </t-button>
             <btn-copy :target="result.map(e => (e as TextEntry).text).join('\n')" />
           </t-space>
         </t-form-item>
