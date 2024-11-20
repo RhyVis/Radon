@@ -11,6 +11,8 @@ public abstract class SpamEntity : BaseIdEntity
 {
     [Column(StringLength = -1, IsNullable = false)]
     public string Text { get; set; } = null!;
+
+    public static DummySpamEntity Dummy() => new();
 }
 
 [Table(DisableSyncStructure = true)]
@@ -18,7 +20,7 @@ public class DummySpamEntity : SpamEntity
 {
     public DummySpamEntity()
     {
-        Id = 0;
+        Id = -1;
         Text = "No data found";
     }
 }

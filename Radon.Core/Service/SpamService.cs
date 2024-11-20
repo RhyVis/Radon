@@ -164,7 +164,7 @@ public class SpamService(
     {
         if (entity is null)
         {
-            return SpamRes.FromEntity(new DummySpamEntity());
+            return SpamRes.FromDummy();
         }
         entity.Text = dictProcessor.ProcessDict(type, entity.Text, true);
         return SpamRes.FromEntity(entity);
@@ -175,7 +175,7 @@ public class SpamService(
     {
         if (entities.Count == 0)
         {
-            return SpamRes.FromEntity(new DummySpamEntity());
+            return SpamRes.FromDummy();
         }
         foreach (var entity in entities)
         {

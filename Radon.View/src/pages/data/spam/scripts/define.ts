@@ -55,7 +55,7 @@ export const spamColumns: (copyFn: CopyFn) => TableProps["columns"] = copyFn => 
         return h(
           Space,
           { direction: "vertical", size: 2 },
-          (row.text as string).split(/[\r\n]|\r\n|\\r\\n/).map((t, i) => h(Text, { key: i }, { default: () => t })),
+          (row.text as string).split(/[\r\n]|\r\n/).map((t, i) => h(Text, { key: i }, { default: () => t })),
         );
       },
     },
