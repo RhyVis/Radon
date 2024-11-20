@@ -2,4 +2,4 @@
 
 namespace Radon.Core.Model.Response;
 
-public class UnsetRes(dynamic data) : BaseApiRes<dynamic>((object)data) { }
+public class UnsetRes(dynamic data) : BaseApiRes<dynamic>((object)data);

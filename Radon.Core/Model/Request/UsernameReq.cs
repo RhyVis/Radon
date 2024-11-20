@@ -3,4 +3,4 @@ using Radon.Core.Model.Extra;
 
 namespace Radon.Core.Model.Request;
 
-public class UsernameReq : BaseApiReq<UsernamePair> { }
+public class UsernameReq : BaseApiReq<UsernamePair>;

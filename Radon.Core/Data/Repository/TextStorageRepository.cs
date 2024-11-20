@@ -3,4 +3,4 @@ using Radon.Data.Repository;
 
 namespace Radon.Core.Data.Repository;
 
-public class TextStorageRepository(IFreeSql fsql) : BaseRepository<EntryTextStorage, long>(fsql) { }
+public class TextStorageRepository(IFreeSql fsql) : BaseRepository<EntryTextStorage, long>(fsql);

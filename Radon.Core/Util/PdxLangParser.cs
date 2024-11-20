@@ -53,6 +53,7 @@ public class PdxLangParser
 
     public List<PdxLangParsedItem> Parse()
     {
+        _logger.Info($"Reading PdxLang for {_lines[0].Trim().TrimEnd(':')}");
         return _lines
             .Skip(1)
             .Where(l => !(string.IsNullOrWhiteSpace(l) || l.TrimStart().StartsWith('#')))

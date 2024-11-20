@@ -32,14 +32,14 @@ axiosInstance.interceptors.response.use(
     if (resp) {
       const errData = resp.data as ErrResponse;
       if (errData) {
-        await MessagePlugin.error(`${t("common.serverError")}(${errData.code}): ${errData.msg}`);
+        void MessagePlugin.error(`${t("common.serverError")}(${errData.code}): ${errData.msg}`);
         console.error(error);
         console.error(JSON.parse(errData.data));
       } else {
-        await MessagePlugin.error(`${t("common.networkError")}(${resp.status}): ${resp.statusText}`);
+        void MessagePlugin.error(`${t("common.networkError")}(${resp.status}): ${resp.statusText}`);
       }
     } else {
-      await MessagePlugin.error(t("common.networkError"));
+      void MessagePlugin.error(t("common.networkError"));
     }
 
     return Promise.reject(error);

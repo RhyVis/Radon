@@ -2,11 +2,11 @@
 
 public class TarotDeck
 {
-    public string Name { get; set; } = "";
-    public string Loc { get; set; } = "";
-    public bool Full { get; set; }
-    public bool HasR { get; set; }
-    public List<TarotCard> Deck { get; set; } = new();
+    public string Name { get; init; } = "";
+    public string Loc { get; init; } = "";
+    public bool Full { get; init; }
+    public bool HasR { get; init; }
+    public List<TarotCard> Deck { get; init; } = [];
 
     public TarotDeckInfo BuildInfo() =>
         new()

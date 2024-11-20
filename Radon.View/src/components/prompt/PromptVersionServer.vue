@@ -87,7 +87,7 @@ local: Client Offline
 </i18n>
 
 <i18n locale="zh-CN">
-serverVersion: "服务器版本："
+serverVersion: "服务端版本："
 await: 等待中
 error: 错误
 local: 客户端离线

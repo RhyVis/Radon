@@ -12,14 +12,14 @@ const tagTheme = computed(() => {
   if (get(status)) {
     return "success";
   } else {
-    return "danger";
+    return "default";
   }
 });
 const tagIcon = computed(() => {
   if (get(status)) {
     return "check-circle";
   } else {
-    return "error-circle";
+    return "info-circle";
   }
 });
 const tagValue = computed(() => {

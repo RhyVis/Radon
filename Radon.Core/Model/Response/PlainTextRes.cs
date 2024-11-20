@@ -2,4 +2,4 @@
 
 namespace Radon.Core.Model.Response;
 
-public class PlainTextRes(string data) : BaseApiRes<string>(data) { }
+public class PlainTextRes(string data) : BaseApiRes<string>(data);

@@ -3,4 +3,4 @@ using Radon.Data.Repository;
 
 namespace Radon.Core.Data.Repository;
 
-public class NavigationRepository(IFreeSql fsql) : BaseRepository<EntryNavigation, long>(fsql) { }
+public class NavigationRepository(IFreeSql fsql) : BaseRepository<EntryNavigation, long>(fsql);

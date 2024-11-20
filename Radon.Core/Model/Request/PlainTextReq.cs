@@ -2,4 +2,4 @@
 
 namespace Radon.Core.Model.Request;
 
-public class PlainTextReq : BaseApiReq<string> { }
+public class PlainTextReq : BaseApiReq<string>;

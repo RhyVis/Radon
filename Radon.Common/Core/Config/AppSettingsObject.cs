@@ -1,9 +1,10 @@
 ﻿using System.Text;
-using Masuit.Tools.Security;
+using JetBrains.Annotations;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Radon.Common.Core.Config;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class AppSettingsObject
 {
     private const string DEFAULT_NAME = "Radon";
@@ -14,16 +15,19 @@ public class AppSettingsObject
     public DataSettings Data { get; init; } = null!;
     public SecuritySettings Security { get; init; } = null!;
 
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class DataSettings
     {
         public string SQLConnectionString { get; init; } = null!;
         public string RedisConnectionString { get; init; } = null!;
     }
 
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class SecuritySettings
     {
         public JwtSettings Jwt { get; init; } = null!;
 
+        [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
         public class JwtSettings
         {
             public string SigningKey { get; init; } = null!;

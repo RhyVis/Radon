@@ -28,7 +28,7 @@ public abstract class BaseApiRes<D>()
     /// <summary>
     /// Status Code
     /// </summary>
-    public int Code { get; set; } = 0;
+    public int Code { get; set; }
 
     /// <summary>
     /// Assigned Message

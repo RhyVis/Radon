@@ -18,10 +18,10 @@ namespace Radon.Arc.Setup;
 
 public static class InitService
 {
-    private static Logger _logger = LogManager.GetCurrentClassLogger();
     private const string BASE_NAMESPACE = "Radon";
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    private static Assembly[] RADON_ASSEMBLIES = new[]
+    private static readonly Assembly[] RADON_ASSEMBLIES = new[]
     {
         // Radon.Common
         typeof(AppSettings).Assembly,

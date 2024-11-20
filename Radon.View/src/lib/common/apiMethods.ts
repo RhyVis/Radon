@@ -20,10 +20,15 @@ type ReqData = string | object;
 /**
  * @description Refer to ApiResBase defined in core
  */
-type ApiResponse<T> = {
+type ApiResponse<T> = ApiResponseData<T> & ApiResponseStatus;
+
+type ApiResponseData<T> = {
   code: number;
   msg: string;
   data: T;
+};
+
+type ApiResponseStatus = {
   status: {
     responseCode: number;
     responseText: string;
