@@ -8,6 +8,8 @@ export type GlobalStore = {
   fontLoaded: boolean;
   vRemote: number;
   vState: number;
+  vServer: string;
+  vServerState: 0 | -1 | 1 | -999;
   locale: string;
 };
 
@@ -19,6 +21,8 @@ export const useGlobalStore = defineStore("global", {
     fontLoaded: false,
     vRemote: -1,
     vState: -2,
+    vServer: "",
+    vServerState: 0,
     locale: "zh-CN",
   }),
   getters: {

@@ -6,11 +6,11 @@ import "tdesign-vue-next/es/style/index.css";
 import { createApp } from "vue";
 
 import App from "@/App.vue";
+import { setupWindowListener } from "@/lib/util/windowListener";
 import i18n from "@/locale";
 import router from "@/router";
 import store from "@/store";
 import { registerSW } from "virtual:pwa-register";
-import { setupWindowListener } from "@/lib/util/windowListener";
 
 registerSW({ immediate: true });
 

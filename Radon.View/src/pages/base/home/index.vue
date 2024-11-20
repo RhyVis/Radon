@@ -35,10 +35,16 @@ const { needUpdate } = storeToRefs(useGlobalStore());
     </t-paragraph>
 
     <t-title level="h4">{{ t("status.tt") }}</t-title>
-    <t-space align="center" :size="6">
-      <!-- Prompts -->
-      <prompt-online />
-      <prompt-version-check />
+    <!-- Prompts -->
+    <t-space direction="vertical">
+      <t-space align="center" :size="6">
+        <prompt-online />
+        <prompt-server-available />
+      </t-space>
+      <t-space align="center" :size="6">
+        <prompt-version-client />
+        <prompt-version-server />
+      </t-space>
     </t-space>
     <t-paragraph>
       <t-text v-if="needUpdate">{{ t("status.hint") }}</t-text>

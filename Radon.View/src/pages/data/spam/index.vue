@@ -34,7 +34,7 @@ const result = ref<TextEntry[]>([
   { id: 666, text: "快乐生活每一天，请不要用这个工具的结果来攻击他人哦😊" },
   { id: 999, text: "仅供学习交流使用，由您不当使用造成的后果，将由您承担" },
 ]);
-const columns = computed(() => spamColumns(handleCopy));
+const columns = computed(() => spamColumns(handleEntryCopy));
 const tagValid = computed(() => get(qIds).every(item => Number.isInteger(Number(item))));
 
 const handleTabChange = (key: string | number) => {
@@ -58,7 +58,7 @@ const handleTagInput = () => {
     MessagePlugin.warning("请输入正确的ID");
   }
 };
-const handleCopy = (s: string) => {
+const handleEntryCopy = (s: string) => {
   try {
     copy(s.replace(/[\r\n]|\r\n|\\r\\n/, "")).then(() => MessagePlugin.success("复制成功"));
   } catch (e) {
@@ -136,7 +136,7 @@ const handleAppend = async (repeat: boolean = false) => {
 };
 
 watch(
-  () => qType,
+  () => store.qType,
   () => setUsed(false),
 );
 </script>
@@ -214,9 +214,17 @@ watch(
             <t-button shape="round" theme="danger" @click="handleFetch" :loading="resultLoading">
               <LoudspeakerIcon v-if="!resultLoading" />
             </t-button>
-            <t-button v-if="used" shape="circle" theme="default" @click="handleFetchAgain" :loading="resultLoading">
-              <RefreshIcon v-if="!resultLoading" />
-            </t-button>
+            <t-tooltip placement="bottom" content="重新获取上一次的内容，可以改变转义模式">
+              <t-button
+                :disabled="!used"
+                shape="circle"
+                theme="default"
+                @click="handleFetchAgain"
+                :loading="resultLoading"
+              >
+                <RefreshIcon v-if="!resultLoading" />
+              </t-button>
+            </t-tooltip>
             <btn-copy :target="result.map(e => (e as TextEntry).text).join('\n')" />
           </t-space>
         </t-form-item>

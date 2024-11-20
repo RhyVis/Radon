@@ -22,8 +22,6 @@ public class AppSettingsObject
 
     public class SecuritySettings
     {
-        public string AuthToken { get; init; } = null!;
-
         public JwtSettings Jwt { get; init; } = null!;
 
         public class JwtSettings

@@ -212,10 +212,14 @@ async function getVersion(): Promise<number> {
   return (await axiosInstance.get("/version.json")).data.compileTime as number;
 }
 
+async function getServerVersion(): Promise<string> {
+  return (await axiosInstance.get("/api")).data.version as string;
+}
+
 export { apiDelete, apiGet, apiPost, apiPut };
 
 export { apiGetStr, apiPostState, apiPostStr, apiPostWithFile, apiPutState };
 
-export { getVersion };
+export { getServerVersion, getVersion };
 
 export type { ApiResponse, ErrResponse };

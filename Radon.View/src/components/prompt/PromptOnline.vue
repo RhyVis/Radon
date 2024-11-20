@@ -7,7 +7,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const online = useOnline();
-const onlineText = computed(() => (get(online) ? t("online") : t("offline")));
+const onlineText = computed(() => (t("netWorkStatus") + get(online) ? t("online") : t("offline")));
 const tagTheme = computed(() => (get(online) ? "success" : "default"));
 </script>
 
@@ -22,11 +22,13 @@ const tagTheme = computed(() => (get(online) ? "success" : "default"));
 </template>
 
 <i18n locale="en">
+netWorkStatus: "Network Status: "
 online: Online
 offline: Offline
 </i18n>
 
 <i18n locale="zh-CN">
+netWorkStatus: "网络状态："
 online: 在线
 offline: 离线
 </i18n>

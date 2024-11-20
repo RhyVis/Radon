@@ -11,8 +11,8 @@
     noEmpty: "不能为空",
   },
   message: {
-      authInvalid: "认证失败",
-      pageNeedNetwork: "此页面需要网络连接",
+    authInvalid: "认证失败",
+    pageNeedNetwork: "此页面需要网络连接",
   },
   auth: {
     message: {

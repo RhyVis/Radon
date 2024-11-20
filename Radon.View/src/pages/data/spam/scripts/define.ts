@@ -1,6 +1,8 @@
 ﻿import { EscapeType } from "@/pages/util/codex/scripts/define.ts";
 import { Space, type TableProps, Tag, Text } from "tdesign-vue-next";
 
+type CopyFn = (s: string) => void;
+
 export type TextEntry = {
   id: number;
   text: string;
@@ -17,7 +19,9 @@ export enum SpamType {
   Dinner = "dn",
 }
 
-export const spamTypes = Object.entries(SpamType).map(([label, value]) => ({ value, label }));
+export const spamTypes = Object.entries(SpamType)
+  .map(([label, value]) => ({ value, label }))
+  .slice(1);
 
 export const codeTypes = [
   { value: EscapeType.NONE, label: "直白对决😅" },
@@ -27,7 +31,7 @@ export const codeTypes = [
   { value: EscapeType.DIFF, label: "形近转换🧐" },
 ];
 
-export const spamColumns: (copyFn: (s: string) => void) => TableProps["columns"] = (copyFn: (s: string) => void) => {
+export const spamColumns: (copyFn: CopyFn) => TableProps["columns"] = copyFn => {
   return [
     {
       colKey: "id",

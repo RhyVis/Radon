@@ -3,13 +3,14 @@ import VersionView from "@/assets/local/version.json";
 import { getVersion } from "@/lib/common/apiMethods";
 import { radixValExtended } from "@/pages/math/radix/scripts/radix";
 import { useGlobalStore } from "@/store/global";
-import { get, set } from "@vueuse/core";
+import { get, set, useOnline } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const global = useGlobalStore();
+const online = useOnline();
 const { t } = useI18n();
 const { vRemote, vState } = storeToRefs(global);
 
@@ -46,17 +47,23 @@ const tagIcon = computed(() => {
 const tagValue = computed(() => {
   switch (get(vState)) {
     case 0:
-      return `${get(vPackage)}.${get(vLocalShort)} ${t("display.latest")}`;
+      return `${t("clientVersion")}${get(vPackage)}.${get(vLocalShort)}`;
     case 1:
-      return `${get(vPackage)}.${get(vLocalShort)} -> ${get(vPackage)}.${get(vRemoteShort)} ${t("display.update")}`;
+      return `${t("clientVersion")}${get(vPackage)}.${get(vLocalShort)} -> ${get(vPackage)}.${get(vRemoteShort)}`;
     case -1:
-      return t("display.error");
+      return t("clientVersion") + t("display.error");
+    case -999:
+      return `${t("clientVersion")}${get(vPackage)}.${get(vLocalShort)} ${t("display.local")}`;
     default:
-      return t("display.wait");
+      return t("clientVersion") + t("display.wait");
   }
 });
 
 onMounted(async () => {
+  if (!get(online)) {
+    set(vState, -999);
+    return;
+  }
   if (get(vState) < 0) {
     try {
       const v = await getVersion();
@@ -93,25 +100,25 @@ onMounted(async () => {
 </template>
 
 <i18n lang="yaml" locale="en">
+clientVersion: "Client Version: "
 display:
-  latest: "Latest Version"
-  update: "Update Required"
-  error: "Version Fetch Failed"
-  wait: "Waiting for Version Fetch"
+  error: "Error"
+  wait: "Waiting"
+  local: "(Local)"
 msg:
-  update: "Non-latest version"
+  update: "Need to update"
   error: "Version fetch failed"
   comm-error: "Communication with server failed"
 </i18n>
 
 <i18n lang="yaml" locale="zh-CN">
+clientVersion: "客户端版本: "
 display:
-  latest: "最新版本"
-  update: "需要更新"
-  error: "版本获取失败"
-  wait: "等待版本获取"
+  error: "错误"
+  wait: "等待中"
+  local: "(本地)"
 msg:
-  update: "非最新版本"
+  update: "需要更新"
   error: "版本获取失败"
   comm-error: "与服务器通信失败"
 </i18n>
