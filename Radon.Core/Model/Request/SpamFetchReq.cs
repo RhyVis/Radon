@@ -2,9 +2,9 @@
 
 namespace Radon.Core.Model.Request;
 
-public class SpamFetchReq : BaseApiReq<SpamFetchReq.SpamReqData>
+public class SpamFetchReq : BaseApiReq<SpamFetchReq.ReqData>
 {
-    public class SpamReqData
+    public class ReqData
     {
         public string Type { get; set; } = "";
         public string Dict { get; set; } = "";
@@ -12,9 +12,9 @@ public class SpamFetchReq : BaseApiReq<SpamFetchReq.SpamReqData>
     }
 }
 
-public class SpamFetchPreciseReq : BaseApiReq<SpamFetchPreciseReq.SpamPreciseReqData>
+public class SpamFetchPreciseReq : BaseApiReq<SpamFetchPreciseReq.ReqData>
 {
-    public class SpamPreciseReqData
+    public class ReqData
     {
         public string Type { get; set; } = "";
         public string Dict { get; set; } = "";

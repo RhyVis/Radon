@@ -9,7 +9,7 @@ namespace Radon.Core.Service;
 [ServiceTransient]
 public class NavigationService(NavigationRepository repo) : INavigationService
 {
-    public NavigationRes HandleNavigation() => new(GetNavigations().ToArray());
+    public NavigationRes HandleNavigation() => NavigationRes.Of(GetNavigations().ToArray());
 
     private List<EntryNavigation> GetNavigations() => repo.FindAll();
 }

@@ -45,6 +45,7 @@ const fontList: FontInfo[] = [
 ];
 
 const base = import.meta.env.VITE_RES_ROOT;
+const url = (s: string): string => `url("${base + s}")`;
 
 const getFontLoaders = (): Loader[] => {
   return fontList.map(font => {
@@ -53,7 +54,7 @@ const getFontLoaders = (): Loader[] => {
       action: new Promise<void>(async (resolve, reject) => {
         try {
           if (typeof FontFace !== "undefined") {
-            const fontFace = new FontFace(font.name, `url(${base + font.url})`);
+            const fontFace = new FontFace(font.name, url(font.url));
             const loadedFont = await fontFace.load();
             document.fonts.add(loadedFont);
             console.debug(`Successfully loaded ${font.name}`);
@@ -62,7 +63,7 @@ const getFontLoaders = (): Loader[] => {
             style.textContent = `
               @font-face {
                 font-family: "${font.name}";
-                src: url("${base + font.url}") format("woff2");
+                src: ${url(font.url)};
               }
             `;
             document.head.appendChild(style);

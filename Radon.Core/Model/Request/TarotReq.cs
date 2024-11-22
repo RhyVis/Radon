@@ -2,9 +2,9 @@
 
 namespace Radon.Core.Model.Request;
 
-public class TarotReq : BaseApiReq<TarotReq.TarotReqData>
+public class TarotReq : BaseApiReq<TarotReq.ReqData>
 {
-    public class TarotReqData
+    public class ReqData
     {
         public string Deck { get; set; } = "";
         public bool Full { get; set; }

@@ -41,10 +41,8 @@ const { needUpdate } = storeToRefs(useGlobalStore());
         <prompt-online />
         <prompt-server-available />
       </t-space>
-      <t-space align="center" :size="6">
-        <prompt-version-client />
-        <prompt-version-server />
-      </t-space>
+      <prompt-version-client />
+      <prompt-version-server />
     </t-space>
     <t-paragraph>
       <t-text v-if="needUpdate">{{ t("status.hint") }}</t-text>

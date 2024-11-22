@@ -58,6 +58,6 @@ public class PdxController(IParadoxProcessor processor, IPdxService service) : C
         var userId = HttpContext.GetAuthenticatedUserId();
         var replacerJson = service.GetLangParserReplacer(userId);
 
-        return Ok(new PlainTextRes(replacerJson));
+        return Ok(PlainTextRes.Of(replacerJson));
     }
 }

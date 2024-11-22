@@ -61,7 +61,7 @@ offline: "Offline"
 </i18n>
 
 <i18n locale="zh-CN">
-serverStatus: "服务器状态: "
+serverStatus: "服务器: "
 online: "在线"
 offline: "离线"
 </i18n>

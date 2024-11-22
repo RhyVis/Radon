@@ -11,7 +11,7 @@ public class EscapeController(IEscapeService service) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(EscapeRes), 200)]
-    public IActionResult Get() => Ok(new EscapeRes(666, "666", "玩抽象的这辈子有了"));
+    public IActionResult Get() => Ok(EscapeRes.Dummy());
 
     [HttpPost]
     [ProducesResponseType(typeof(EscapeRes), 200)]

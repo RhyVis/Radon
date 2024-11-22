@@ -2,9 +2,9 @@
 
 namespace Radon.Core.Model.Request;
 
-public class TextStoreReq : BaseApiReq<TextStoreReq.TextStoreReqData>
+public class TextStoreReq : BaseApiReq<TextStoreReq.ReqData>
 {
-    public class TextStoreReqData
+    public class ReqData
     {
         public long Id { get; set; }
         public string Text { get; set; } = "";

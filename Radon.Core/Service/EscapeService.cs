@@ -14,8 +14,8 @@ public class EscapeService(IDictProcessor dictProcessor) : IEscapeService
     public EscapeRes HandleEscape(EscapeReq req)
     {
         var type = req.Data.Type.TryParseEnum(DictType.NONE);
-        return (type == DictType.NONE)
-            ? new EscapeRes(-1, "Invalid dict type", req.Data.Text)
-            : new EscapeRes(dictProcessor.ProcessDict(type, req.Data.Text, req.Data.Encode));
+        return type == DictType.NONE
+            ? EscapeRes.Invalid(req.Data.Text)
+            : EscapeRes.Of(dictProcessor.ProcessDict(type, req.Data.Text, req.Data.Encode));
     }
 }

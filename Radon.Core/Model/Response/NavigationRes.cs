@@ -7,7 +7,7 @@ namespace Radon.Core.Model.Response;
 
 public class NavigationRes : BaseApiRes<EntryNavigation[]>
 {
-    public NavigationRes(EntryNavigation[] data)
+    private NavigationRes(EntryNavigation[] data)
     {
         if (data.Length == 0)
         {
@@ -21,4 +21,6 @@ public class NavigationRes : BaseApiRes<EntryNavigation[]>
         }
         Data = data;
     }
+
+    public static NavigationRes Of(EntryNavigation[] data) => new(data);
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Radon.Arc.Util;
 using Radon.Core.Model.Request;
 using Radon.Core.Model.Response;
+using Radon.Core.Util;
 using Radon.Security.Service.Interface;
 
 namespace Radon.Arc.Controller;
@@ -17,7 +18,7 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
     public IActionResult Login(UsernameReq req)
     {
         var p = service.Authenticate(req.Data.Username, req.Data.Password);
-        return Ok(new PlainTextRes(p.Token));
+        return Ok(p.OfRes());
     }
 
     [HttpPost("logout")]
@@ -49,6 +50,6 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
         var token = HttpContext.GetAuthenticatedToken();
         var userID = HttpContext.GetAuthenticatedUserId();
         var p = service.Refresh(token, userID);
-        return Ok(new PlainTextRes(p.Token));
+        return Ok(p.OfRes());
     }
 }
