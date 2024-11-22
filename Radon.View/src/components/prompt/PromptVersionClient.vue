@@ -91,7 +91,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <t-tag :theme="tagTheme" size="small">
+  <t-tag :theme="tagTheme" size="small" variant="outline">
     <template #icon>
       <t-icon :name="tagIcon" />
     </template>

@@ -10,4 +10,6 @@ public interface ITarotService
     TarotRes HandleTarotComplex(TarotReq req);
 
     UnsetRes HandleTarotInfo();
+
+    UnsetRes GetTarotDeckData(string name, bool full, bool shuffle);
 }

@@ -1,6 +1,4 @@
 ﻿using Radon.Common.Core.DI;
-using Radon.Common.Core.Extension;
-using Radon.Common.Enums;
 using Radon.Core.Data.Entity;
 using Radon.Core.Data.Repository;
 using Radon.Core.Model.Request;
@@ -12,10 +10,8 @@ namespace Radon.Core.Service;
 [ServiceTransient]
 public class TextStoreService(TextStorageRepository repo) : ITextStoreService
 {
-    public TextStoreRes HandleTextStoreQuery(TextStoreReq req)
-    {
-        return MapToRes(Query(req.Data.Id));
-    }
+    public TextStoreRes HandleTextStoreQuery(TextStoreReq req) =>
+        TextStoreRes.FromEntity(Query(req.Data.Id));
 
     public StateRes HandleTextStoreUpdate(TextStoreReq req)
     {
@@ -54,22 +50,5 @@ public class TextStoreService(TextStorageRepository repo) : ITextStoreService
                 }
             );
         }
-    }
-
-    private static TextStoreRes MapToRes(EntryTextStorage entity)
-    {
-        return new TextStoreRes
-        {
-            Code =
-                entity.Id < 0
-                    ? ResponseCodeType.NOT_FOUND.ToInt()
-                    : ResponseCodeType.SUCCESS.ToInt(),
-            Data = new TextStoreRes.TextStoreResData
-            {
-                Id = entity.Id,
-                Text = entity.Text,
-                Note = entity.Note,
-            },
-        };
     }
 }

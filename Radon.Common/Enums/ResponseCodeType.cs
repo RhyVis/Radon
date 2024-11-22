@@ -2,7 +2,7 @@
 
 public enum ResponseCodeType
 {
-    UNKNOWN = 0,
-    SUCCESS = 200,
-    NOT_FOUND = 404,
+    UNKNOWN = -900,
+    SUCCESS = 0,
+    NOT_FOUND = -5,
 }

@@ -13,8 +13,8 @@ type UsernamePair = {
  */
 async function authLogin(pair: UsernamePair): Promise<boolean> {
   try {
-    const { code, data } = await apiPostStr("/api/auth/login", pair);
-    if (code === 200) {
+    const { status, data } = await apiPostStr("/api/auth/login", pair);
+    if (status.responseCode === 200) {
       localStorage.setItem("token", data);
       return true;
     } else {

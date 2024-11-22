@@ -36,7 +36,7 @@ const { needUpdate } = storeToRefs(useGlobalStore());
 
     <t-title level="h4">{{ t("status.tt") }}</t-title>
     <!-- Prompts -->
-    <t-space direction="vertical">
+    <t-space direction="vertical" :size="6">
       <t-space align="center" :size="6">
         <prompt-online />
         <prompt-server-available />

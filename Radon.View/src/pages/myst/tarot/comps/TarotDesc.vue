@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
-import type { CardDisplay } from "@/pages/myst/tarot/scripts/typeTarot";
+import { type CardDisplay } from "@/pages/myst/tarot/scripts/define";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { card, index } = defineProps<{
   card: CardDisplay;
   index: number;
@@ -10,7 +12,7 @@ const { card, index } = defineProps<{
 const { name, loc, rev, desc } = card.data;
 
 const indexNum = computed(() => intToRoman(index + 1));
-const revText = computed(() => (rev ? "逆位" : "正位"));
+const revText = computed(() => (rev ? t("reverse") : t("upright")));
 const revDesc = computed(() => (rev ? desc.reverse : desc.upright));
 
 const handleHash = () => {
@@ -50,3 +52,13 @@ const handleHash = () => {
   user-select: none;
 }
 </style>
+
+<i18n locale="en">
+upright: Upright
+reverse: Reversed
+</i18n>
+
+<i18n locale="zh-CN">
+upright: 正位
+reverse: 逆位
+</i18n>

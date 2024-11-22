@@ -1,10 +1,12 @@
 <script lang="tsx" setup>
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
-import type { CardDisplay } from "@/pages/myst/tarot/scripts/typeTarot";
+import { type CardDisplay } from "@/pages/myst/tarot/scripts/define";
 import { MoonIcon, SunnyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { card, index } = defineProps<{
   card: CardDisplay;
   index: number;
@@ -20,12 +22,12 @@ const handleImage = () => {
   // eslint-disable-next-line vue/no-mutating-props
   card.showImg = !card.showImg;
 };
-const handleImageErr = (name: string) => {
-  MessagePlugin.error(`加载图片失败: ${name}`);
-};
 const handleDesc = () => {
   // eslint-disable-next-line vue/no-mutating-props
   card.showDesc = !card.showDesc;
+};
+const handleImageErr = (name: string) => {
+  MessagePlugin.error(t("loadError", name));
 };
 const handleHash = () => {
   location.hash = `tarot-desc-${index}`;
@@ -55,7 +57,7 @@ const handleHash = () => {
             :class="revClass"
             :lazy="true"
             :src="img"
-            :style="{ width: 'fit-content', maxWidth: '100%', height: '360px' }"
+            style="width: fit-content; max-width: 100%; height: 360px"
             fit="scale-down"
             loading="💫"
             @error="handleImageErr(name)"
@@ -70,7 +72,7 @@ const handleHash = () => {
   </t-card>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .r-no-select {
   user-select: none;
 }
@@ -93,3 +95,11 @@ const handleHash = () => {
   height: 400px;
 }
 </style>
+
+<i18n locale="en">
+loadError: "Load image failed: {0}"
+</i18n>
+
+<i18n locale="zh-CN">
+loadError: "加载图片失败: {0}"
+</i18n>

@@ -33,3 +33,11 @@ type DeckInfoSelect = {
 };
 
 export type { Card, CardDisplay, DeckInfo, DeckInfoInterface, DeckInfoSelect };
+
+export const mapCard = (card: Card): CardDisplay => {
+  return {
+    data: card,
+    showImg: true,
+    showDesc: false,
+  };
+};

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { apiPost, apiPutState } from "@/lib/common/apiMethods";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
+import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -11,11 +12,13 @@ const { t } = useI18n();
 const { loading, id, qText, qNote, rText, rNote } = storeToRefs(store);
 
 const handleStore = async () => {
-  if (qText.value.length === 0) {
+  if (get(qText).length === 0) {
     await MessagePlugin.warning(t("msg.empty"));
     return;
   }
-  loading.value = true;
+
+  set(loading, true);
+
   try {
     const b = await apiPutState("/api/text-store", store.query);
     if (b) {
@@ -27,29 +30,37 @@ const handleStore = async () => {
     console.error(e);
     await MessagePlugin.error(t("msg.storeFail"));
   } finally {
-    loading.value = false;
+    set(loading, false);
   }
 };
 const handleSelect = async () => {
-  loading.value = true;
+  set(loading, true);
   try {
-    const data = (
-      await apiPost<{
-        id: number;
-        text: string;
-        note: string;
-      }>("/api/text-store", store.query)
-    ).data;
+    const { data, code } = await apiPost<{
+      id: number;
+      text: string;
+      note: string;
+    }>("/api/text-store", store.query);
 
-    rText.value = qText.value = data.text;
-    rNote.value = qNote.value = data.note;
+    if (code < 0) {
+      void MessagePlugin.warning(t("msg.selectNothing"));
+      set(loading, false);
+      return;
+    }
 
-    await MessagePlugin.success(t("msg.select"));
+    store.$patch({
+      rText: data.text,
+      rNote: data.note,
+      qText: data.text,
+      qNote: data.note,
+    });
+
+    void MessagePlugin.success(t("msg.select"));
   } catch (e) {
     console.error(e);
-    await MessagePlugin.error(t("msg.selectFail"));
+    void MessagePlugin.error(t("msg.selectFail"));
   } finally {
-    loading.value = false;
+    set(loading, false);
   }
 };
 </script>
@@ -113,6 +124,7 @@ msg:
   storeFail: "Store Fail"
   select: "Select Success"
   selectFail: "Select Fail"
+  selectNothing: "Select Nothing"
 </i18n>
 
 <i18n locale="zh-CN">
@@ -132,4 +144,5 @@ msg:
   storeFail: "存储失败"
   select: "选择成功"
   selectFail: "选择失败"
+  selectNothing: "选择无内容"
 </i18n>
