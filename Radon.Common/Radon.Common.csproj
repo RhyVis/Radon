@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -15,7 +15,6 @@
       <PackageReference Include="Masuit.Tools.Core" Version="2024.5.8" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
       <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.14" />
-      <PackageReference Include="NSwag.AspNetCore" Version="14.1.0" />
       <PackageReference Include="OpenCCNET" Version="1.0.2" />
       <PackageReference Include="Scalar.AspNetCore" Version="1.2.29" />
       <PackageReference Include="Scrutor" Version="5.0.1" />

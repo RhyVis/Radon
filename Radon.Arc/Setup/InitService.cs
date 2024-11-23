@@ -6,7 +6,6 @@ using FreeSql.Internal;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
-using NSwag;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
 using Radon.Core.Model.Base;
@@ -166,20 +165,6 @@ public static class InitService
         _logger.Debug("Register Other Service");
         services.AddHttpClient();
         services.AddEndpointsApiExplorer();
-        services.AddOpenApiDocument(opt =>
-        {
-            opt.Title = "Radon API";
-            opt.AddSecurity(
-                "JWT",
-                new OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Description = "Input your JWT token",
-                    In = OpenApiSecurityApiKeyLocation.Header,
-                    Type = OpenApiSecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                }
-            );
-        });
+        services.AddOpenApi();
     }
 }

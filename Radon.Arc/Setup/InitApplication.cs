@@ -26,10 +26,7 @@ public static class InitApplication
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseOpenApi(opt =>
-        {
-            opt.Path = "/api/openapi/{documentName}.json";
-        });
+        app.MapOpenApi("/api/openapi/{documentName}.json");
         app.MapScalarApiReference(opt =>
         {
             opt.Title = "Radon API";
