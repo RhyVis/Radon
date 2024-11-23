@@ -7,7 +7,7 @@ import { type Card, mapCard } from "@/pages/myst/tarot/scripts/define";
 import { useTarotStore } from "@/pages/myst/tarot/scripts/store";
 import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { CardIcon } from "tdesign-icons-vue-next";
+import { CardIcon, RollbackIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
@@ -22,12 +22,14 @@ const { key, updateKey } = useKeyUpdate();
 const deckFull = computed(() => get(dInfoMap)[qDeck.value]?.full ?? false);
 const deckMax = computed(() => (get(deckFull) && get(qFull) ? 78 : 22));
 const deckFullTooltip = computed(() => (get(deckFull) ? t("form.fullTT") : t("form.fullTT2")));
+const resetable = computed(() => get(qSize) > 1);
 
 const handleSelect = () => {
   if (!deckFull.value) set(qFull, false);
   set(results, []);
   updateKey();
 };
+const handleResetCount = () => set(qSize, 1);
 const handleDraw = async () => {
   location.hash = "";
   setLoading(true);
@@ -64,7 +66,12 @@ onMounted(() => {
               <t-switch v-model="dShowDesc" />
             </t-form-item>
             <t-form-item :label="t('form.size')">
-              <t-input-number v-model="qSize" :max="deckMax" :min="1" />
+              <t-space :size="8">
+                <t-input-number v-model="qSize" :max="deckMax" :min="1" />
+                <t-button v-if="resetable" shape="circle" variant="outline" theme="default" @click="handleResetCount">
+                  <RollbackIcon />
+                </t-button>
+              </t-space>
             </t-form-item>
           </div>
         </t-tab-panel>

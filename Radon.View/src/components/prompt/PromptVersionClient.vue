@@ -1,91 +1,53 @@
 <script setup lang="ts">
-import VersionView from "@/assets/local/version.json";
-import { getVersion } from "@/lib/common/apiMethods";
-import { radixValExtended } from "@/pages/math/radix/scripts/radix";
-import { useGlobalStore } from "@/store/global";
-import { get, set, useOnline } from "@vueuse/core";
+import { FetchState, useVersionStore } from "@/store/version.ts";
+import { get } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { MessagePlugin } from "tdesign-vue-next";
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-const global = useGlobalStore();
-const online = useOnline();
+const version = useVersionStore();
 const { t } = useI18n();
-const { vRemote, vState } = storeToRefs(global);
-
-const vPackage = computed(() => import.meta.env.PACKAGE_VERSION);
-const vLocal = VersionView.compileTime;
-
-const vLocalShort = computed(() => radixValExtended(vLocal));
-const vRemoteShort = computed(() => radixValExtended(get(vRemote)));
+const { fetchState, cAssembleTimeL, cAssembleTimeR } = storeToRefs(version);
 
 const tagTheme = computed(() => {
-  switch (get(vState)) {
-    case 0:
+  switch (get(fetchState)) {
+    case FetchState.SUCCESS:
       return "success";
-    case 1:
+    case FetchState.NEED_UPDATE | FetchState.NOT_ONLINE:
       return "warning";
-    case -1:
+    case FetchState.ERROR:
       return "danger";
     default:
       return "default";
   }
 });
 const tagIcon = computed(() => {
-  switch (get(vState)) {
-    case 0:
+  switch (get(fetchState)) {
+    case FetchState.SUCCESS:
       return "check-circle";
-    case 1:
+    case FetchState.NEED_UPDATE | FetchState.NOT_ONLINE:
       return "info-circle";
-    case -1:
+    case FetchState.ERROR:
       return "error-circle";
     default:
       return "help-circle";
   }
 });
 const tagValue = computed(() => {
-  switch (get(vState)) {
-    case 0:
-      return `${t("clientVersion")}${get(vPackage)}.${get(vLocalShort)}`;
-    case 1:
-      return `${t("clientVersion")}${get(vPackage)}.${get(vLocalShort)} -> ${get(vPackage)}.${get(vRemoteShort)}`;
-    case -1:
-      return t("clientVersion") + t("display.error");
-    case -999:
-      return `${t("clientVersion")}${get(vPackage)}.${get(vLocalShort)} ${t("display.local")}`;
+  const prefix = t("clientVersion");
+  switch (get(fetchState)) {
+    case FetchState.SUCCESS:
+      return prefix + get(cAssembleTimeL);
+    case FetchState.NEED_UPDATE:
+      return prefix + get(cAssembleTimeL) + " -> " + get(cAssembleTimeR);
+    case FetchState.ERROR:
+      return prefix + t("display.error");
+    case FetchState.NOT_ONLINE:
+      return prefix + t("display.local");
+    case FetchState.INIT:
+      return prefix + get(cAssembleTimeL) + t("display.wait");
     default:
-      return t("clientVersion") + t("display.wait");
-  }
-});
-
-onMounted(async () => {
-  if (!get(online)) {
-    set(vState, -999);
-    return;
-  }
-  if (get(vState) < 0) {
-    try {
-      const v = await getVersion();
-      if (v != 0) {
-        console.log(`vR: ${v} | vL: ${vLocal}`);
-        set(vRemote, v);
-        if (v != vLocal) {
-          set(vState, 1);
-          await MessagePlugin.warning(t("msg.update"));
-        } else {
-          set(vState, 0);
-        }
-      } else {
-        set(vState, -1);
-        await MessagePlugin.warning(t("msg.error"));
-      }
-    } catch (e) {
-      console.error(e);
-      set(vState, -1);
-      await MessagePlugin.error(t("msg.comm-error"));
-    } finally {
-    }
+      return prefix + t("display.wait");
   }
 });
 </script>

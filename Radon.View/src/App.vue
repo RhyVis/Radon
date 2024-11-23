@@ -9,6 +9,7 @@ import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { getFontLoaders } from "@/lib/util/fontLoader";
 import { changeMetaColor } from "@/lib/util/themeUtil";
 import { useGlobalStore } from "@/store/global";
+import { useVersionStore } from "@/store/version.ts";
 import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -16,6 +17,7 @@ import { onMounted, provide, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
+const version = useVersionStore();
 const global = useGlobalStore();
 const router = useRouter();
 const i18n = useI18n();
@@ -73,6 +75,7 @@ provide(darkModeKey, dark);
 // Hook section
 
 onMounted(() => {
+  version.init();
   tryLoadFonts();
   tryRefreshToken();
 });

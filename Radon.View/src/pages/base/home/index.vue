@@ -1,14 +1,22 @@
 <script lang="ts" setup>
 import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
-import { useGlobalStore } from "@/store/global";
+import { useVersionStore } from "@/store/version.ts";
+import { get } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { inject } from "vue";
+import { inject, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const fontLoader = inject(fontLoaderKey)!;
+const version = useVersionStore();
 const { t } = useI18n();
 const { current, completed, hasError } = fontLoader;
-const { needUpdate } = storeToRefs(useGlobalStore());
+const { needUpdate, initialized, badState } = storeToRefs(version);
+
+onMounted(() => {
+  if (get(initialized) && get(badState)) {
+    version.init();
+  }
+});
 </script>
 
 <template>

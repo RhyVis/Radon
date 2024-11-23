@@ -1,10 +1,18 @@
 import fs from "fs";
 
+// Get Version from package.json
+
+const packageJSON = fs.readFileSync("./package.json", "utf8");
+const packageObject = JSON.parse(packageJSON);
+const packageVersion = packageObject.version;
+
+console.log(`Version found in package.json: ${packageVersion}`);
+
 // Build time record
 
 const date = new Date();
 const version = date.getTime();
-const versionObject = { compileTime: version };
+const versionObject = { clientVersion: packageVersion, compileTime: version };
 const versionJSON = JSON.stringify(versionObject);
 
 console.log(`Version confirmed on ${date}`);

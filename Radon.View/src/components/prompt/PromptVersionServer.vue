@@ -1,71 +1,51 @@
 ﻿<script setup lang="ts">
-import { getServerVersion } from "@/lib/common/apiMethods.ts";
-import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useOnline } from "@vueuse/core";
+import { FetchState, useVersionStore } from "@/store/version.ts";
+import { get } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+const version = useVersionStore();
 const { t } = useI18n();
-const { vServer, vServerState } = storeToRefs(useGlobalStore());
-const online = useOnline();
+const { fetchState, sVersion } = storeToRefs(version);
 
 const tagTheme = computed(() => {
-  switch (get(vServerState)) {
-    case 0:
-      return "default";
-    case 1:
+  switch (get(fetchState)) {
+    case FetchState.SUCCESS:
       return "success";
-    case -1:
+    case FetchState.NOT_ONLINE:
+      return "warning";
+    case FetchState.ERROR:
       return "danger";
     default:
       return "default";
   }
 });
 const tagIcon = computed(() => {
-  switch (get(vServerState)) {
-    case 0:
-      return "help-circle";
-    case 1:
+  switch (get(fetchState)) {
+    case FetchState.SUCCESS:
       return "check-circle";
-    case -1:
+    case FetchState.NOT_ONLINE:
+      return "info-circle";
+    case FetchState.ERROR:
       return "error-circle";
     default:
       return "help-circle";
   }
 });
 const tagValue = computed(() => {
-  switch (get(vServerState)) {
-    case 0:
-      return t("serverVersion") + t("await");
-    case 1:
-      return t("serverVersion") + get(vServer);
-    case -1:
-      return t("serverVersion") + t("error");
-    case -999:
-      return t("serverVersion") + t("local");
+  const prefix = t("serverVersion");
+  switch (get(fetchState)) {
+    case FetchState.INIT:
+      return prefix + t("await");
+    case FetchState.SUCCESS:
+      return prefix + get(sVersion);
+    case FetchState.ERROR:
+      return prefix + t("error");
+    case FetchState.NOT_ONLINE:
+      return prefix + t("local");
     default:
-      return t("serverVersion") + t("await");
-  }
-});
-
-const fetchVersion = async () => {
-  try {
-    set(vServer, await getServerVersion());
-    set(vServerState, 1);
-  } catch (e) {
-    console.error(e);
-    set(vServerState, -1);
-  }
-};
-
-onMounted(() => {
-  if (!get(online)) {
-    set(vServerState, -999);
-    return;
-  }
-  if (get(vServerState) <= 0) {
-    fetchVersion();
+      return prefix + t("await");
   }
 });
 </script>

@@ -1,3 +1,4 @@
+import VersionLocal from "@/assets/local/version.json";
 import axiosInstance from "@/lib/common/apiHttp";
 import type { AxiosRequestConfig } from "axios";
 
@@ -20,15 +21,15 @@ type ReqData = string | object;
 /**
  * @description Refer to ApiResBase defined in core
  */
-type ApiResponse<T> = ApiResponseData<T> & ApiResponseStatus;
+export type ApiResponse<T> = ApiResponseData<T> & ApiResponseStatus;
 
-type ApiResponseData<T> = {
+export type ApiResponseData<T> = {
   code: number;
   msg: string;
   data: T;
 };
 
-type ApiResponseStatus = {
+export type ApiResponseStatus = {
   status: {
     responseCode: number;
     responseText: string;
@@ -38,14 +39,14 @@ type ApiResponseStatus = {
 /**
  * @description Refer to ExceptionRes defined in core, data is JSON serialized exception object
  */
-type ErrResponse = ApiResponse<string>;
+export type ErrResponse = ApiResponse<string>;
 
 /**
  * Get Method
  * @param url
  * @param config
  */
-async function apiGet<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+export async function apiGet<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
   const response = await axiosInstance.get(url, config);
   let responseData: ApiResponse<T> = response.data;
 
@@ -69,7 +70,7 @@ async function apiGet<T>(url: string, config?: AxiosRequestConfig): Promise<ApiR
   return responseData;
 }
 
-async function apiGetStr(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<string>> {
+export async function apiGetStr(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<string>> {
   return await apiGet<string>(url, config);
 }
 
@@ -79,7 +80,7 @@ async function apiGetStr(url: string, config?: AxiosRequestConfig): Promise<ApiR
  * @param data
  * @param config
  */
-async function apiPost<T>(url: string, data?: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+export async function apiPost<T>(url: string, data?: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
   const response = await axiosInstance.post(url, new Req(data), config);
   let responseData: ApiResponse<T> = response.data;
 
@@ -109,7 +110,11 @@ async function apiPost<T>(url: string, data?: ReqData, config?: AxiosRequestConf
  * @param data
  * @param config
  */
-async function apiPostStr(url: string, data?: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<string>> {
+export async function apiPostStr(
+  url: string,
+  data?: ReqData,
+  config?: AxiosRequestConfig,
+): Promise<ApiResponse<string>> {
   return await apiPost<string>(url, data, config);
 }
 
@@ -119,7 +124,11 @@ async function apiPostStr(url: string, data?: ReqData, config?: AxiosRequestConf
  * @param data
  * @param config
  */
-async function apiPostState(url: string, data?: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<boolean>> {
+export async function apiPostState(
+  url: string,
+  data?: ReqData,
+  config?: AxiosRequestConfig,
+): Promise<ApiResponse<boolean>> {
   return await apiPost<boolean>(url, data, config);
 }
 
@@ -128,7 +137,7 @@ async function apiPostState(url: string, data?: ReqData, config?: AxiosRequestCo
  * @param url
  * @param blob file data
  */
-async function apiPostWithFile<T>(url: string, blob: Blob): Promise<ApiResponse<T>> {
+export async function apiPostWithFile<T>(url: string, blob: Blob): Promise<ApiResponse<T>> {
   const formData = new FormData();
   formData.append("file", blob);
   const response = await axiosInstance.post(url, formData, {
@@ -150,7 +159,7 @@ async function apiPostWithFile<T>(url: string, blob: Blob): Promise<ApiResponse<
  * @param data
  * @param config
  */
-async function apiPut<T>(url: string, data: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+export async function apiPut<T>(url: string, data: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
   const response = await axiosInstance.put(url, new Req(data), config);
   let responseData: ApiResponse<T> = response.data;
 
@@ -180,7 +189,11 @@ async function apiPut<T>(url: string, data: ReqData, config?: AxiosRequestConfig
  * @param data
  * @param config
  */
-async function apiPutState(url: string, data: ReqData, config?: AxiosRequestConfig): Promise<ApiResponse<boolean>> {
+export async function apiPutState(
+  url: string,
+  data: ReqData,
+  config?: AxiosRequestConfig,
+): Promise<ApiResponse<boolean>> {
   return await apiPut<boolean>(url, data, config);
 }
 
@@ -189,7 +202,7 @@ async function apiPutState(url: string, data: ReqData, config?: AxiosRequestConf
  * @param url
  * @param config
  */
-async function apiDelete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+export async function apiDelete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
   const response = await axiosInstance.delete(url, config);
   let responseData: ApiResponse<T> = response.data;
 
@@ -213,18 +226,18 @@ async function apiDelete<T>(url: string, config?: AxiosRequestConfig): Promise<A
   return responseData;
 }
 
-async function getVersion(): Promise<number> {
+export function getClientVersionLocal(): string {
+  return VersionLocal.clientVersion as string;
+}
+
+export async function getClientVersionRemote(): Promise<string> {
+  return (await axiosInstance.get("/version.json")).data.clientVersion as string;
+}
+
+export async function getClientCompileTimeRemote(): Promise<number> {
   return (await axiosInstance.get("/version.json")).data.compileTime as number;
 }
 
-async function getServerVersion(): Promise<string> {
+export async function getServerVersion(): Promise<string> {
   return (await axiosInstance.get("/api")).data.version as string;
 }
-
-export { apiDelete, apiGet, apiPost, apiPut };
-
-export { apiGetStr, apiPostState, apiPostStr, apiPostWithFile, apiPutState };
-
-export { getServerVersion, getVersion };
-
-export type { ApiResponse, ErrResponse };

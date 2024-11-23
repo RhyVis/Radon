@@ -37,7 +37,7 @@ const handleUpdate = (id: number) => {
   });
 };
 const handleText = () => {
-  if (textMultipleLines.value) {
+  if (textMultipleLines.value && get(spaceSize) < 52) {
     set(spaceSize, 52);
   }
 };
