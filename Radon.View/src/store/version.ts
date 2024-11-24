@@ -15,7 +15,7 @@ type VersionState = {
   initialized: boolean;
 };
 
-export const enum FetchState {
+export enum FetchState {
   INIT = 0,
   SUCCESS = 1,
   NEED_UPDATE = 2,
@@ -47,7 +47,7 @@ export const useVersionStore = defineStore("version", {
       return state.fetchState === FetchState.NEED_UPDATE;
     },
     badState(state) {
-      return state.fetchState === FetchState.ERROR || state.fetchState === FetchState.NOT_ONLINE;
+      return state.fetchState < 0;
     },
   },
   actions: {

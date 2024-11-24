@@ -1,8 +1,20 @@
 import CharacterList from "@/assets/conf/characters.json";
-import type { CharacterDefinition } from "@/lib/type/typeSticker";
 
-const charaList: CharacterDefinition[] = CharacterList;
+export type CharacterDefinition = {
+  id: number;
+  name: string;
+  chara: string;
+  img: string;
+  color: string;
+  defaultText: {
+    text: string;
+    x: number;
+    y: number;
+    r: number;
+    s: number;
+  };
+};
 
-const assembleSrc = (s: string) => import.meta.env.VITE_RES_ROOT + "/pjsk-sticker/" + s;
+export const charaList: CharacterDefinition[] = CharacterList;
 
-export { assembleSrc, charaList };
+export const assembleSrc = (s: string) => import.meta.env.VITE_RES_ROOT + "/pjsk-sticker/" + s;

@@ -1,6 +1,7 @@
 ﻿<script setup lang="ts">
 import { getServerVersion } from "@/lib/common/apiMethods.ts";
 import { get, useOnline, useToggle } from "@vueuse/core";
+import { WifiIcon, WifiOffIcon } from "tdesign-icons-vue-next";
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -13,13 +14,6 @@ const tagTheme = computed(() => {
     return "success";
   } else {
     return "default";
-  }
-});
-const tagIcon = computed(() => {
-  if (get(status)) {
-    return "check-circle";
-  } else {
-    return "info-circle";
   }
 });
 const tagValue = computed(() => {
@@ -48,7 +42,8 @@ onMounted(() => {
 <template>
   <t-tag :theme="tagTheme" size="small" variant="outline">
     <template #icon>
-      <t-icon :name="tagIcon" />
+      <WifiIcon v-if="online" />
+      <WifiOffIcon v-else />
     </template>
     <span class="r-no-select">{{ tagValue }}</span>
   </t-tag>

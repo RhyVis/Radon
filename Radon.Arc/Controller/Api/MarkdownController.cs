@@ -22,9 +22,26 @@ public class MarkdownController(IMarkdownService md) : ControllerBase
         return Ok(PlainTextRes.Of(p));
     }
 
-    [HttpGet, Route("check/{path}")]
-    [ProducesResponseType<StateRes>(StatusCodes.Status200OK)]
-    public IActionResult Check(string path) => Ok(StateRes.Of(md.CheckContent(path)));
+    [HttpDelete, Route("{path}"), Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult Delete(string path)
+    {
+        md.DeleteContent(path);
+        return NoContent();
+    }
+
+    [HttpPost, Route("create"), Authorize]
+    [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
+    public IActionResult Create(MdReq req)
+    {
+        var d = req.Data;
+        var p = md.UpdateContent(null, d.Name, d.Desc, d.Content);
+        return Ok(PlainTextRes.Of(p));
+    }
+
+    [HttpGet, Route("check/{path}"), Authorize]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
+    public IActionResult Check(string path) => Ok(new UnsetRes(md.CheckContent(path)));
 
     [HttpGet, Route("index")]
     [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]

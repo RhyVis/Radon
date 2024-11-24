@@ -176,9 +176,18 @@ export const markdownRecords: RouteRecordAssemble[] = [
       title: "Markdown",
     },
   },
+  // Create
+  {
+    path: "/md/create",
+    name: "MarkdownCreate",
+    component: () => import("@/pages/with/markdown/create/index.vue"),
+    meta: {
+      title: "Markdown Creator",
+    },
+  },
   // Read
   {
-    path: "/md/:path/read",
+    path: "/md/:p/read",
     name: "MarkdownReader",
     component: () => import("@/pages/with/markdown/read/index.vue"),
     meta: {
@@ -187,7 +196,7 @@ export const markdownRecords: RouteRecordAssemble[] = [
   },
   // Write
   {
-    path: "/md/:path/write",
+    path: "/md/:p/write",
     name: "MarkdownWriter",
     component: () => import("@/pages/with/markdown/write/index.vue"),
     meta: {

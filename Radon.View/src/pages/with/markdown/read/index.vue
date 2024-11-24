@@ -1,20 +1,22 @@
 ﻿<script setup lang="ts">
-import { getMdRecord } from "@/pages/with/markdown/scripts/define.ts";
-import { set } from "@vueuse/core";
+import { getMdRecord } from "@/pages/with/markdown/define.ts";
+import { get, set, useWindowSize } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";
 import { MdCatalog, MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { ArrowLeftIcon } from "tdesign-icons-vue-next";
-import { ref, watch } from "vue";
+import { Content as TContent } from "tdesign-vue-next";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const path = useRouteParams("path");
-const content = ref<string>("");
+const path = useRouteParams("p");
+const content = ref("");
 const scrollElement = document.documentElement;
 
+const { width } = useWindowSize();
 const updateContent = async (path: string) => set(content, (await getMdRecord(path)).content);
-
+const sideWidth = computed(() => (get(width) > 768 ? "232px" : "0"));
 watch(
   () => path.value,
   async newPath => {
@@ -32,8 +34,14 @@ watch(
 
 <template>
   <content-layout title="Reader">
-    <MdPreview id="preview-only" :model-value="content" />
-    <MdCatalog editor-id="preview-only" :scroll-element="scrollElement" />
+    <t-layout>
+      <t-content>
+        <MdPreview id="preview-only" :model-value="content" />
+      </t-content>
+      <t-aside :width="sideWidth">
+        <MdCatalog editor-id="preview-only" :scroll-element="scrollElement" />
+      </t-aside>
+    </t-layout>
 
     <template #actions>
       <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/md')">

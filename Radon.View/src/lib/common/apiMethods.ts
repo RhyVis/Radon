@@ -233,6 +233,13 @@ export async function apiDelete<T>(url: string, config?: AxiosRequestConfig): Pr
   return responseData;
 }
 
+export async function apiDeleteNoContent(url: string, config?: AxiosRequestConfig): Promise<void> {
+  const r = await apiDelete(url, config);
+  if (r.status.responseCode !== 204) {
+    throw new Error("Unexpected response code");
+  }
+}
+
 export function getClientVersionLocal(): string {
   return VersionLocal.clientVersion as string;
 }

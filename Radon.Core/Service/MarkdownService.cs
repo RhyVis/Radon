@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Masuit.Tools;
+using NLog;
 using Radon.Common.Core.DI;
 using Radon.Core.Data.Entity;
 using Radon.Core.Data.Repository;
@@ -16,15 +17,9 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
     private const string NoContent = "### No content available.";
     private const string Void = "void";
 
-    public bool CheckContent(string path)
+    public MdIndex CheckContent(string path)
     {
-        if (path != Void)
-        {
-            return PathExists(path);
-        }
-
-        Logger.Warn("Trying to access void markdown content.");
-        return false;
+        return repo.FindByPath(path) ?? new MdIndex();
     }
 
     public MdRecord ProvideContent(string path)
@@ -47,7 +42,7 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
         }
     }
 
-    public string UpdateContent(string path, string name, string desc, string content)
+    public string UpdateContent(string? path, string name, string desc, string content)
     {
         if (path == Void)
         {
@@ -57,13 +52,28 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
 
         try
         {
-            return PathWrite(path, name, desc, content);
+            return (path.IsNullOrEmpty())
+                ? PathWrite(null, name, desc, content)
+                : PathWrite(path, name, desc, content);
         }
         catch (Exception e)
         {
             Logger.Error(e, $"Exception occurred on updating markdown file on {path}.");
             throw;
         }
+    }
+
+    public void DeleteContent(string path)
+    {
+        var index =
+            repo.FindByPath(path)
+            ?? throw new InvalidOperationException(
+                $"Path {path} not found but you are going to delete it."
+            );
+
+        FileDelete(index.Path.ToString());
+
+        repo.Delete(index);
     }
 
     public List<MdIndex> ListIndex()
@@ -101,20 +111,38 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
         return (index.Name, File.Exists(targetPath) ? File.ReadAllText(targetPath) : NoContent);
     }
 
-    private string PathWrite(string path, string name, string desc, string content)
+    private string PathWrite(string? path, string name, string desc, string content)
     {
+        if (path is null)
+        {
+            var newIndex = new MdIndex { Name = name, Desc = desc };
+
+            var newEntity = repo.Insert(newIndex);
+            var newPath = newEntity.Path.ToString();
+
+            FileWrite(newPath, content);
+
+            return newPath;
+        }
+
         var index = repo.FindByPath(path);
 
         if (index is null)
         {
+            Logger.Warn($"Requested path {path} not found. Creating new markdown file.");
+
             var newIndex = new MdIndex { Name = name, Desc = desc };
 
-            FileWrite(path, content);
+            var newEntity = repo.Insert(newIndex);
+            var newPath = newEntity.Path.ToString();
 
-            repo.Insert(newIndex);
+            FileWrite(newPath, content);
 
-            return newIndex.Path.ToString();
+            return newPath;
         }
+
+        index.Name = name;
+        index.Desc = desc;
 
         FileWrite(index.Path.ToString(), content);
 
@@ -127,5 +155,13 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
         var targetPath = Path.Combine(baseDir, $"{path}.md");
 
         File.WriteAllText(targetPath, content);
+    }
+
+    private static void FileDelete(string path)
+    {
+        var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppResDir, "md");
+        var targetPath = Path.Combine(baseDir, $"{path}.md");
+
+        File.Delete(targetPath);
     }
 }

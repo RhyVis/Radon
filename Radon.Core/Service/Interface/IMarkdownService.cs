@@ -5,7 +5,7 @@ namespace Radon.Core.Service.Interface;
 
 public interface IMarkdownService
 {
-    bool CheckContent(string path);
+    MdIndex CheckContent(string path);
 
     /// <summary>
     /// Read markdown content from the given path.
@@ -16,12 +16,17 @@ public interface IMarkdownService
     /// <summary>
     /// Update content of the markdown file.
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="path">null if going to create new one</param>
     /// <param name="name"></param>
     /// <param name="desc"></param>
     /// <param name="content"></param>
     /// <returns>Empty if the path exists, or the inserted path</returns>
-    string UpdateContent(string path, string name, string desc, string content);
+    string UpdateContent(string? path, string name, string desc, string content);
+
+    /// <summary>
+    /// Delete the markdown file, throw if any error occurs.
+    /// </summary>
+    void DeleteContent(string path);
 
     List<MdIndex> ListIndex();
 }

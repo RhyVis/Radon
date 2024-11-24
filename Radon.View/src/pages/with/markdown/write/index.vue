@@ -1,24 +1,28 @@
 ﻿<script setup lang="ts">
-import { getMdRecord } from "@/pages/with/markdown/scripts/define.ts";
+import { checkMdRecord, getMdRecord, type MdIndex, updateMdRecord } from "@/pages/with/markdown/define.ts";
 import { get, set } from "@vueuse/core";
-import { useRouteParams, useRouteQuery } from "@vueuse/router";
+import { useRouteParams } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { ArrowLeftIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const path = useRouteParams("path");
-const newContent = useRouteQuery("new", 0);
+const path = useRouteParams("p");
 const content = ref("");
+const record = ref<MdIndex>({
+  path: "",
+  name: "",
+  desc: "",
+});
 
 const updateContent = async (path: string) => set(content, (await getMdRecord(path)).content);
-const handleUpdate = () => {
-  console.log(get(newContent));
-  MessagePlugin.warning("Not implemented yet");
-};
+const handleUpdate = () =>
+  updateMdRecord(path.value as string, record.value.name, record.value.desc, content.value)
+    .then(() => MessagePlugin.success("Update success"))
+    .catch(() => MessagePlugin.error("Update failed"));
 
 watch(
   () => path.value,
@@ -33,6 +37,17 @@ watch(
   },
   { immediate: true },
 );
+
+onMounted(() => {
+  checkMdRecord(get(path) as string)
+    .then(res => set(record, res))
+    .then(() => {
+      if (record.value.name.length === 0) {
+        MessagePlugin.error("No such record");
+        router.push("/md");
+      }
+    });
+});
 </script>
 
 <template>

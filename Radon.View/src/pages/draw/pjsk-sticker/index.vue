@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import CharacterList from "@/assets/conf/characters.json";
-import type { CharacterDefinition } from "@/lib/type/typeSticker";
 import { b64ToBlob } from "@/lib/util/imageTransform";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
 import SelectChara from "@/pages/draw/pjsk-sticker/comps/SelectChara.vue";
 import StickerCanvas from "@/pages/draw/pjsk-sticker/comps/StickerCanvas.vue";
+import type { CharacterDefinition } from "@/pages/draw/pjsk-sticker/scripts/define.ts";
 import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
 import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
