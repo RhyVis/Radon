@@ -1,17 +1,19 @@
-﻿using Radon.Data.Entity;
+﻿using JetBrains.Annotations;
+using Radon.Data.Entity;
 
 namespace Radon.Data.Repository;
 
-public class BaseRepository<E, K>(IFreeSql fsql) : FreeSql.BaseRepository<E, K>(fsql, null)
-    where E : BaseEntity
-    where K : struct
+[UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
+public class BaseRepository<TE, TK>(IFreeSql fsql) : FreeSql.BaseRepository<TE, TK>(fsql, null)
+    where TE : BaseEntity
+    where TK : struct
 {
-    public E? FindRand() => Select.OrderByRandom().Limit(1).First();
+    public TE? FindRand() => Select.OrderByRandom().Limit(1).First();
 
-    public List<E> FindRand(int count) => Select.OrderByRandom().Limit(count).ToList();
+    public List<TE> FindRand(int count) => Select.OrderByRandom().Limit(count).ToList();
 
     /// <summary>
     /// Be cautious when using this method, it will return all data from the table.
     /// </summary>
-    public List<E> FindAll() => Select.ToList();
+    public List<TE> FindAll() => Select.ToList();
 }

@@ -3,11 +3,11 @@
 /// <summary>
 /// Base Api Request Model
 /// </summary>
-/// <typeparam name="D">Type of inner data</typeparam>
-public abstract class BaseApiReq<D>()
-    where D : class
+/// <typeparam name="T">Type of inner data</typeparam>
+public abstract class BaseApiReq<T>()
+    where T : notnull
 {
-    protected BaseApiReq(D data)
+    protected BaseApiReq(T data)
         : this()
     {
         Data = data;
@@ -16,5 +16,5 @@ public abstract class BaseApiReq<D>()
     /// <summary>
     /// Data
     /// </summary>
-    public D Data { get; init; } = null!;
+    public T Data { get; init; } = default!;
 }

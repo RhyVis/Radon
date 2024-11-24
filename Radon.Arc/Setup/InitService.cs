@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
+using Radon.Core.Data.Entity;
 using Radon.Core.Model.Base;
 using Radon.Data.Entity;
 using Radon.Security.Model;
@@ -17,11 +18,11 @@ namespace Radon.Arc.Setup;
 
 public static class InitService
 {
-    private const string BASE_NAMESPACE = "Radon";
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private const string BaseNamespace = "Radon";
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    private static readonly Assembly[] RADON_ASSEMBLIES = new[]
-    {
+    private static readonly Assembly[] RadonAssemblies =
+    [
         // Radon.Common
         typeof(AppSettings).Assembly,
         // Radon.Data
@@ -32,7 +33,7 @@ public static class InitService
         typeof(Passport).Assembly,
         // Radon.Arc
         typeof(Init).Assembly,
-    };
+    ];
 
     /// <summary>
     /// Settings before the application built
@@ -49,29 +50,29 @@ public static class InitService
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
         builder.Services.AppendAuthentication();
-        builder.Services.AppendMiscService();
+        builder.Services.AppendMiscService(builder.Environment.IsDevelopment());
 
         return builder;
     }
 
     private static void SetupSql(this IServiceCollection services)
     {
-        _logger.Debug("Register FreeSql");
+        Logger.Debug("Register FreeSql");
         var fsql = new FreeSqlBuilder()
             .UseConnectionString(DataType.PostgreSQL, AppSettings.Get().Data.SQLConnectionString)
             .UseMonitorCommand(cmd =>
-                _logger.Info($"Sql：{cmd.CommandText.ReplaceLineEndings(" ")}")
+                Logger.Info($"Sql：{cmd.CommandText.ReplaceLineEndings(" ")}")
             )
             .UseAutoSyncStructure(true)
             .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
             .Build();
-        _logger.Debug("Sync Database Structure");
+        Logger.Debug("Sync Database Structure");
         fsql.CodeFirst.SyncStructure();
         services.AddSingleton(fsql);
 
-        _logger.Debug("Register Repository");
+        Logger.Debug("Register Repository");
         services.Scan(scan =>
-            scan.FromAssemblies(RADON_ASSEMBLIES)
+            scan.FromAssemblies(RadonAssemblies)
                 .AddClasses(classes =>
                     classes
                         .InNamespaces("Radon")
@@ -95,42 +96,42 @@ public static class InitService
 
     private static void RegisterService(this IServiceCollection services)
     {
-        _logger.Debug("Register Singleton Service");
+        Logger.Debug("Register Singleton Service");
         services.Scan(scan =>
-            scan.FromAssemblies(RADON_ASSEMBLIES)
+            scan.FromAssemblies(RadonAssemblies)
                 .AddClasses(classes =>
-                    classes.InNamespaces(BASE_NAMESPACE).WithAttribute<ServiceSingletonAttribute>()
+                    classes.InNamespaces(BaseNamespace).WithAttribute<ServiceSingletonAttribute>()
                 )
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsMatchingInterface()
                 .WithSingletonLifetime()
         );
-        _logger.Debug("Register Scoped Service");
+        Logger.Debug("Register Scoped Service");
         services.Scan(scan =>
-            scan.FromAssemblies(RADON_ASSEMBLIES)
+            scan.FromAssemblies(RadonAssemblies)
                 .AddClasses(classes =>
-                    classes.InNamespaces(BASE_NAMESPACE).WithAttribute<ServiceScopedAttribute>()
+                    classes.InNamespaces(BaseNamespace).WithAttribute<ServiceScopedAttribute>()
                 )
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsMatchingInterface()
                 .WithScopedLifetime()
         );
-        _logger.Debug("Register Transient Service");
+        Logger.Debug("Register Transient Service");
         services.Scan(scan =>
-            scan.FromAssemblies(RADON_ASSEMBLIES)
+            scan.FromAssemblies(RadonAssemblies)
                 .AddClasses(classes =>
-                    classes.InNamespaces(BASE_NAMESPACE).WithAttribute<ServiceTransientAttribute>()
+                    classes.InNamespaces(BaseNamespace).WithAttribute<ServiceTransientAttribute>()
                 )
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsMatchingInterface()
                 .WithTransientLifetime()
         );
 
-        _logger.Debug("Register Initializer");
+        Logger.Debug("Register Initializer");
         services.Scan(scan =>
-            scan.FromAssemblies(RADON_ASSEMBLIES)
+            scan.FromAssemblies(RadonAssemblies)
                 .AddClasses(classes =>
-                    classes.InNamespaces(BASE_NAMESPACE).AssignableTo<IInitializer>()
+                    classes.InNamespaces(BaseNamespace).AssignableTo<IInitializer>()
                 )
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsSelf()
@@ -140,7 +141,7 @@ public static class InitService
 
     private static void AppendAuthentication(this IServiceCollection services)
     {
-        _logger.Debug("Register Authentication Service");
+        Logger.Debug("Register Authentication Service");
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -160,10 +161,15 @@ public static class InitService
             });
     }
 
-    private static void AppendMiscService(this IServiceCollection services)
+    private static void AppendMiscService(this IServiceCollection services, bool dev)
     {
-        _logger.Debug("Register Other Service");
+        Logger.Debug("Register Other Service");
         services.AddHttpClient();
+
+        if (!dev)
+        {
+            return;
+        }
         services.AddEndpointsApiExplorer();
         services.AddOpenApi();
     }

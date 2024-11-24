@@ -1,3 +1,3 @@
 ﻿namespace Radon.Arc.Setup;
 
-public class Init { }
+public class Init;

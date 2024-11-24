@@ -197,6 +197,13 @@ export async function apiPutState(
   return await apiPut<boolean>(url, data, config);
 }
 
+export async function apiPutNoContent(url: string, data: ReqData, config?: AxiosRequestConfig): Promise<void> {
+  const r = await apiPut(url, data, config);
+  if (r.status.responseCode !== 204) {
+    throw new Error("Unexpected response code");
+  }
+}
+
 /**
  * Delete Method
  * @param url

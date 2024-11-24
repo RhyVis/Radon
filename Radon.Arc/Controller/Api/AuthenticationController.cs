@@ -6,7 +6,7 @@ using Radon.Core.Model.Response;
 using Radon.Core.Util;
 using Radon.Security.Service.Interface;
 
-namespace Radon.Arc.Controller;
+namespace Radon.Arc.Controller.Api;
 
 [Authorize]
 [ApiController, Route("api/auth")]
@@ -14,7 +14,7 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
 {
     [AllowAnonymous]
     [HttpPost("login")]
-    [ProducesResponseType(typeof(PlainTextRes), StatusCodes.Status200OK)]
+    [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
     public IActionResult Login(UsernameReq req)
     {
         var p = service.Authenticate(req.Data.Username, req.Data.Password);
@@ -44,12 +44,12 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
     public IActionResult Validate() => NoContent();
 
     [HttpPost("refresh")]
-    [ProducesResponseType(typeof(PlainTextRes), StatusCodes.Status200OK)]
+    [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
     public IActionResult Refresh()
     {
         var token = HttpContext.GetAuthenticatedToken();
-        var userID = HttpContext.GetAuthenticatedUserId();
-        var p = service.Refresh(token, userID);
+        var userId = HttpContext.GetAuthenticatedUserId();
+        var p = service.Refresh(token, userId);
         return Ok(p.OfRes());
     }
 }

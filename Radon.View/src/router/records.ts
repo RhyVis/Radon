@@ -165,3 +165,33 @@ const utilRecords: RouteRecordAssemble[] = [
 
 export { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords };
 export type { RouteRecordAssemble };
+
+export const markdownRecords: RouteRecordAssemble[] = [
+  // Menu
+  {
+    path: "/md",
+    name: "Markdown",
+    component: () => import("@/pages/with/markdown/index.vue"),
+    meta: {
+      title: "Markdown",
+    },
+  },
+  // Read
+  {
+    path: "/md/:path/read",
+    name: "MarkdownReader",
+    component: () => import("@/pages/with/markdown/read/index.vue"),
+    meta: {
+      title: "Markdown Reader",
+    },
+  },
+  // Write
+  {
+    path: "/md/:path/write",
+    name: "MarkdownWriter",
+    component: () => import("@/pages/with/markdown/write/index.vue"),
+    meta: {
+      title: "Markdown Writer",
+    },
+  },
+];

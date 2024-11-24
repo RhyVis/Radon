@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Radon.Core.Model.Response;
 using Radon.Core.Service.Interface;
 
-namespace Radon.Arc.Controller;
+namespace Radon.Arc.Controller.Api;
 
-[ApiController]
-[Route("api/nav")]
+[Authorize]
+[ApiController, Route("api/nav")]
 public class NavigationController(INavigationService service) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(NavigationRes), 200)]
+    [ProducesResponseType<NavigationRes>(StatusCodes.Status200OK)]
     public IActionResult GetNavigation() => Ok(service.HandleNavigation());
 }

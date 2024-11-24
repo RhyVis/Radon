@@ -5,7 +5,7 @@ import { dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from 
 import { useGlobalStore } from "@/store/global";
 import { set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { CloseIcon, FileUnknownIcon, HomeIcon } from "tdesign-icons-vue-next";
+import { CloseIcon, File1Icon, FileUnknownIcon, HomeIcon } from "tdesign-icons-vue-next";
 import type { MenuRoute } from "tdesign-vue-next";
 import { onMounted } from "vue";
 
@@ -35,11 +35,18 @@ onMounted(() => {
         <t-image class="r-ct-icon" shape="round" :src="ProjectIcon" alt="Radon" />
         <span class="r-ct-sd-tt">Radon</span>
       </template>
-      <t-menu-item :to="'/' as MenuRoute" @click="handleClose">
+      <t-menu-item :to="'/' as MenuRoute" value="home" @click="handleClose">
         <template #icon>
           <HomeIcon />
         </template>
         <span>HomePage</span>
+      </t-menu-item>
+
+      <t-menu-item :to="'/md' as MenuRoute" value="md" @click="handleClose">
+        <template #icon>
+          <File1Icon />
+        </template>
+        <span>Content</span>
       </t-menu-item>
 
       <!--Data-->

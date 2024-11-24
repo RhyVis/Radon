@@ -12,4 +12,8 @@ public class StateRes : BaseApiRes<bool>
 
     public StateRes()
         : base(true) { }
+
+    public static StateRes Of(bool success) => new(success);
+
+    public static StateRes OfSuccess() => new(true);
 }

@@ -4,7 +4,7 @@ namespace Radon.Core.Model.Request;
 
 public class SpamFetchReq : BaseApiReq<SpamFetchReq.ReqData>
 {
-    public class ReqData
+    public record ReqData
     {
         public string Type { get; set; } = "";
         public string Dict { get; set; } = "";
@@ -14,7 +14,7 @@ public class SpamFetchReq : BaseApiReq<SpamFetchReq.ReqData>
 
 public class SpamFetchPreciseReq : BaseApiReq<SpamFetchPreciseReq.ReqData>
 {
-    public class ReqData
+    public record ReqData
     {
         public string Type { get; set; } = "";
         public string Dict { get; set; } = "";

@@ -4,7 +4,7 @@ namespace Radon.Core.Model.Request;
 
 public class TarotReq : BaseApiReq<TarotReq.ReqData>
 {
-    public class ReqData
+    public record ReqData
     {
         public string Deck { get; set; } = "";
         public bool Full { get; set; }

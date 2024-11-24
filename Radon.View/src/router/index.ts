@@ -1,7 +1,15 @@
 import HomeView from "@/pages/base/home/index.vue";
 import { authGuard, onlineGuard } from "@/router/guard";
 import type { RouteRecordAssemble } from "@/router/records";
-import { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
+import {
+  baseRecords,
+  dataRecords,
+  drawRecords,
+  markdownRecords,
+  mathRecords,
+  mystRecords,
+  utilRecords,
+} from "@/router/records";
 import { createRouter, createWebHistory } from "vue-router";
 
 const records: RouteRecordAssemble[] = [
@@ -13,6 +21,11 @@ const records: RouteRecordAssemble[] = [
       title: "Radon",
     },
   },
+
+  // Complex
+  ...markdownRecords,
+
+  // Simple
   ...baseRecords,
   ...dataRecords,
   ...mystRecords,

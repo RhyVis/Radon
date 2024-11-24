@@ -7,13 +7,13 @@ using Radon.Core.Processor.Interface;
 using Radon.Core.Service.Interface;
 using Radon.Core.Util;
 
-namespace Radon.Arc.Controller;
+namespace Radon.Arc.Controller.Api;
 
 [ApiController, Route("api/pdx")]
 public class PdxController(IParadoxProcessor processor, IPdxService service) : ControllerBase
 {
     [HttpGet("test")]
-    [ProducesResponseType(typeof(UnsetRes), StatusCodes.Status200OK)]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
     public IActionResult GetTest()
     {
         var test = PdxLangParser.Create(["00_TESTER.LINE_EOF_O:0 \"Testing §rParser§! Item\""]);
@@ -21,7 +21,7 @@ public class PdxController(IParadoxProcessor processor, IPdxService service) : C
     }
 
     [HttpPost("parse/lang")]
-    [ProducesResponseType(typeof(UnsetRes), StatusCodes.Status200OK)]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
     public IActionResult ParseLang([FromForm] IFormFile? file)
     {
         if (file == null || file.Length == 0)
@@ -41,18 +41,18 @@ public class PdxController(IParadoxProcessor processor, IPdxService service) : C
 
     [Authorize]
     [HttpPut("parse/lang/replacer")]
-    [ProducesResponseType(typeof(StateRes), StatusCodes.Status200OK)]
+    [ProducesResponseType<StateRes>(StatusCodes.Status200OK)]
     public IActionResult SetLangReplacer(PlainTextReq req)
     {
         var userId = HttpContext.GetAuthenticatedUserId();
         service.SetLangParserReplacer(userId, req.Data);
 
-        return Ok(new StateRes());
+        return Ok(StateRes.OfSuccess());
     }
 
     [Authorize]
     [HttpGet("parse/lang/replacer")]
-    [ProducesResponseType(typeof(PlainTextRes), StatusCodes.Status200OK)]
+    [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
     public IActionResult GetLangReplacer()
     {
         var userId = HttpContext.GetAuthenticatedUserId();

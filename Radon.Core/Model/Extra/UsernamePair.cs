@@ -1,6 +1,6 @@
 ﻿namespace Radon.Core.Model.Extra;
 
-public class UsernamePair
+public record UsernamePair
 {
     public string Username { get; init; } = null!;
     public string Password { get; init; } = null!;

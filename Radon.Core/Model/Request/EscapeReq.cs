@@ -4,7 +4,7 @@ namespace Radon.Core.Model.Request;
 
 public class EscapeReq : BaseApiReq<EscapeReq.ReqData>
 {
-    public class ReqData
+    public record ReqData
     {
         public string Type { get; set; } = null!;
         public string Text { get; set; } = null!;

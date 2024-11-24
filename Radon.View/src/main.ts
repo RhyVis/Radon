@@ -12,6 +12,8 @@ import router from "@/router";
 import store from "@/store";
 import { registerSW } from "virtual:pwa-register";
 
+console.log("RN: main");
+
 registerSW({ immediate: true });
 
 const app = createApp(App);

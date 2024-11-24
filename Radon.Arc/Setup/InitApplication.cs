@@ -8,7 +8,7 @@ namespace Radon.Arc.Setup;
 
 public static class InitApplication
 {
-    private static Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// Settings after the application is built
@@ -26,13 +26,16 @@ public static class InitApplication
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapOpenApi("/api/openapi/{documentName}.json");
-        app.MapScalarApiReference(opt =>
+        if (app.Environment.IsDevelopment())
         {
-            opt.Title = "Radon API";
-            opt.EndpointPathPrefix = "/api/scalar/{documentName}";
-            opt.OpenApiRoutePattern = "/api/openapi/{documentName}.json";
-        });
+            app.MapOpenApi("/api/openapi/{documentName}.json");
+            app.MapScalarApiReference(opt =>
+            {
+                opt.Title = "Radon API";
+                opt.EndpointPathPrefix = "/api/scalar/{documentName}";
+                opt.OpenApiRoutePattern = "/api/openapi/{documentName}.json";
+            });
+        }
 
         app.MapFallbackToFile("/index.html");
 
@@ -46,7 +49,7 @@ public static class InitApplication
 
     private static void SetupInitializer(this IApplicationBuilder app)
     {
-        _logger.Info("Starting Initializer");
+        Logger.Info("Starting Initializer");
         var scope = app.ApplicationServices.CreateScope();
         try
         {
@@ -55,20 +58,20 @@ public static class InitApplication
             {
                 try
                 {
-                    _logger.Debug($"Trying to Initialize {service.GetType().Name}");
+                    Logger.Debug($"Trying to Initialize {service.GetType().Name}");
                     service.InitAsync().GetAwaiter().GetResult();
                 }
                 catch (Exception e)
                 {
-                    _logger.Warn($"Initializer {service.GetType().Name} failed with {e.Message}");
-                    _logger.Info($"Retrying to Initialize {service.GetType().Name}");
+                    Logger.Warn($"Initializer {service.GetType().Name} failed with {e.Message}");
+                    Logger.Info($"Retrying to Initialize {service.GetType().Name}");
                     service.InitAsync().GetAwaiter().GetResult();
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Initializer Error on Startup");
+            Logger.Error(ex, "Initializer Error on Startup");
         }
         finally
         {
@@ -78,12 +81,12 @@ public static class InitApplication
 
     private static void DevTest(this IApplicationBuilder app)
     {
-        _logger.Info("Starting tester");
+        Logger.Info("Starting tester");
         var scope = app.ApplicationServices.CreateScope();
         try { }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Test err");
+            Logger.Error(ex, "Test err");
             throw;
         }
         finally
