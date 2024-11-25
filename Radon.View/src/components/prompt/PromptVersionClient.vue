@@ -10,7 +10,7 @@ const { t } = useI18n();
 const { fetchState, cAssembleTimeL, cAssembleTimeR } = storeToRefs(version);
 
 const tagTheme = computed(() => {
-  switch (get(fetchState)) {
+  switch (fetchState.value) {
     case FetchState.SUCCESS:
       return "success";
     case FetchState.NEED_UPDATE | FetchState.NOT_ONLINE:
@@ -22,7 +22,7 @@ const tagTheme = computed(() => {
   }
 });
 const tagIcon = computed(() => {
-  switch (get(fetchState)) {
+  switch (fetchState.value) {
     case FetchState.SUCCESS:
       return "check-circle";
     case FetchState.NEED_UPDATE | FetchState.NOT_ONLINE:
@@ -35,7 +35,7 @@ const tagIcon = computed(() => {
 });
 const tagValue = computed(() => {
   const prefix = t("clientVersion");
-  switch (get(fetchState)) {
+  switch (fetchState.value) {
     case FetchState.SUCCESS:
       return prefix + get(cAssembleTimeL);
     case FetchState.NEED_UPDATE:

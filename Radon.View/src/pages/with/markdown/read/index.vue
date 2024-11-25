@@ -59,7 +59,7 @@ watch(
           :model-value="content"
           :theme="theme"
           :language="lang"
-          previewTheme="github"
+          previewTheme="cyanosis"
           codeTheme="github"
         />
         <t-aside :width="sideWidth">

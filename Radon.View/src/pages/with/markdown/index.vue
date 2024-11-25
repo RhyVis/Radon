@@ -10,9 +10,9 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
-const { t } = useI18n();
 const router = useRouter();
 const store = useMdStore();
+const { t } = useI18n();
 const { authPassed } = storeToRefs(useGlobalStore());
 const { indexList } = storeToRefs(store);
 const [loading, setLoading] = useToggle(true);
@@ -58,12 +58,12 @@ onMounted(() => {
         <t-list-item v-for="(entry, index) in indexList" :key="index">
           <t-list-item-meta :title="entry.name" :description="entry.desc" />
           <template #action>
-            <t-space>
-              <t-button theme="primary" variant="outline" shape="circle" @click="handleToRead(entry.path)">
+            <t-space :size="6">
+              <t-button theme="primary" variant="text" size="small" shape="circle" @click="handleToRead(entry.path)">
                 <SearchIcon />
               </t-button>
               <template v-if="authPassed">
-                <t-button theme="primary" variant="outline" shape="circle" @click="handleToWrite(entry.path)">
+                <t-button theme="primary" variant="text" size="small" shape="circle" @click="handleToWrite(entry.path)">
                   <EditIcon />
                 </t-button>
                 <t-popconfirm
@@ -80,7 +80,7 @@ onMounted(() => {
                     theme: 'danger',
                   }"
                 >
-                  <t-button :theme="delBtnTheme" variant="outline" shape="circle">
+                  <t-button :theme="delBtnTheme" variant="text" size="small" shape="circle">
                     <DeleteIcon />
                   </t-button>
                 </t-popconfirm>

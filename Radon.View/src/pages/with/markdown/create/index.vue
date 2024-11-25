@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { createMdRecord } from "@/pages/with/markdown/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, useDark, useToggle } from "@vueuse/core";
+import { get, useDark, useToggle, useWindowSize } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -18,13 +18,20 @@ const router = useRouter();
 const createName = useRouteQuery("name");
 const createDesc = useRouteQuery("desc");
 const content = ref("");
+const [updating, setUpdating] = useToggle(false);
 const [complete, setComplete] = useToggle(false);
 const { locale } = storeToRefs(useGlobalStore());
+const { width } = useWindowSize();
 const { t } = useI18n();
 const theme = computed(() => (get(dark) ? "dark" : "light"));
 const lang = computed(() => (get(locale) === "zh-CN" ? "zh-CN" : "en-US"));
+const tooNarrow = computed(() => get(width) < 768);
 
 const handleCreate = async () => {
+  if (get(updating)) {
+    return;
+  }
+  setUpdating(true);
   const path = await createMdRecord(get(createName) as string, get(createDesc) as string, get(content));
   if (path.length > 0) {
     setComplete(true);
@@ -85,7 +92,7 @@ onMounted(() => {
     typeof createName.value !== "string" ||
     typeof createDesc.value !== "string"
   ) {
-    MessagePlugin.warning("Invalid create request");
+    MessagePlugin.warning(t("msg.invalidCreate"));
     setComplete(true);
     router.push("/md");
   }
@@ -97,9 +104,11 @@ onMounted(() => {
     <MdEditor
       v-model="content"
       @onSave="handleCreate()"
+      :readOnly="updating"
       :theme="theme"
       :language="lang"
-      previewTheme="github"
+      :preview="!tooNarrow"
+      previewTheme="cyanosis"
       codeTheme="github"
       noUploadImg
     />
@@ -122,3 +131,13 @@ onMounted(() => {
   }
 }
 </style>
+
+<i18n locale="en">
+msg:
+  invalidCreate: "Invalid create request"
+</i18n>
+
+<i18n locale="zh-CN">
+msg:
+  invalidCreate: "无效的创建请求"
+</i18n>

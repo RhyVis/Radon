@@ -1,7 +1,7 @@
 ﻿<script setup lang="tsx">
 import { checkMdRecord, updateMdRecord } from "@/pages/with/markdown/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useDark, useToggle } from "@vueuse/core";
+import { get, set, useDark, useToggle, useWindowSize } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -21,9 +21,12 @@ const name = ref("");
 const desc = ref("");
 const content = ref("");
 const { locale } = storeToRefs(useGlobalStore());
+const { width } = useWindowSize();
 const [updating, setUpdating] = useToggle(false);
+const [changed, setChanged] = useToggle(false);
 const theme = computed(() => (get(dark) ? "dark" : "light"));
 const lang = computed(() => (get(locale) === "zh-CN" ? "zh-CN" : "en-US"));
+const tooNarrow = computed(() => get(width) < 768);
 
 const updateContent = async (path: string) => {
   const check = await checkMdRecord(path);
@@ -45,14 +48,17 @@ const handleUpdate = () => {
   updateMdRecord(get(path) as string, get(name), get(desc), get(content))
     .then(() => MessagePlugin.success(t("msg.updateSuccess")))
     .catch(() => MessagePlugin.error(t("msg.updateFailed")))
-    .finally(() => setUpdating(false));
+    .finally(() => {
+      setUpdating(false);
+      setChanged(false);
+    });
 };
 
 onBeforeRouteLeave(async () => {
   if (get(updating)) {
     void MessagePlugin.warning(t("msg.updateInProgress"));
     return false;
-  } else {
+  } else if (get(changed)) {
     return await new Promise<boolean>(async resolve => {
       const n = await NotificationPlugin.warning({
         title: t("message.saveConfirm.title"),
@@ -90,6 +96,8 @@ onBeforeRouteLeave(async () => {
         },
       });
     });
+  } else {
+    return true;
   }
 });
 watch(
@@ -114,10 +122,13 @@ watch(
       <MdEditor
         v-else
         v-model="content"
+        @onChange="setChanged(true)"
         @onSave="handleUpdate()"
+        :readOnly="updating"
         :theme="theme"
         :language="lang"
-        previewTheme="github"
+        :preview="!tooNarrow"
+        previewTheme="cyanosis"
         codeTheme="github"
         noUploadImg
       />
