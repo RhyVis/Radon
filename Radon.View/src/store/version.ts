@@ -5,6 +5,11 @@ import { radixValExtended } from "@/pages/math/radix/scripts/radix.ts";
 import { get, useOnline } from "@vueuse/core";
 import { defineStore } from "pinia";
 
+type VersionFile = {
+  compileTime: number;
+  clientVersion: string;
+};
+
 type VersionState = {
   cCompileTimeL: number;
   cCompileTimeR: number;
@@ -14,6 +19,8 @@ type VersionState = {
   fetchState: FetchState;
   initialized: boolean;
 };
+
+const localVersion: VersionFile = LocalVersion;
 
 export enum FetchState {
   INIT = 0,
@@ -25,9 +32,9 @@ export enum FetchState {
 
 export const useVersionStore = defineStore("version", {
   state: (): VersionState => ({
-    cCompileTimeL: LocalVersion.compileTime as number,
+    cCompileTimeL: localVersion.compileTime,
     cCompileTimeR: 0,
-    cVersionL: LocalVersion.clientVersion as string,
+    cVersionL: localVersion.clientVersion,
     cVersionR: "0.0.0",
     sVersion: "0.0.0",
     fetchState: FetchState.INIT,
@@ -44,7 +51,7 @@ export const useVersionStore = defineStore("version", {
       return formatFromTimestamp(state.cCompileTimeR);
     },
     needUpdate(state) {
-      return state.fetchState === FetchState.NEED_UPDATE;
+      return state.fetchState == FetchState.NEED_UPDATE;
     },
     badState(state) {
       return state.fetchState < 0;
@@ -57,24 +64,33 @@ export const useVersionStore = defineStore("version", {
         return;
       }
 
-      try {
-        getClientCompileTimeRemote()
-          .then(time => (this.cCompileTimeR = time))
-          .then(() => {
-            if (this.cCompileTimeL != this.cCompileTimeR) {
-              this.fetchState = FetchState.NEED_UPDATE;
-            } else {
-              this.fetchState = FetchState.SUCCESS;
-            }
-          });
-        getClientVersionRemote().then(version => (this.cVersionR = version));
-        getServerVersion().then(version => (this.sVersion = version));
-      } catch (e) {
-        console.error(e);
-        this.fetchState = FetchState.ERROR;
-      } finally {
-        this.initialized = true;
-      }
+      getClientCompileTimeRemote()
+        .then(time => (this.cCompileTimeR = time))
+        .then(() => {
+          if (this.cCompileTimeL != this.cCompileTimeR) {
+            this.fetchState = FetchState.NEED_UPDATE;
+          } else {
+            this.fetchState = FetchState.SUCCESS;
+          }
+        })
+        .catch(e => {
+          console.error(e);
+          this.fetchState = FetchState.ERROR;
+        });
+      getClientVersionRemote()
+        .then(version => (this.cVersionR = version))
+        .catch(e => {
+          console.error(e);
+          this.fetchState = FetchState.ERROR;
+        });
+      getServerVersion()
+        .then(version => (this.sVersion = version))
+        .catch(e => {
+          console.error(e);
+          this.fetchState = FetchState.ERROR;
+        });
+
+      this.initialized = true;
     },
   },
 });

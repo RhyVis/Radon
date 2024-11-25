@@ -46,7 +46,7 @@ onMounted(() => {
         <template #icon>
           <File1Icon />
         </template>
-        <span>Content</span>
+        <span>Archive</span>
       </t-menu-item>
 
       <!--Data-->

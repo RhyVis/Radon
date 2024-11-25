@@ -10,6 +10,7 @@ export type MdIndex = MdIndexBrief & { content: string };
 
 export type MdRecord = {
   name: string;
+  desc: string;
   content: string;
 };
 

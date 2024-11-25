@@ -25,8 +25,8 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
     {
         try
         {
-            var (name, content) = PathRead(path);
-            return new MdRecord(name, content);
+            var (name, desc, content) = PathRead(path);
+            return new MdRecord(name, desc, content);
         }
         catch (Exception e)
         {
@@ -66,11 +66,11 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
         return repo.Select.ToList().Select(x => x.ToDto()).ToList();
     }
 
-    private (string, string) PathRead(string path)
+    private (string, string, string) PathRead(string path)
     {
         var index = repo.FindByPath(path);
 
-        return index is null ? (Void, NoContent) : (index.Name, index.Content);
+        return index is null ? (Void, Void, NoContent) : (index.Name, index.Desc, index.Content);
     }
 
     private string PathWrite(string? path, string name, string desc, string content)

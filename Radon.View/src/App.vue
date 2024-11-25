@@ -100,7 +100,7 @@ watch(
 
 <template>
   <base-layout class="r-app-base-layout">
-    <template #side>
+    <template #left>
       <ContentSide />
     </template>
     <template #header>

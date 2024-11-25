@@ -9,10 +9,17 @@
     networkError: "Network Error",
     syncSuccess: "Sync successful",
     noEmpty: "Should not be empty",
+    loading: "Loading...",
   },
   message: {
     authInvalid: "Authentication failed",
     pageNeedNetwork: "This page requires network connection",
+    saveConfirm: {
+      title: "Leaving so soon?",
+      content: "You have unsaved changes. Are you sure you want to leave?",
+      confirm: "Leave",
+      cancel: "Stay",
+    }
   },
   auth: {
     message: {

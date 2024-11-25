@@ -9,10 +9,17 @@
     networkError: "网络错误",
     syncSuccess: "同步成功",
     noEmpty: "不能为空",
+    loading: "加载中...",
   },
   message: {
     authInvalid: "认证失败",
     pageNeedNetwork: "此页面需要网络连接",
+    saveConfirm: {
+      title: "要离开了吗？",
+      content: "您有未保存的更改。确定要离开吗？",
+      confirm: "离开",
+      cancel: "停留",
+    },
   },
   auth: {
     message: {

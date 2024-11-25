@@ -170,10 +170,10 @@ export const markdownRecords: RouteRecordAssemble[] = [
   // Menu
   {
     path: "/md",
-    name: "Markdown",
+    name: "Archive",
     component: () => import("@/pages/with/markdown/index.vue"),
     meta: {
-      title: "Markdown",
+      title: "Archive",
     },
   },
   // Create
