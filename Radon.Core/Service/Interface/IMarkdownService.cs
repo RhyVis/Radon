@@ -28,5 +28,5 @@ public interface IMarkdownService
     /// </summary>
     void DeleteContent(string path);
 
-    List<MdIndex> ListIndex();
+    List<MdIndexDto> ListIndex();
 }

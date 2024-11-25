@@ -5,6 +5,7 @@ export type GlobalStore = {
   authShow: boolean;
   authPassed: boolean;
   fontLoaded: boolean;
+  darkTheme: boolean;
   locale: string;
 };
 
@@ -14,6 +15,7 @@ export const useGlobalStore = defineStore("global", {
     authShow: false,
     authPassed: false,
     fontLoaded: false,
+    darkTheme: false,
     locale: "zh-CN",
   }),
   persist: {

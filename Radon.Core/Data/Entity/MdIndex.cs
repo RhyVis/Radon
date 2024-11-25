@@ -15,9 +15,33 @@ public class MdIndex : BaseEntity
     [Column(StringLength = 128, IsNullable = true)]
     public string Desc { get; set; } = string.Empty;
 
+    [Column(StringLength = -1, IsNullable = false)]
+    public string Content { get; set; } = string.Empty;
+
     [Column(ServerTime = DateTimeKind.Utc, CanUpdate = false)]
     public DateTime CreateTime { get; set; }
 
     [Column(ServerTime = DateTimeKind.Utc)]
+    public DateTime UpdateTime { get; set; }
+
+    public MdIndexDto ToDto()
+    {
+        return new MdIndexDto
+        {
+            Path = Path,
+            Name = Name,
+            Desc = Desc,
+            CreateTime = CreateTime,
+            UpdateTime = UpdateTime,
+        };
+    }
+}
+
+public class MdIndexDto
+{
+    public Guid Path { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Desc { get; set; } = string.Empty;
+    public DateTime CreateTime { get; set; }
     public DateTime UpdateTime { get; set; }
 }

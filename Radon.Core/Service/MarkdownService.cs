@@ -13,7 +13,6 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    private const string AppResDir = "appResource";
     private const string NoContent = "### No content available.";
     private const string Void = "void";
 
@@ -24,12 +23,6 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
 
     public MdRecord ProvideContent(string path)
     {
-        if (path == Void)
-        {
-            Logger.Warn("Trying to access void markdown content.");
-            return new MdRecord(Void, NoContent);
-        }
-
         try
         {
             var (name, content) = PathRead(path);
@@ -44,15 +37,9 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
 
     public string UpdateContent(string? path, string name, string desc, string content)
     {
-        if (path == Void)
-        {
-            Logger.Warn("Trying to access void markdown content.");
-            return string.Empty;
-        }
-
         try
         {
-            return (path.IsNullOrEmpty())
+            return path.IsNullOrEmpty()
                 ? PathWrite(null, name, desc, content)
                 : PathWrite(path, name, desc, content);
         }
@@ -71,97 +58,64 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
                 $"Path {path} not found but you are going to delete it."
             );
 
-        FileDelete(index.Path.ToString());
-
         repo.Delete(index);
     }
 
-    public List<MdIndex> ListIndex()
+    public List<MdIndexDto> ListIndex()
     {
-        return repo.Select.ToList();
-    }
-
-    private bool PathExists(string path)
-    {
-        var index = repo.FindByPath(path);
-
-        if (index is null)
-        {
-            return false;
-        }
-
-        var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppResDir, "md");
-        var targetPath = Path.Combine(baseDir, $"{index}.md");
-
-        return File.Exists(targetPath);
+        return repo.Select.ToList().Select(x => x.ToDto()).ToList();
     }
 
     private (string, string) PathRead(string path)
     {
         var index = repo.FindByPath(path);
 
-        if (index is null)
-        {
-            return (Void, NoContent);
-        }
-
-        var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppResDir, "md");
-        var targetPath = Path.Combine(baseDir, $"{path}.md");
-
-        return (index.Name, File.Exists(targetPath) ? File.ReadAllText(targetPath) : NoContent);
+        return index is null ? (Void, NoContent) : (index.Name, index.Content);
     }
 
     private string PathWrite(string? path, string name, string desc, string content)
     {
+        // Create new
         if (path is null)
         {
-            var newIndex = new MdIndex { Name = name, Desc = desc };
+            var newIndex = new MdIndex
+            {
+                Name = name,
+                Desc = desc,
+                Content = content,
+            };
 
             var newEntity = repo.Insert(newIndex);
             var newPath = newEntity.Path.ToString();
-
-            FileWrite(newPath, content);
 
             return newPath;
         }
 
         var index = repo.FindByPath(path);
 
+        // Create new if not found
         if (index is null)
         {
             Logger.Warn($"Requested path {path} not found. Creating new markdown file.");
 
-            var newIndex = new MdIndex { Name = name, Desc = desc };
+            var newIndex = new MdIndex
+            {
+                Name = name,
+                Desc = desc,
+                Content = content,
+            };
 
             var newEntity = repo.Insert(newIndex);
             var newPath = newEntity.Path.ToString();
-
-            FileWrite(newPath, content);
 
             return newPath;
         }
 
         index.Name = name;
         index.Desc = desc;
-
-        FileWrite(index.Path.ToString(), content);
+        index.Content = content;
+        repo.Update(index);
 
         return string.Empty;
-    }
-
-    private static void FileWrite(string path, string content)
-    {
-        var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppResDir, "md");
-        var targetPath = Path.Combine(baseDir, $"{path}.md");
-
-        File.WriteAllText(targetPath, content);
-    }
-
-    private static void FileDelete(string path)
-    {
-        var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppResDir, "md");
-        var targetPath = Path.Combine(baseDir, $"{path}.md");
-
-        File.Delete(targetPath);
     }
 }

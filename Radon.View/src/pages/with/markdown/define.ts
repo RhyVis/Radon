@@ -1,18 +1,20 @@
-﻿import { apiDeleteNoContent, apiGet, apiPost, apiPut } from "@/lib/common/apiMethods.ts";
+﻿import { apiDeleteNoContent, apiGet, apiPostStr, apiPut } from "@/lib/common/apiMethods.ts";
 
-export type MdIndex = {
+export type MdIndexBrief = {
   path: string;
   name: string;
   desc: string;
 };
+
+export type MdIndex = MdIndexBrief & { content: string };
 
 export type MdRecord = {
   name: string;
   content: string;
 };
 
-export const getMdIndex = async (): Promise<MdIndex[]> => {
-  const index = await apiGet<MdIndex[]>("/api/md/index");
+export const getMdIndex = async (): Promise<MdIndexBrief[]> => {
+  const index = await apiGet<MdIndexBrief[]>("/api/md/index");
   return index.data;
 };
 
@@ -38,7 +40,7 @@ export const updateMdRecord = async (path: string, name: string, desc: string, c
 };
 
 export const createMdRecord = async (name: string, desc: string, content: string): Promise<string> => {
-  const res = await apiPost<string>(`api/md/create`, {
+  const res = await apiPostStr(`api/md/create`, {
     path: "",
     name: name,
     desc: desc,
