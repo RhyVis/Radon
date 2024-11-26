@@ -55,10 +55,12 @@ const router = createRouter({
   routes: records,
 });
 
-router.beforeEach(async (to, from, next) => {
-  await onlineGuard(to, from, async () => {
-    await authGuard(to, from, next);
-  });
+router.beforeEach(async to => {
+  if (await onlineGuard(to)) {
+    return await authGuard(to);
+  } else {
+    return false;
+  }
 });
 
 export default router;

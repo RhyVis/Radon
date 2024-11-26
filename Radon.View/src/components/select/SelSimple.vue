@@ -6,16 +6,20 @@ type SimpleSelOpt = {
   value?: string;
 };
 
+const { t } = useI18n();
 const model = defineModel<string>({ required: true });
 const emit = defineEmits(["update"]);
-defineProps<{
+const {
+  options,
+  placeholder,
+  loading = false,
+  autoWidth = false,
+} = defineProps<{
   options: SimpleSelOpt[];
   placeholder?: string;
   loading?: boolean;
   autoWidth?: boolean;
 }>();
-
-const { t } = useI18n();
 </script>
 
 <template>
@@ -23,7 +27,7 @@ const { t } = useI18n();
     v-model="model"
     :placeholder="placeholder ?? t('placeholder')"
     :auto-width="autoWidth"
-    :loading="loading ?? false"
+    :loading="loading"
     :loading-text="t('loading')"
     @change="emit('update', model)"
   >

@@ -8,12 +8,11 @@ import { storeToRefs } from "pinia";
 import { HomeIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 
-const global = useGlobalStore();
-const { authShow } = storeToRefs(global);
+const { authShow } = storeToRefs(useGlobalStore());
 const handleAuthEntry = () => {
   if (!get(authShow)) {
     set(authShow, true);
-    MessagePlugin.info("Something went wrong...");
+    MessagePlugin.info("Unexpected");
   }
 };
 </script>
@@ -57,7 +56,7 @@ const handleAuthEntry = () => {
     <t-paragraph>
       <t-title level="h5"> Tools </t-title>
       <ul>
-        <li>IntelliJ Rider & WebStorm - Development tool by JetBrains</li>
+        <li>Rider & WebStorm - Development tool by JetBrains</li>
       </ul>
     </t-paragraph>
     <t-divider />
@@ -117,14 +116,7 @@ const handleAuthEntry = () => {
       </ul>
     </t-paragraph>
     <template #actions>
-      <t-button
-        class="r-no-select"
-        v-on-long-press="handleAuthEntry"
-        variant="text"
-        theme="primary"
-        shape="circle"
-        size="small"
-      >
+      <t-button class="r-no-select" v-on-long-press="handleAuthEntry" variant="text" theme="primary" shape="circle">
         <HomeIcon />
       </t-button>
     </template>

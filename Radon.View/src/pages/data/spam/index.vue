@@ -246,18 +246,11 @@ watch(
       />
     </div>
     <template #actions>
-      <t-button
-        v-if="global.authPassed"
-        variant="text"
-        shape="circle"
-        theme="primary"
-        size="small"
-        @click="setAppendDialog(true)"
-      >
+      <t-button v-if="global.authPassed" variant="text" shape="circle" theme="primary" @click="setAppendDialog(true)">
         <ToolsIcon />
       </t-button>
       <RouterLink to="/">
-        <t-button variant="text" theme="primary" shape="circle" size="small">
+        <t-button variant="text" theme="primary" shape="circle">
           <HomeIcon />
         </t-button>
       </RouterLink>

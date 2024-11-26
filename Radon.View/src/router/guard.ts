@@ -2,70 +2,34 @@
 import i18n from "@/locale";
 import { get, useOnline } from "@vueuse/core";
 import { MessagePlugin } from "tdesign-vue-next";
-import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
-import type { NavigationGuardNext, RouteLocationNormalizedGeneric, RouteLocationNormalizedLoaded } from "vue-router";
+import type { RouteLocationNormalizedGeneric } from "vue-router";
 
 const { t } = i18n.global;
 
-export const onlineGuard = async (
-  to: RouteLocationNormalizedGeneric,
-  _: RouteLocationNormalizedLoaded,
-  next: NavigationGuardNext,
-) => {
+export const onlineGuard = async (to: RouteLocationNormalizedGeneric) => {
   if (to.meta.online) {
     const b = get(useOnline());
     if (b) {
-      next();
+      return true;
     } else {
       await MessagePlugin.warning(t("message.pageNeedNetwork"));
-      next(false);
+      return false;
     }
   } else {
-    next();
+    return true;
   }
 };
 
-export const authGuard = async (
-  to: RouteLocationNormalizedGeneric,
-  _: RouteLocationNormalizedLoaded,
-  next: NavigationGuardNext,
-) => {
+export const authGuard = async (to: RouteLocationNormalizedGeneric) => {
   if (to.meta.auth) {
     const b = await authValidate();
     if (b) {
-      next();
+      return true;
     } else {
-      await MessagePlugin.warning(t("message.authInvalid"));
-      next("/error");
+      void MessagePlugin.warning(t("message.authInvalid"));
+      return "/error";
     }
   } else {
-    next();
-  }
-};
-
-export const saveConfirmGuard = async (
-  _: RouteLocationNormalizedGeneric,
-  from: RouteLocationNormalizedLoaded,
-  next: NavigationGuardNext,
-) => {
-  if (from.meta.saveConfirm) {
-    next(
-      await new Promise<boolean>(resolve => {
-        NotificationPlugin.warning({
-          title: t("message.saveConfirm.title"),
-          content: t("message.saveConfirm.content"),
-          duration: 10000,
-          closeBtn: t("message.saveConfirm.confirm"),
-          onCloseBtnClick: () => {
-            resolve(true);
-          },
-          onDurationEnd: () => {
-            resolve(false);
-          },
-        });
-      }),
-    );
-  } else {
-    next();
+    return true;
   }
 };

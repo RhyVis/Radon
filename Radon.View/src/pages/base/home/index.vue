@@ -3,6 +3,7 @@ import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
 import { useVersionStore } from "@/store/version.ts";
 import { get } from "@vueuse/core";
 import { storeToRefs } from "pinia";
+import { LogoGithubIcon } from "tdesign-icons-vue-next";
 import { inject, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -11,6 +12,8 @@ const version = useVersionStore();
 const { t } = useI18n();
 const { current, completed, hasError } = fontLoader;
 const { needUpdate, initialized, badState } = storeToRefs(version);
+
+const jumpToGithub = () => window.open("https://github.com/RhyVis/Radon", "_blank");
 
 onMounted(() => {
   if (get(initialized) && get(badState)) {
@@ -55,6 +58,12 @@ onMounted(() => {
     <t-paragraph>
       <t-text v-if="needUpdate">{{ t("status.hint") }}</t-text>
     </t-paragraph>
+
+    <template #actions>
+      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="jumpToGithub">
+        <LogoGithubIcon />
+      </t-button>
+    </template>
   </content-layout>
 </template>
 

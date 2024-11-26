@@ -97,14 +97,14 @@ onMounted(() => {
       </div>
     </div>
     <template #actions>
-      <t-button variant="text" theme="primary" shape="circle" size="small" @click="setMenuReplaceVisible()">
+      <t-button variant="text" theme="primary" shape="circle" @click="setMenuReplaceVisible()">
         <RefreshIcon />
       </t-button>
-      <t-button variant="text" theme="primary" shape="circle" size="small" @click="setMenuUploadVisible()">
+      <t-button variant="text" theme="primary" shape="circle" @click="setMenuUploadVisible()">
         <UploadIcon />
       </t-button>
       <RouterLink to="/">
-        <t-button variant="text" theme="primary" shape="circle" size="small">
+        <t-button variant="text" theme="primary" shape="circle">
           <HomeIcon />
         </t-button>
       </RouterLink>

@@ -9,16 +9,10 @@ import { CloseIcon, File1Icon, FileUnknownIcon, HomeIcon } from "tdesign-icons-v
 import type { MenuRoute } from "tdesign-vue-next";
 import { onMounted } from "vue";
 
-const global = useGlobalStore();
-const { asideVisible } = storeToRefs(global);
+const { asideVisible, authShow } = storeToRefs(useGlobalStore());
+const handleClose = () => set(asideVisible, false);
 
-const handleClose = () => {
-  set(asideVisible, false);
-};
-
-onMounted(() => {
-  handleClose();
-});
+onMounted(handleClose);
 </script>
 
 <template>
@@ -73,7 +67,7 @@ onMounted(() => {
           </template>
           <span>Credits</span>
         </t-menu-item>
-        <t-menu-item v-if="global.authShow" :to="'/auth' as MenuRoute" value="auth" @click="handleClose">
+        <t-menu-item v-if="authShow" :to="'/auth' as MenuRoute" value="auth" @click="handleClose">
           <template #icon>
             <t-icon name="lock-on" />
           </template>

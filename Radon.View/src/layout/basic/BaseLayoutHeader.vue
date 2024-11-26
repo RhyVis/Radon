@@ -11,13 +11,12 @@ import { useRouter } from "vue-router";
 const dev = computed(() => import.meta.env.DEV);
 const router = useRouter();
 const global = useGlobalStore();
+const dark = inject(darkModeKey)!;
+const toggleDark = useToggle(dark);
 const { asideVisible, authPassed } = storeToRefs(global);
 
 const handleAside = () => (asideVisible.value = !asideVisible.value);
 const handleAuth = () => router.push("/auth");
-
-const dark = inject(darkModeKey)!;
-const toggleDark = useToggle(dark);
 </script>
 
 <template>
@@ -42,7 +41,7 @@ const toggleDark = useToggle(dark);
       </t-space>
     </div>
     <template #operations>
-      <t-space class="r-ct-hd-operations" :size="8">
+      <t-space class="r-ct-hd-operations" :size="6">
         <!-- Auth -->
         <t-button v-if="authPassed" theme="default" variant="outline" shape="circle" @click="handleAuth">
           <UserIcon />
