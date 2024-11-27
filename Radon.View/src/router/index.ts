@@ -1,6 +1,5 @@
 import HomeView from "@/pages/base/home/index.vue";
 import { authGuard, onlineGuard } from "@/router/guard";
-import type { RouteRecordAssemble } from "@/router/records";
 import {
   baseRecords,
   dataRecords,
@@ -10,9 +9,9 @@ import {
   mystRecords,
   utilRecords,
 } from "@/router/records";
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
-const records: RouteRecordAssemble[] = [
+const records: RouteRecordRaw[] = [
   {
     path: "/",
     name: "Home",

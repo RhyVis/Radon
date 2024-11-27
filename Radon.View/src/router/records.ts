@@ -1,16 +1,16 @@
+import "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 
-type RouteRecordMeta = {
-  title: string;
-  icon?: string;
-  auth?: boolean;
-  online?: boolean;
-};
-type RouteRecordAssemble = RouteRecordRaw & {
-  meta: RouteRecordMeta;
-};
+declare module "vue-router" {
+  interface RouteMeta {
+    title: string;
+    icon?: string;
+    auth?: boolean;
+    online?: boolean;
+  }
+}
 
-const baseRecords: RouteRecordAssemble[] = [
+export const baseRecords: RouteRecordRaw[] = [
   {
     path: "/credits",
     name: "Credits",
@@ -30,7 +30,7 @@ const baseRecords: RouteRecordAssemble[] = [
   },
 ];
 
-const dataRecords: RouteRecordAssemble[] = [
+export const dataRecords: RouteRecordRaw[] = [
   {
     path: "/spam",
     name: "Spam",
@@ -65,7 +65,7 @@ const dataRecords: RouteRecordAssemble[] = [
   },
 ];
 
-const mystRecords: RouteRecordAssemble[] = [
+export const mystRecords: RouteRecordRaw[] = [
   {
     path: "/tarot",
     name: "Tarot",
@@ -78,7 +78,7 @@ const mystRecords: RouteRecordAssemble[] = [
   },
 ];
 
-const mathRecords: RouteRecordAssemble[] = [
+export const mathRecords: RouteRecordRaw[] = [
   {
     path: "/radix",
     name: "Radix",
@@ -99,7 +99,7 @@ const mathRecords: RouteRecordAssemble[] = [
   },
 ];
 
-const drawRecords: RouteRecordAssemble[] = [
+export const drawRecords: RouteRecordRaw[] = [
   {
     path: "/pjsk-sticker",
     name: "PJSK-Sticker",
@@ -122,7 +122,7 @@ const drawRecords: RouteRecordAssemble[] = [
   },
 ];
 
-const utilRecords: RouteRecordAssemble[] = [
+export const utilRecords: RouteRecordRaw[] = [
   {
     path: "/codex",
     name: "Codex",
@@ -163,44 +163,52 @@ const utilRecords: RouteRecordAssemble[] = [
   },
 ];
 
-export { baseRecords, dataRecords, drawRecords, mathRecords, mystRecords, utilRecords };
-export type { RouteRecordAssemble };
-
-export const markdownRecords: RouteRecordAssemble[] = [
+export const markdownRecords: RouteRecordRaw[] = [
   // Menu
   {
     path: "/md",
-    name: "Archive",
-    component: () => import("@/pages/with/markdown/index.vue"),
-    meta: {
-      title: "Archive",
-    },
-  },
-  // Create
-  {
-    path: "/md/create",
-    name: "MarkdownCreate",
-    component: () => import("@/pages/with/markdown/create/index.vue"),
-    meta: {
-      title: "Markdown Creator",
-    },
-  },
-  // Read
-  {
-    path: "/md/:p/read",
-    name: "MarkdownReader",
-    component: () => import("@/pages/with/markdown/read/index.vue"),
-    meta: {
-      title: "Markdown Reader",
-    },
-  },
-  // Write
-  {
-    path: "/md/:p/write",
-    name: "MarkdownWriter",
-    component: () => import("@/pages/with/markdown/write/index.vue"),
-    meta: {
-      title: "Markdown Writer",
-    },
+    children: [
+      {
+        // Index
+        path: "",
+        name: "Archive",
+        component: () => import("@/pages/with/markdown/index.vue"),
+        meta: {
+          title: "Archive",
+        },
+      },
+      {
+        // Create
+        path: "create",
+        name: "MarkdownCreate",
+        component: () => import("@/pages/with/markdown/create/index.vue"),
+        meta: {
+          title: "Markdown Creator",
+        },
+      },
+      {
+        path: ":p",
+        children: [
+          {
+            // Read
+            path: "read",
+            name: "MarkdownReader",
+            component: () => import("@/pages/with/markdown/read/index.vue"),
+            meta: {
+              title: "Markdown Reader",
+            },
+          },
+          {
+            // Update
+            path: "write",
+            name: "MarkdownWriter",
+            component: () => import("@/pages/with/markdown/write/index.vue"),
+            meta: {
+              title: "Markdown Writer",
+            },
+          },
+        ],
+      },
+    ],
   },
 ];
