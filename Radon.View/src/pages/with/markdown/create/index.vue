@@ -35,10 +35,10 @@ const handleCreate = async () => {
   const path = await createMdRecord(get(createName) as string, get(createDesc) as string, get(content));
   if (path.length > 0) {
     setComplete(true);
-    void MessagePlugin.success("Create success, moving to write page");
+    void MessagePlugin.success(t("msg.success"));
     await router.push(`/md/${path}/write`);
   } else {
-    void MessagePlugin.error("Create failed");
+    void MessagePlugin.error(t("msg.failed"));
   }
 };
 
@@ -135,9 +135,13 @@ onMounted(() => {
 <i18n locale="en">
 msg:
   invalidCreate: "Invalid create request"
+  success: "Create success, moving to write page"
+  failed: "Create failed"
 </i18n>
 
 <i18n locale="zh-CN">
 msg:
   invalidCreate: "无效的创建请求"
+  success: "创建成功，跳转到写作页面"
+  failed: "创建失败"
 </i18n>
