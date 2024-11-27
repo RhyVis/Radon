@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { apiPost, apiPutState } from "@/lib/common/apiMethods";
+import { apiPost, apiPutNumber } from "@/lib/common/apiMethods";
 import { codeTypes, spamColumns, SpamType, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
 import { useGlobalStore } from "@/store/global";
@@ -118,12 +118,12 @@ const handleAppend = async (repeat: boolean = false) => {
   }
   setAppendLoading(true);
   try {
-    const r = (await apiPutState("/api/spam/append", store.queryAppend)).data;
-    if (r) {
+    const r = (await apiPutNumber("/api/spam/append", store.queryAppend)).data;
+    if (r > 0) {
       store.clearAppendQuery();
-      void MessagePlugin.success("追加成功");
+      void MessagePlugin.success(`追加成功: ${r}`);
     } else {
-      void MessagePlugin.error("追加失败");
+      void MessagePlugin.error(`追加失败: ${r}`);
     }
   } catch (e) {
     console.error(e);

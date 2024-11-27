@@ -23,21 +23,22 @@ public class TarotService : ITarotService
     public UnsetRes GetTarotDeckData(string name, bool full, bool shuffle)
     {
         var canBeFull = TarotData.GetDeckInfoDict()[name].Full;
+
         var deck = TarotData.GetDeck(name + (canBeFull && !full ? "_main" : ""));
-        if (shuffle)
+        if (!shuffle)
         {
-            var newDeck = new TarotDeck
-            {
-                Name = deck.Name,
-                Loc = deck.Loc,
-                Full = deck.Full,
-                HasR = deck.HasR,
-                Deck = GetShuffledList(deck),
-            };
-            return new UnsetRes(newDeck);
+            return new UnsetRes(deck);
         }
 
-        return new UnsetRes(deck);
+        var newDeck = new TarotDeck
+        {
+            Name = deck.Name,
+            Loc = deck.Loc,
+            Full = deck.Full,
+            HasR = deck.HasR,
+            Deck = GetShuffledList(deck),
+        };
+        return new UnsetRes(newDeck);
     }
 
     private static List<TarotCardDrawn> HandleRequest(TarotReq req)

@@ -197,6 +197,14 @@ export async function apiPutState(
   return await apiPut<boolean>(url, data, config);
 }
 
+export async function apiPutNumber(
+  url: string,
+  data: ReqData,
+  config?: AxiosRequestConfig,
+): Promise<ApiResponse<number>> {
+  return await apiPut<number>(url, data, config);
+}
+
 export async function apiPutNoContent(url: string, data: ReqData, config?: AxiosRequestConfig): Promise<void> {
   const r = await apiPut(url, data, config);
   if (r.status.responseCode !== 204) {

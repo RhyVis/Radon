@@ -24,14 +24,14 @@ public class SpamService(
     IDictProcessor dictProcessor
 ) : ISpamService
 {
-    private static Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public SpamRes Fetch(SpamFetchReq req)
     {
         var size = req.Data.Size;
         var type = req.Data.Type.TryParseEnum(SpamType.N);
         var dict = req.Data.Dict.TryParseEnum(DictType.NONE);
-        _logger.Info($"Recieved request for {size} spam(s) of type {type}");
+        Logger.Info($"Recieved request for {size} spam(s) of type {type}");
         if (size == 1)
         {
             return type switch
@@ -64,7 +64,7 @@ public class SpamService(
         var type = req.Data.Type.TryParseEnum(SpamType.N);
         var dict = req.Data.Dict.TryParseEnum(DictType.NONE);
         var ids = req.Data.Ids;
-        _logger.Info($"Recieved request for [{ids.Join()}] precise spam of type {type}");
+        Logger.Info($"Recieved request for [{ids.Join()}] precise spam of type {type}");
         if (ids.IsNullOrEmpty())
         {
             return SpamRes.FromDummy();
@@ -97,7 +97,7 @@ public class SpamService(
         };
     }
 
-    public bool Append(SpamAppendReq req)
+    public long Append(SpamAppendReq req)
     {
         var type = req.Data.Type.TryParseEnum(SpamType.N);
         try
@@ -106,56 +106,55 @@ public class SpamService(
             {
                 case SpamType.AK:
                 {
-                    akRepo.Insert(new GachaAk { Text = req.Data.Text });
-                    break;
+                    var e = akRepo.Insert(new GachaAk { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.GS:
                 {
-                    gsRepo.Insert(new GachaGs { Text = req.Data.Text });
-                    break;
+                    var e = gsRepo.Insert(new GachaGs { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.ML:
                 {
-                    mlRepo.Insert(new GachaMl { Text = req.Data.Text });
-                    break;
+                    var e = mlRepo.Insert(new GachaMl { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.AC:
                 {
-                    acRepo.Insert(new MemeAcgn { Text = req.Data.Text });
-                    break;
+                    var e = acRepo.Insert(new MemeAcgn { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.DN:
                 {
-                    dnRepo.Insert(new MemeDinner { Text = req.Data.Text });
-                    break;
+                    var e = dnRepo.Insert(new MemeDinner { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.SN:
                 {
-                    mnRepo.Insert(new SpamMin { Text = req.Data.Text });
-                    break;
+                    var e = mnRepo.Insert(new SpamMin { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.SX:
                 {
-                    mxRepo.Insert(new SpamMax { Text = req.Data.Text });
-                    break;
+                    var e = mxRepo.Insert(new SpamMax { Text = req.Data.Text });
+                    return e?.Id ?? -1;
                 }
                 case SpamType.N:
                 {
-                    _logger.Warn("Unrecognized spam appending type");
-                    return false;
+                    Logger.Warn("Empty spam appending type");
+                    return -2;
                 }
                 default:
                 {
-                    _logger.Warn("Unrecognized spam appending type");
-                    return false;
+                    Logger.Warn("Unrecognized spam appending type");
+                    return -10;
                 }
             }
-            return true;
         }
         catch (Exception e)
         {
-            _logger.Error(e, $"Failed to append spam for type {type}");
-            return false;
+            Logger.Error(e, $"Failed to append spam for type {type}");
+            return -6;
         }
     }
 

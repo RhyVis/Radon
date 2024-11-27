@@ -7,5 +7,5 @@ public interface ISpamService
 {
     SpamRes Fetch(SpamFetchReq req);
     SpamRes FetchPrecise(SpamFetchPreciseReq req);
-    bool Append(SpamAppendReq req);
+    long Append(SpamAppendReq req);
 }

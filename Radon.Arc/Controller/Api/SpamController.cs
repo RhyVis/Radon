@@ -19,6 +19,6 @@ public class SpamController(ISpamService service) : ControllerBase
 
     [Authorize]
     [HttpPut("append")]
-    [ProducesResponseType<StateRes>(StatusCodes.Status200OK)]
-    public IActionResult Append(SpamAppendReq req) => Ok(new StateRes(service.Append(req)));
+    [ProducesResponseType<PlainNumberRes>(StatusCodes.Status200OK)]
+    public IActionResult Append(SpamAppendReq req) => Ok(PlainNumberRes.Of(service.Append(req)));
 }
