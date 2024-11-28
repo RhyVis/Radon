@@ -4,6 +4,7 @@ import type { RouteRecordRaw } from "vue-router";
 declare module "vue-router" {
   interface RouteMeta {
     title: string;
+    tKey?: string;
     icon?: string;
     auth?: boolean;
     online?: boolean;
@@ -17,6 +18,7 @@ export const baseRecords: RouteRecordRaw[] = [
     component: () => import("@/pages/base/credits/index.vue"),
     meta: {
       title: "Credits",
+      tKey: "route.credits",
     },
   },
   {
@@ -25,6 +27,7 @@ export const baseRecords: RouteRecordRaw[] = [
     component: () => import("@/pages/base/auth/index.vue"),
     meta: {
       title: "Auth",
+      tKey: "route.auth",
       online: true,
     },
   },
@@ -38,6 +41,7 @@ export const dataRecords: RouteRecordRaw[] = [
     meta: {
       title: "弹药库",
       icon: "loudspeaker",
+      tKey: "route.data.spam",
       online: true,
     },
   },
@@ -48,6 +52,7 @@ export const dataRecords: RouteRecordRaw[] = [
     meta: {
       title: "字符存储",
       icon: "save",
+      tKey: "route.data.save",
       auth: true,
       online: true,
     },
@@ -59,6 +64,7 @@ export const dataRecords: RouteRecordRaw[] = [
     meta: {
       title: "导航",
       icon: "indicator",
+      tKey: "route.data.nav",
       auth: true,
       online: true,
     },
@@ -73,6 +79,7 @@ export const mystRecords: RouteRecordRaw[] = [
     meta: {
       title: "电子塔罗",
       icon: "card",
+      tKey: "route.myst.tarot",
       online: true,
     },
   },
@@ -86,6 +93,7 @@ export const mathRecords: RouteRecordRaw[] = [
     meta: {
       title: "进制转换",
       icon: "calculation-1",
+      tKey: "route.math.radix",
     },
   },
   {
@@ -95,6 +103,7 @@ export const mathRecords: RouteRecordRaw[] = [
     meta: {
       title: "罗马数字",
       icon: "castle",
+      tKey: "route.math.roman",
     },
   },
 ];
@@ -107,6 +116,7 @@ export const drawRecords: RouteRecordRaw[] = [
     meta: {
       title: "PJSK表情",
       icon: "edit-2",
+      tKey: "route.draw.pjskSticker",
       online: true,
     },
   },
@@ -117,6 +127,7 @@ export const drawRecords: RouteRecordRaw[] = [
     meta: {
       title: "BA横幅",
       icon: "typography",
+      tKey: "route.draw.baBanner",
       online: true,
     },
   },
@@ -130,6 +141,7 @@ export const utilRecords: RouteRecordRaw[] = [
     meta: {
       title: "抽象转义",
       icon: "chat-error",
+      tKey: "route.util.codex",
       online: true,
     },
   },
@@ -140,6 +152,7 @@ export const utilRecords: RouteRecordRaw[] = [
     meta: {
       title: "反转机",
       icon: "refresh",
+      tKey: "route.util.reverse",
     },
   },
   {
@@ -149,6 +162,7 @@ export const utilRecords: RouteRecordRaw[] = [
     meta: {
       title: "Base64",
       icon: "file-code-1",
+      tKey: "route.util.base64",
     },
   },
   {
@@ -158,6 +172,7 @@ export const utilRecords: RouteRecordRaw[] = [
     meta: {
       title: "PDX Parser",
       icon: "ruler",
+      tKey: "route.util.pdxParser",
       online: true,
     },
   },
@@ -200,8 +215,8 @@ export const markdownRecords: RouteRecordRaw[] = [
           },
           {
             // Update
-            path: "write",
-            name: "MarkdownWriter",
+            path: "update",
+            name: "MarkdownUpdater",
             component: () => import("@/pages/with/markdown/write/index.vue"),
             meta: {
               title: "Markdown Writer",

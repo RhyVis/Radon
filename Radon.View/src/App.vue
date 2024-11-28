@@ -12,7 +12,7 @@ import { useGlobalStore } from "@/store/global";
 import { useVersionStore } from "@/store/version.ts";
 import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { MessagePlugin } from "tdesign-vue-next";
+import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
 import { onMounted, provide, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -47,10 +47,18 @@ const tryRefreshToken = () => {
   if (get(authPassed)) {
     authValidateWithRefresh().then(v => {
       if (v) {
-        MessagePlugin.success(t("auth.message.tokenValidAndRefreshed"));
+        NotificationPlugin.success({
+          title: t("auth.message.tokenValidAndRefreshed.title"),
+          content: t("auth.message.tokenValidAndRefreshed.content"),
+          closeBtn: true,
+        });
       } else {
         set(authPassed, false);
-        MessagePlugin.warning(t("auth.message.tokenInvalid"));
+        NotificationPlugin.warning({
+          title: t("auth.message.tokenInvalid.title"),
+          content: t("auth.message.tokenInvalid.content"),
+          closeBtn: true,
+        });
         setTimeout(() => {
           router.push("/auth");
         }, 1420);
@@ -59,7 +67,7 @@ const tryRefreshToken = () => {
   }
 };
 const updateTitle = () => {
-  const title = router.currentRoute.value.meta.title as string | null;
+  const title = router.currentRoute.value.meta.title;
   if (title) {
     useTitle(title);
   }

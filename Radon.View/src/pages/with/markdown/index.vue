@@ -52,7 +52,8 @@ onMounted(() => {
 
 <template>
   <content-layout :title="t('tt')" :subtitle="t('st')">
-    <t-empty class="tw-mt-6" v-if="loading || indexList.length == 0" />
+    <t-empty class="mt-3" v-if="loading" :title="t('common.loading')" />
+    <t-empty class="mt-3" v-else-if="indexList.length == 0" :title="t('common.noContent')" />
     <t-card v-else>
       <t-list :stripe="true" size="small">
         <t-list-item v-for="(entry, index) in indexList" :key="index">

@@ -10,6 +10,7 @@
     syncSuccess: "同步成功",
     noEmpty: "不能为空",
     loading: "加载中...",
+    noContent: "无内容",
   },
   message: {
     authInvalid: "认证失败",
@@ -23,8 +24,14 @@
   },
   auth: {
     message: {
-      tokenValidAndRefreshed: "令牌有效并已刷新",
-      tokenInvalid: "令牌已失效，请重新登录",
+      tokenValidAndRefreshed: {
+        title: "登录成功",
+        content: "令牌有效并已刷新",
+      },
+      tokenInvalid: {
+        title: "登录失败",
+        content: "令牌无效",
+      }
     },
   },
   loader: {
@@ -34,4 +41,44 @@
       fontLoadingFailed: "字体加载失败",
     },
   },
+  route: {
+    home: "首页",
+    archive: "档案馆",
+    // 数据记录
+    data: {
+      title: "数据",
+      spam: "弹药库",
+      save: "文本存储",
+      nav: "导航",
+    },
+    // 神秘
+    myst: {
+      title: "神秘",
+      tarot: "塔罗模拟",
+    },
+    // 绘制
+    draw: {
+      title: "绘制",
+      pjskSticker: "PJSK 表情",
+      baBanner: "BA 横幅",
+    },
+    // 数学
+    math: {
+      title: "数学",
+      radix: "进制转换",
+      roman: "罗马数字",
+    },
+    // 工具
+    util: {
+      title: "工具",
+      codex: "抽象转义",
+      reverse: "文本反转",
+      base64: "Base64 编码",
+      pdxParser: "PDX 解析器",
+    },
+    extras: "额外",
+    credits: "Credits",
+    settings: "设置",
+    auth: "登陆",
+  }
 }

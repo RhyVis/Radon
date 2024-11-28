@@ -10,6 +10,7 @@
     syncSuccess: "Sync successful",
     noEmpty: "Should not be empty",
     loading: "Loading...",
+    noContent: "No Content",
   },
   message: {
     authInvalid: "Authentication failed",
@@ -23,8 +24,14 @@
   },
   auth: {
     message: {
-      tokenValidAndRefreshed: "Token is valid and refreshed",
-      tokenInvalid: "Token is invalid, please login again",
+      tokenValidAndRefreshed: {
+        title: "Login Success",
+        content: "Token is valid and refreshed",
+      },
+      tokenInvalid: {
+        title: "Login Failed",
+        content: "Token is invalid",
+      }
     },
   },
   loader: {
@@ -34,4 +41,44 @@
       fontLoadingFailed: "Font loading failed",
     },
   },
+  route: {
+    home: "Home",
+    archive: "Archive",
+    // Data Records
+    data: {
+      title: "Data",
+      spam: "Spam DB",
+      save: "Text Storage",
+      nav: "Navigator",
+    },
+    // Myst
+    myst: {
+      title: "Myst",
+      tarot: "Tarot Sim",
+    },
+    // Draw
+    draw: {
+      title: "Draw",
+      pjskSticker: "PJSK Sticker",
+      baBanner: "BA Banner",
+    },
+    // Math
+    math: {
+      title: "Math",
+      radix: "Radix Conversion",
+      roman: "Roman Numeral",
+    },
+    // Util
+    util: {
+      title: "Util",
+      codex: "Codex",
+      reverse: "Reverse",
+      base64: "Base64",
+      pdxParser: "PDX Parser",
+    },
+    extras: "Extras",
+    credits: "Credits",
+    settings: "Settings",
+    auth: "Auth",
+  }
 }
