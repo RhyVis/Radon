@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { createMdRecord } from "@/pages/with/markdown/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, useDark, useToggle, useWindowSize } from "@vueuse/core";
+import { get, useDark, useToggle } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -12,6 +12,7 @@ import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
+import { useNarrow } from "@/composable/useNarrow.ts";
 
 const dark = useDark();
 const router = useRouter();
@@ -20,12 +21,10 @@ const createDesc = useRouteQuery("desc");
 const content = ref("");
 const [updating, setUpdating] = useToggle(false);
 const [complete, setComplete] = useToggle(false);
-const { locale } = storeToRefs(useGlobalStore());
-const { width } = useWindowSize();
+const { localeStandard } = storeToRefs(useGlobalStore());
 const { t } = useI18n();
 const theme = computed(() => (get(dark) ? "dark" : "light"));
-const lang = computed(() => (get(locale) === "zh-CN" ? "zh-CN" : "en-US"));
-const tooNarrow = computed(() => get(width) < 768);
+const tooNarrow = useNarrow();
 
 const handleCreate = async () => {
   if (get(updating)) {
@@ -106,7 +105,7 @@ onMounted(() => {
       @onSave="handleCreate()"
       :readOnly="updating"
       :theme="theme"
-      :language="lang"
+      :language="localeStandard"
       :preview="!tooNarrow"
       previewTheme="cyanosis"
       codeTheme="github"

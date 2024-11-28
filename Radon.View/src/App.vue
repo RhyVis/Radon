@@ -11,9 +11,13 @@ import { changeMetaColor } from "@/lib/util/themeUtil";
 import { useGlobalStore } from "@/store/global";
 import { useVersionStore } from "@/store/version.ts";
 import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
+import { merge } from "lodash";
 import { storeToRefs } from "pinia";
+import { ConfigProvider as TConfigProvider, type GlobalConfigProvider } from "tdesign-vue-next";
+import enConfig from "tdesign-vue-next/es/locale/en_US";
+import zhConfig from "tdesign-vue-next/es/locale/zh_CN";
 import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
-import { onMounted, provide, watch } from "vue";
+import { computed, onMounted, provide, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
@@ -37,6 +41,9 @@ const dark = useDark({
   },
 });
 const { idle } = useIdle();
+const tEmptyConfig: GlobalConfigProvider = {};
+const tLangConfig = computed(() => (get(locale) === "zh-CN" ? zhConfig : enConfig));
+const tGlobalConfig = computed(() => merge(tEmptyConfig, tLangConfig));
 
 const tryLoadFonts = () => {
   if (!get(fontLoader.completed)) {
@@ -107,25 +114,27 @@ watch(
 </script>
 
 <template>
-  <base-layout class="r-app-base-layout">
-    <template #left>
-      <ContentSide />
-    </template>
-    <template #header>
-      <ContentHeader />
-    </template>
-    <template #default>
-      <prompt-update />
-      <RouterView v-slot="{ Component }">
-        <Transition name="route" mode="out-in">
-          <Component :is="Component" />
-        </Transition>
-      </RouterView>
-    </template>
-    <template #footer>
-      <ContentFooter />
-    </template>
-  </base-layout>
+  <t-config-provider :global-config="tGlobalConfig">
+    <base-layout class="r-app-base-layout">
+      <template #left>
+        <ContentSide />
+      </template>
+      <template #header>
+        <ContentHeader />
+      </template>
+      <template #default>
+        <prompt-update />
+        <RouterView v-slot="{ Component }">
+          <Transition name="route" mode="out-in">
+            <Component :is="Component" />
+          </Transition>
+        </RouterView>
+      </template>
+      <template #footer>
+        <ContentFooter />
+      </template>
+    </base-layout>
+  </t-config-provider>
 </template>
 
 <style scoped lang="less">

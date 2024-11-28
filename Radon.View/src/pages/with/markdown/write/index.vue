@@ -1,7 +1,7 @@
 ﻿<script setup lang="tsx">
 import { checkMdRecord, updateMdRecord } from "@/pages/with/markdown/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useDark, useToggle, useWindowSize } from "@vueuse/core";
+import { get, set, useDark, useToggle } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -12,6 +12,7 @@ import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
+import { useNarrow } from "@/composable/useNarrow.ts";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -20,13 +21,11 @@ const path = useRouteParams("p");
 const name = ref("");
 const desc = ref("");
 const content = ref("");
-const { locale } = storeToRefs(useGlobalStore());
-const { width } = useWindowSize();
+const { localeStandard } = storeToRefs(useGlobalStore());
 const [updating, setUpdating] = useToggle(false);
 const [changed, setChanged] = useToggle(false);
 const theme = computed(() => (get(dark) ? "dark" : "light"));
-const lang = computed(() => (get(locale) === "zh-CN" ? "zh-CN" : "en-US"));
-const tooNarrow = computed(() => get(width) < 768);
+const tooNarrow = useNarrow();
 
 const updateContent = async (path: string) => {
   const check = await checkMdRecord(path);
@@ -126,7 +125,7 @@ watch(
         @onSave="handleUpdate()"
         :readOnly="updating"
         :theme="theme"
-        :language="lang"
+        :language="localeStandard"
         :preview="!tooNarrow"
         previewTheme="cyanosis"
         codeTheme="github"

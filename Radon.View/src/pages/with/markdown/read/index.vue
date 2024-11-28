@@ -1,8 +1,9 @@
 ﻿<script setup lang="ts">
+import { useNarrow } from "@/composable/useNarrow.ts";
 import { getMdRecord } from "@/pages/with/markdown/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useDark, useWindowSize } from "@vueuse/core";
-import { useRouteParams } from "@vueuse/router";
+import { get, set, useDark } from "@vueuse/core";
+import { useRouteParams, useRouteQuery } from "@vueuse/router";
 import { MdCatalog, MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { storeToRefs } from "pinia";
@@ -15,17 +16,23 @@ const { t } = useI18n();
 const router = useRouter();
 const dark = useDark();
 const path = useRouteParams("p");
+const other = useRouteQuery("other");
 
-const { locale } = storeToRefs(useGlobalStore());
-const { width } = useWindowSize();
+const { localeStandard } = storeToRefs(useGlobalStore());
 const name = ref("");
 const desc = ref("");
 const content = ref("");
-const sideWidth = computed(() => (get(width) > 768 ? "168px" : "0"));
-const sideShow = computed(() => get(width) > 768);
+const narrow = useNarrow();
+const sideWidth = computed(() => (get(narrow) ? "0" : "168px"));
 const theme = computed(() => (get(dark) ? "dark" : "light"));
-const lang = computed(() => (get(locale) === "zh-CN" ? "zh-CN" : "en-US"));
 
+const handleBack = () => {
+  if (other.value) {
+    history.back();
+  } else {
+    router.push("/md");
+  }
+};
 const updateContent = async (path: string) => {
   const record = await getMdRecord(path);
   set(name, record.name);
@@ -58,18 +65,18 @@ watch(
           id="preview-only"
           :model-value="content"
           :theme="theme"
-          :language="lang"
+          :language="localeStandard"
           previewTheme="cyanosis"
           codeTheme="github"
         />
         <t-aside :width="sideWidth">
-          <MdCatalog class="r-md-catalog" v-if="sideShow" editor-id="preview-only" :theme="theme" />
+          <MdCatalog class="r-md-catalog" v-if="!narrow" editor-id="preview-only" :theme="theme" />
         </t-aside>
       </t-layout>
     </div>
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/md')">
+      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="handleBack">
         <ArrowLeftIcon />
       </t-button>
     </template>

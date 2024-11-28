@@ -18,6 +18,9 @@ export const useGlobalStore = defineStore("global", {
     darkTheme: false,
     locale: "zh-CN",
   }),
+  getters: {
+    localeStandard: state => (state.locale === "zh-CN" ? "zh-CN" : "en-US"),
+  },
   persist: {
     pick: ["authPassed", "locale"],
   },
