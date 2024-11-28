@@ -187,7 +187,7 @@ export const markdownRecords: RouteRecordRaw[] = [
         // Index
         path: "",
         name: "Archive",
-        component: () => import("@/pages/with/markdown/index.vue"),
+        component: () => import("@/pages/with/archive/index.vue"),
         meta: {
           title: "Archive",
         },
@@ -196,7 +196,7 @@ export const markdownRecords: RouteRecordRaw[] = [
         // Create
         path: "create",
         name: "MarkdownCreate",
-        component: () => import("@/pages/with/markdown/create/index.vue"),
+        component: () => import("@/pages/with/archive/create/index.vue"),
         meta: {
           title: "Markdown Creator",
         },
@@ -208,7 +208,7 @@ export const markdownRecords: RouteRecordRaw[] = [
             // Read
             path: "read",
             name: "MarkdownReader",
-            component: () => import("@/pages/with/markdown/read/index.vue"),
+            component: () => import("@/pages/with/archive/read/index.vue"),
             meta: {
               title: "Markdown Reader",
             },
@@ -217,7 +217,7 @@ export const markdownRecords: RouteRecordRaw[] = [
             // Edit
             path: "edit",
             name: "MarkdownEditor",
-            component: () => import("@/pages/with/markdown/write/index.vue"),
+            component: () => import("@/pages/with/archive/write/index.vue"),
             meta: {
               title: "Markdown Editor",
             },

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
 import { type CardDisplay } from "@/pages/myst/tarot/scripts/define";
+import { set } from "@vueuse/core";
+import { useRouteHash } from "@vueuse/router";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -10,14 +12,13 @@ const { card, index } = defineProps<{
   index: number;
 }>();
 const { name, loc, rev, desc } = card.data;
+const hash = useRouteHash();
 
 const indexNum = computed(() => intToRoman(index + 1));
 const revText = computed(() => (rev ? t("reverse") : t("upright")));
 const revDesc = computed(() => (rev ? desc.reverse : desc.upright));
 
-const handleHash = () => {
-  location.hash = `tarot-main-${index}`;
-};
+const handleHash = () => set(hash, `tarot-main-${index}`);
 </script>
 
 <template>

@@ -6,6 +6,7 @@ import TarotMain from "@/pages/myst/tarot/comps/TarotMain.vue";
 import { type Card, mapCard } from "@/pages/myst/tarot/scripts/define";
 import { useTarotStore } from "@/pages/myst/tarot/scripts/store";
 import { get, set, useToggle } from "@vueuse/core";
+import { useRouteHash } from "@vueuse/router";
 import { storeToRefs } from "pinia";
 import { CardIcon, RollbackIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -18,6 +19,7 @@ const { t } = useI18n();
 
 const [loading, setLoading] = useToggle(false);
 const { key, updateKey } = useKeyUpdate();
+const hash = useRouteHash();
 
 const deckFull = computed(() => get(dInfoMap)[qDeck.value]?.full ?? false);
 const deckMax = computed(() => (get(deckFull) && get(qFull) ? 78 : 22));
@@ -31,7 +33,7 @@ const handleSelect = () => {
 };
 const handleResetCount = () => set(qSize, 1);
 const handleDraw = async () => {
-  location.hash = "";
+  set(hash, "");
   setLoading(true);
   try {
     const f = (await apiPost<Card[]>("/api/tarot", store.query)).data.map(mapCard);

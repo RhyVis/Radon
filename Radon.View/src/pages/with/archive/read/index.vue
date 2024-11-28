@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { useNarrow } from "@/composable/useNarrow.ts";
-import { getMdRecord } from "@/pages/with/markdown/define.ts";
+import { getMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useDark } from "@vueuse/core";
 import { useRouteParams, useRouteQuery } from "@vueuse/router";

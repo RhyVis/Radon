@@ -1,6 +1,8 @@
 <script lang="tsx" setup>
 import { intToRoman } from "@/pages/math/roman/scripts/romanNum";
 import { type CardDisplay } from "@/pages/myst/tarot/scripts/define";
+import { set } from "@vueuse/core";
+import { useRouteHash } from "@vueuse/router";
 import { MoonIcon, SunnyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { computed } from "vue";
@@ -12,26 +14,19 @@ const { card, index } = defineProps<{
   index: number;
 }>();
 const { name, loc, img, rev, desc } = card.data;
+const hash = useRouteHash();
 
 const revClass = computed(() => ({ "r-tarot-img-rev": rev }));
-const revText = computed(() => (rev ? "(逆位)" : "(正位)"));
+const revText = computed(() => (rev ? t("reverse") : t("upright")));
 const revDesc = computed(() => (rev ? desc.reverse : desc.upright));
 const indexNum = computed(() => intToRoman(index + 1));
 
-const handleImage = () => {
-  // eslint-disable-next-line vue/no-mutating-props
-  card.showImg = !card.showImg;
-};
-const handleDesc = () => {
-  // eslint-disable-next-line vue/no-mutating-props
-  card.showDesc = !card.showDesc;
-};
-const handleImageErr = (name: string) => {
-  MessagePlugin.error(t("loadError", name));
-};
-const handleHash = () => {
-  location.hash = `tarot-desc-${index}`;
-};
+// eslint-disable-next-line vue/no-mutating-props
+const handleImage = () => (card.showImg = !card.showImg);
+// eslint-disable-next-line vue/no-mutating-props
+const handleDesc = () => (card.showDesc = !card.showDesc);
+const handleImageErr = (name: string) => MessagePlugin.error(t("loadError", name));
+const handleHash = () => set(hash, `tarot-desc-${index}`);
 </script>
 
 <template>
@@ -52,7 +47,7 @@ const handleHash = () => {
       <div class="r-tarot-main-div-full" @click="handleDesc">
         <div v-show="!card.showDesc">
           <t-image
-            class="r-tarot-img-fit"
+            class="m-auto"
             :alt="name"
             :class="revClass"
             :lazy="true"
@@ -63,9 +58,9 @@ const handleHash = () => {
             @error="handleImageErr(name)"
           />
         </div>
-        <div v-show="card.showDesc" style="text-align: left; align-items: center">
+        <div class="items-center text-left" v-show="card.showDesc">
           <t-title :content="revDesc" level="h6" />
-          <t-text :content="desc.desc.join('')" />
+          <t-text v-for="(line, index) in desc.desc" :content="line" :key="index" />
         </div>
       </div>
     </div>
@@ -73,24 +68,14 @@ const handleHash = () => {
 </template>
 
 <style scoped lang="less">
-.r-no-select {
-  user-select: none;
-}
-
 .r-tarot-img-rev {
   transform: rotate(180deg);
 }
-
-.r-tarot-img-fit {
-  margin: auto;
-}
-
 .r-tarot-main-div-full {
   flex: 1;
   height: 360px;
   text-align: center;
 }
-
 .r-tarot-main-card-override :deep(.t-card__body) {
   height: 400px;
 }
@@ -98,8 +83,12 @@ const handleHash = () => {
 
 <i18n locale="en">
 loadError: "Load image failed: {0}"
+upright: Upright
+reverse: Reversed
 </i18n>
 
 <i18n locale="zh-CN">
 loadError: "加载图片失败: {0}"
+upright: 正位
+reverse: 逆位
 </i18n>

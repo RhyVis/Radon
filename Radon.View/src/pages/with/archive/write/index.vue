@@ -1,5 +1,5 @@
 ﻿<script setup lang="tsx">
-import { checkMdRecord, updateMdRecord } from "@/pages/with/markdown/define.ts";
+import { checkMdRecord, updateMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useDark, useToggle } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";

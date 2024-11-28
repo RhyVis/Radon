@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { useNarrow } from "@/composable/useNarrow.ts";
-import { deleteMdRecord, getMdIndex, type MdIndexDto } from "@/pages/with/markdown/define.ts";
-import { useMdStore } from "@/pages/with/markdown/store.ts";
+import { deleteMdRecord, getMdIndex, type MdIndexDto } from "@/pages/with/archive/define.ts";
+import { useMdStore } from "@/pages/with/archive/store.ts";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
