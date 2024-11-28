@@ -3,7 +3,7 @@ import { apiPostWithFile } from "@/lib/common/apiMethods";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
 import { useGlobalStore } from "@/store/global";
-import { get, useToggle } from "@vueuse/core";
+import { get, useDark, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import {
   AddIcon,
@@ -27,6 +27,7 @@ const { initialized, replacer, parseLangResult, addReplacerKey, addReplacerValue
 const { authPassed } = storeToRefs(global);
 const treeVal = ref<TreeNodeValue[]>([]);
 const regQuote = /\\"/g;
+const dark = useDark();
 
 const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> => {
   try {
@@ -46,7 +47,7 @@ const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> =
 };
 const renderText = (raw: string) => {
   return raw
-    .replace(/§([beghlmprstwy])/gi, (_, p1) => `<span class='r-pdx-c-${p1.toLowerCase()}'>`)
+    .replace(/§([beghlmprstwy])/gi, (_, p1) => `<span class='r-pdx-c${get(dark) ? "-dark" : ""}-${p1.toLowerCase()}'>`)
     .replace(/§!/g, "</span>")
     .replace(
       /\$(\w+)\$/g,
@@ -243,6 +244,43 @@ onMounted(() => {
   font-style: italic;
 }
 .r-pdx-c-y {
+  color: yellow;
+}
+
+.r-pdx-c-dark-b {
+  color: blue;
+}
+.r-pdx-c-dark-e {
+  color: teal;
+}
+.r-pdx-c-dark-g {
+  color: green;
+}
+.r-pdx-c-dark-h {
+  color: orange;
+}
+.r-pdx-c-dark-l {
+  color: brown;
+}
+.r-pdx-c-dark-m {
+  color: purple;
+}
+.r-pdx-c-dark-p {
+  color: orangered;
+}
+.r-pdx-c-dark-r {
+  color: red;
+}
+.r-pdx-c-dark-s {
+  color: darkorange;
+}
+.r-pdx-c-dark-t {
+  color: lightgray;
+}
+.r-pdx-c-dark-w {
+  color: white;
+}
+.r-pdx-c-dark-y {
   color: yellow;
 }
 </style>

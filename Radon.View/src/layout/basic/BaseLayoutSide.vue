@@ -39,7 +39,7 @@ onMounted(handleClose);
         <span>{{ t("route.home") }}</span>
       </t-menu-item>
 
-      <t-menu-item :to="'/md' as MenuRoute" value="md" @click="handleClose">
+      <t-menu-item :to="'/archive' as MenuRoute" value="archive" @click="handleClose">
         <template #icon>
           <File1Icon />
         </template>

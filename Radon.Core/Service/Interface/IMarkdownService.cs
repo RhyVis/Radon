@@ -5,7 +5,7 @@ namespace Radon.Core.Service.Interface;
 
 public interface IMarkdownService
 {
-    MdIndex CheckContent(string path);
+    MdIndexFullDto CheckContent(string path);
 
     /// <summary>
     /// Read markdown content from the given path.

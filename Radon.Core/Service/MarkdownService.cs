@@ -16,9 +16,9 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
     private const string NoContent = "### No content available.";
     private const string Void = "void";
 
-    public MdIndex CheckContent(string path)
+    public MdIndexFullDto CheckContent(string path)
     {
-        return repo.FindByPath(path) ?? new MdIndex();
+        return (repo.FindByPath(path) ?? new MdIndex()).ToFullDto();
     }
 
     public MdRecord ProvideContent(string path)

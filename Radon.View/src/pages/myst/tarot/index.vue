@@ -22,7 +22,7 @@ const { key, updateKey } = useKeyUpdate();
 const deckFull = computed(() => get(dInfoMap)[qDeck.value]?.full ?? false);
 const deckMax = computed(() => (get(deckFull) && get(qFull) ? 78 : 22));
 const deckFullTooltip = computed(() => (get(deckFull) ? t("form.fullTT") : t("form.fullTT2")));
-const resetable = computed(() => get(qSize) > 1);
+const resetAble = computed(() => get(qSize) > 1);
 
 const handleSelect = () => {
   if (!deckFull.value) set(qFull, false);
@@ -68,7 +68,7 @@ onMounted(() => {
             <t-form-item :label="t('form.size')">
               <t-space :size="8">
                 <t-input-number v-model="qSize" :max="deckMax" :min="1" />
-                <t-button v-if="resetable" shape="circle" variant="outline" theme="default" @click="handleResetCount">
+                <t-button v-if="resetAble" shape="circle" variant="outline" theme="default" @click="handleResetCount">
                   <RollbackIcon />
                 </t-button>
               </t-space>

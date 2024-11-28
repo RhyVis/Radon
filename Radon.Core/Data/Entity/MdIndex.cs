@@ -35,6 +35,19 @@ public class MdIndex : BaseEntity
             UpdateTime = UpdateTime,
         };
     }
+
+    public MdIndexFullDto ToFullDto()
+    {
+        return new MdIndexFullDto
+        {
+            Path = Path,
+            Name = Name,
+            Desc = Desc,
+            Content = Content,
+            CreateTime = CreateTime,
+            UpdateTime = UpdateTime,
+        };
+    }
 }
 
 public class MdIndexDto
@@ -44,4 +57,9 @@ public class MdIndexDto
     public string Desc { get; set; } = string.Empty;
     public DateTime CreateTime { get; set; }
     public DateTime UpdateTime { get; set; }
+}
+
+public class MdIndexFullDto : MdIndexDto
+{
+    public string Content { get; set; } = string.Empty;
 }

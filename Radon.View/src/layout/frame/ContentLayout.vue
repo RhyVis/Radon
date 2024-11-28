@@ -13,8 +13,14 @@ defineProps<{
 </script>
 
 <template>
-  <div class="mt-sm-1 mt-md-1 mt-lg-1 mt-xl-2 mt-xxl-2 mb-2" style="margin: auto">
-    <t-card class="r-ct-layout-card" :title="title" :subtitle="subtitle" :loading="loading" :header-bordered="true">
+  <div class="mt-0.5 mb-1">
+    <t-card
+      class="w-full content-center m-auto"
+      :title="title"
+      :subtitle="subtitle"
+      :loading="loading"
+      :header-bordered="true"
+    >
       <slot />
       <template #footer>
         <slot name="footer" />
@@ -31,11 +37,3 @@ defineProps<{
     </t-card>
   </div>
 </template>
-
-<style scoped>
-.r-ct-layout-card {
-  align-content: center;
-  width: 99%;
-  margin: auto;
-}
-</style>

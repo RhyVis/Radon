@@ -60,7 +60,6 @@ const handleTagInput = () => {
 };
 const handleEntryCopy = (s: string) => {
   try {
-    //.replace(/[\r\n]|\r\n|\\r\\n/, "")
     copy(s).then(() => MessagePlugin.success("复制成功"));
   } catch (e) {
     console.error(e);

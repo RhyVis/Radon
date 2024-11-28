@@ -1,12 +1,14 @@
 ﻿import { apiDeleteNoContent, apiGet, apiPostStr, apiPut } from "@/lib/common/apiMethods.ts";
 
-export type MdIndexBrief = {
+export type MdIndexDto = {
   path: string;
   name: string;
   desc: string;
+  createTime: string;
+  updateTime: string;
 };
 
-export type MdIndex = MdIndexBrief & { content: string };
+export type MdIndex = MdIndexDto & { content: string };
 
 export type MdRecord = {
   name: string;
@@ -14,23 +16,23 @@ export type MdRecord = {
   content: string;
 };
 
-export const getMdIndex = async (): Promise<MdIndexBrief[]> => {
-  const index = await apiGet<MdIndexBrief[]>("/api/md/index");
+export const getMdIndex = async (): Promise<MdIndexDto[]> => {
+  const index = await apiGet<MdIndexDto[]>("/api/archive/index", { timeout: 20000 });
   return index.data;
 };
 
 export const getMdRecord = async (path: string): Promise<MdRecord> => {
-  const { data } = await apiGet<MdRecord>(`/api/md/${path}`);
+  const { data } = await apiGet<MdRecord>(`/api/archive/${path}`);
   return data;
 };
 
 export const checkMdRecord = async (path: string): Promise<MdIndex> => {
-  const { data } = await apiGet<MdIndex>(`/api/md/check/${path}`);
+  const { data } = await apiGet<MdIndex>(`/api/archive/check/${path}`);
   return data;
 };
 
 export const updateMdRecord = async (path: string, name: string, desc: string, content: string): Promise<string> => {
-  const res = await apiPut<string>(`api/md/${path}`, {
+  const res = await apiPut<string>(`api/archive/${path}`, {
     path: path,
     name: name,
     desc: desc,
@@ -41,7 +43,7 @@ export const updateMdRecord = async (path: string, name: string, desc: string, c
 };
 
 export const createMdRecord = async (name: string, desc: string, content: string): Promise<string> => {
-  const res = await apiPostStr(`api/md/create`, {
+  const res = await apiPostStr(`api/archive/create`, {
     path: "",
     name: name,
     desc: desc,
@@ -51,5 +53,5 @@ export const createMdRecord = async (name: string, desc: string, content: string
 };
 
 export const deleteMdRecord = async (path: string): Promise<void> => {
-  await apiDeleteNoContent(`api/md/${path}`);
+  await apiDeleteNoContent(`api/archive/${path}`);
 };

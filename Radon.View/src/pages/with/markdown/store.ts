@@ -1,8 +1,8 @@
-﻿import type { MdIndexBrief } from "@/pages/with/markdown/define.ts";
+﻿import type { MdIndexDto } from "@/pages/with/markdown/define.ts";
 import { defineStore } from "pinia";
 
 export type MdState = {
-  indexList: MdIndexBrief[];
+  indexList: MdIndexDto[];
 };
 
 export const useMdStore = defineStore("markdown", {

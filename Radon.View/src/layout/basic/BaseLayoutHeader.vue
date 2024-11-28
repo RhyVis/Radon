@@ -32,7 +32,7 @@ const handleAuth = () => router.push("/auth");
         <div>
           <t-space :size="4">
             <span class="r-ct-hd-content-tt1">Radon</span>
-            <i class="r-ct-hd-content-tt tw-font-thin">Gen3</i>
+            <i class="r-ct-hd-content-tt font-thin">Gen3</i>
           </t-space>
         </div>
         <div v-if="dev">

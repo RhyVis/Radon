@@ -181,7 +181,7 @@ export const utilRecords: RouteRecordRaw[] = [
 export const markdownRecords: RouteRecordRaw[] = [
   // Menu
   {
-    path: "/md",
+    path: "/archive",
     children: [
       {
         // Index
@@ -214,12 +214,12 @@ export const markdownRecords: RouteRecordRaw[] = [
             },
           },
           {
-            // Update
-            path: "update",
-            name: "MarkdownUpdater",
+            // Edit
+            path: "edit",
+            name: "MarkdownEditor",
             component: () => import("@/pages/with/markdown/write/index.vue"),
             meta: {
-              title: "Markdown Writer",
+              title: "Markdown Editor",
             },
           },
         ],

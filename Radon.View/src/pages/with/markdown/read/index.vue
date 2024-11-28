@@ -25,12 +25,13 @@ const content = ref("");
 const narrow = useNarrow();
 const sideWidth = computed(() => (get(narrow) ? "0" : "168px"));
 const theme = computed(() => (get(dark) ? "dark" : "light"));
+const scrollEl = document.getElementById("base-content") ?? document.documentElement;
 
 const handleBack = () => {
   if (other.value) {
     history.back();
   } else {
-    router.push("/md");
+    router.push("/archive");
   }
 };
 const updateContent = async (path: string) => {
@@ -57,7 +58,9 @@ watch(
 
 <template>
   <content-layout id="md-read-container" :title="name" :subtitle="desc">
-    <t-empty class="tw-mt-6" v-if="content.length === 0" :title="t('common.loading')" />
+    <div class="mt-6" v-if="content.length === 0">
+      <t-empty :title="t('common.loading')" />
+    </div>
     <div v-else>
       <t-layout class="r-md-container">
         <MdPreview
@@ -70,7 +73,9 @@ watch(
           codeTheme="github"
         />
         <t-aside :width="sideWidth">
-          <MdCatalog class="r-md-catalog" v-if="!narrow" editor-id="preview-only" :theme="theme" />
+          <t-affix :offset-top="160" :offset-bottom="60" container="#base-content">
+            <MdCatalog v-if="!narrow" editorId="preview-only" :theme="theme" :scrollElement="scrollEl" />
+          </t-affix>
         </t-aside>
       </t-layout>
     </div>

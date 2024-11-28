@@ -23,11 +23,4 @@
       },
     );
   };
-
-  window.onresize = () => {
-    if (document.body.style.zoom != "1") {
-      console.debug(`Unexpected resize: ${document.body.style.zoom ?? "?"}`);
-      document.body.style.zoom = "1.0";
-    }
-  };
 };

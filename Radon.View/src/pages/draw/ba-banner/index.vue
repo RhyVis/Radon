@@ -26,7 +26,7 @@ const handleDownloadImage = async () => {
 
 <template>
   <content-layout title="BA横幅" subtitle="移植自蔚蓝档案标题生成器">
-    <div class="mb-3 mt-1 r-d-bb-canvas-container">
+    <div class="mb-3 mt-1 text-center">
       <div>
         <BannerCanvas
           :key="key"
@@ -74,9 +74,3 @@ const handleDownloadImage = async () => {
     </t-form>
   </content-layout>
 </template>
-
-<style scoped>
-.r-d-bb-canvas-container {
-  text-align: center;
-}
-</style>

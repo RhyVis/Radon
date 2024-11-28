@@ -31,7 +31,7 @@ const updateContent = async (path: string) => {
   const check = await checkMdRecord(path);
   if (check.name.length === 0) {
     void MessagePlugin.error(t("msg.noSuchRecord"));
-    await router.push("/md");
+    await router.push("/archive");
   } else {
     set(name, check.name);
     set(desc, check.desc);
@@ -117,7 +117,9 @@ watch(
 <template>
   <content-layout :title="name" :subtitle="desc">
     <div>
-      <t-empty class="tw-mt-6" v-if="content.length === 0" :title="t('common.loading')" />
+      <div class="mt-6" v-if="content.length === 0">
+        <t-empty :title="t('common.loading')" />
+      </div>
       <MdEditor
         v-else
         v-model="content"
@@ -134,7 +136,7 @@ watch(
     </div>
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/md')">
+      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/archive')">
         <ArrowLeftIcon />
       </t-button>
     </template>

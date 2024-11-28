@@ -6,8 +6,8 @@ using Radon.Core.Service.Interface;
 
 namespace Radon.Arc.Controller.Api;
 
-[ApiController, Route("api/md")]
-public class MarkdownController(IMarkdownService md) : ControllerBase
+[ApiController, Route("api/archive")]
+public class ArchiveController(IMarkdownService md) : ControllerBase
 {
     [HttpGet, Route("{path}")]
     [ProducesResponseType<MdRes>(StatusCodes.Status200OK)]

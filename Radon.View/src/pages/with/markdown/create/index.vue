@@ -35,7 +35,7 @@ const handleCreate = async () => {
   if (path.length > 0) {
     setComplete(true);
     void MessagePlugin.success(t("msg.success"));
-    await router.push(`/md/${path}/write`);
+    await router.push(`/archive/${path}/edit`);
   } else {
     void MessagePlugin.error(t("msg.failed"));
   }
@@ -93,7 +93,7 @@ onMounted(() => {
   ) {
     MessagePlugin.warning(t("msg.invalidCreate"));
     setComplete(true);
-    router.push("/md");
+    router.push("/archive");
   }
 });
 </script>
@@ -113,7 +113,7 @@ onMounted(() => {
     />
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/md')">
+      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/archive')">
         <ArrowLeftIcon />
       </t-button>
     </template>

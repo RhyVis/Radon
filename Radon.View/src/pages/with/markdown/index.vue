@@ -1,8 +1,9 @@
 ﻿<script setup lang="ts">
-import { deleteMdRecord, getMdIndex } from "@/pages/with/markdown/define.ts";
+import { useNarrow } from "@/composable/useNarrow.ts";
+import { deleteMdRecord, getMdIndex, type MdIndexDto } from "@/pages/with/markdown/define.ts";
 import { useMdStore } from "@/pages/with/markdown/store.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { set, useToggle } from "@vueuse/core";
+import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { AddCircleIcon, DeleteIcon, EditIcon, HomeIcon, SearchIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -17,47 +18,51 @@ const { authPassed } = storeToRefs(useGlobalStore());
 const { indexList } = storeToRefs(store);
 const [loading, setLoading] = useToggle(true);
 const [create, setCreate] = useToggle(false);
+const narrow = useNarrow();
 const createRequest = reactive({ name: "", desc: "" });
 const popupVisible = ref(false);
 const delBtnTheme = computed(() => (popupVisible.value ? "danger" : "primary"));
 
+const date = (entry: MdIndexDto) =>
+  get(narrow)
+    ? new Date(entry.updateTime).toLocaleDateString()
+    : `${new Date(entry.updateTime).toLocaleDateString()} Since ${new Date(entry.createTime).toLocaleDateString()}`;
 const handleCreate = () => {
   if (createRequest.name.length === 0 || createRequest.desc.length === 0) {
     MessagePlugin.warning(t("msg.nameDescRequired"));
     return;
   }
-  router.push({ path: "/md/create", query: createRequest });
+  router.push({ path: "/archive/create", query: createRequest });
 };
 const handleDelete = (path: string) =>
   deleteMdRecord(path)
     .then(() => MessagePlugin.success(t("msg.delSuccess")))
     .catch(() => MessagePlugin.warning(t("msg.delFailed")))
     .then(updateIndex);
-const handleToRead = (path: string) => router.push(`md/${path}/read`);
-const handleToWrite = (path: string) => router.push(`md/${path}/write`);
+const handleToRead = (path: string) => router.push(`/archive/${path}/read`);
+const handleToWrite = (path: string) => router.push(`/archive/${path}/edit`);
 const updateIndex = () =>
   getMdIndex()
     .then(i => set(indexList, i))
     .catch(() => MessagePlugin.error(t("msg.updateIndexFailed")))
     .finally(() => setLoading(false));
 
-onMounted(() => {
-  if (indexList.value.length === 0) {
-    updateIndex();
-  } else {
-    setLoading(false);
-  }
-});
+onMounted(() => (indexList.value.length === 0 ? updateIndex() : setLoading(false)));
 </script>
 
 <template>
   <content-layout :title="t('tt')" :subtitle="t('st')">
-    <t-empty class="mt-3" v-if="loading" :title="t('common.loading')" />
-    <t-empty class="mt-3" v-else-if="indexList.length == 0" :title="t('common.noContent')" />
+    <div class="mt-6" v-if="loading">
+      <t-empty :title="t('common.loading')" />
+    </div>
+    <div class="mt-6" v-else-if="indexList.length === 0">
+      <t-empty :title="t('common.noContent')" />
+    </div>
     <t-card v-else>
       <t-list :stripe="true" size="small">
         <t-list-item v-for="(entry, index) in indexList" :key="index">
           <t-list-item-meta :title="entry.name" :description="entry.desc" />
+          <span class="r-entry-time-display">{{ date(entry) }}</span>
           <template #action>
             <t-space :size="6">
               <t-button theme="primary" variant="text" size="small" shape="circle" @click="handleToRead(entry.path)">
@@ -119,6 +124,13 @@ onMounted(() => {
     </template>
   </content-layout>
 </template>
+
+<style scoped>
+.r-entry-time-display {
+  font-size: smaller;
+  font-style: italic;
+}
+</style>
 
 <i18n locale="en">
 tt: "Archive"

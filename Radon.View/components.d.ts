@@ -23,6 +23,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SelLocale: typeof import('./src/components/select/SelLocale.vue')['default']
     SelSimple: typeof import('./src/components/select/SelSimple.vue')['default']
+    TAffix: typeof import('tdesign-vue-next')['Affix']
     TAside: typeof import('tdesign-vue-next')['Aside']
     TButton: typeof import('tdesign-vue-next')['Button']
     TCard: typeof import('tdesign-vue-next')['Card']

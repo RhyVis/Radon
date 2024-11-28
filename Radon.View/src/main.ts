@@ -1,6 +1,6 @@
 import "@/assets/style/mixin.less";
 import "@/assets/style/style.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "tailwindcss/tailwind.css";
 import "tdesign-vue-next/es/style/index.css";
 
 import { createApp } from "vue";
