@@ -22,7 +22,7 @@ type VersionState = {
 
 const localVersion: VersionFile = LocalVersion;
 
-export enum FetchState {
+export const enum FetchState {
   INIT = 0,
   SUCCESS = 1,
   NEED_UPDATE = 2,
@@ -37,25 +37,15 @@ export const useVersionStore = defineStore("version", {
     cVersionL: localVersion.clientVersion,
     cVersionR: "0.0.0",
     sVersion: "0.0.0",
-    fetchState: FetchState.INIT,
+    fetchState: 0,
     initialized: false,
   }),
   getters: {
-    cAssembleTimeL(state) {
-      return `${state.cVersionL}.${radixValExtended(state.cCompileTimeL)}`;
-    },
-    cAssembleTimeR(state) {
-      return `${state.cVersionR}.${radixValExtended(state.cCompileTimeR)}`;
-    },
-    cCompileTimeRFormatted(state) {
-      return formatFromTimestamp(state.cCompileTimeR);
-    },
-    needUpdate(state) {
-      return state.fetchState == FetchState.NEED_UPDATE;
-    },
-    badState(state) {
-      return state.fetchState < 0;
-    },
+    cAssembleTimeL: state => `${state.cVersionL}.${radixValExtended(state.cCompileTimeL)}`,
+    cAssembleTimeR: state => `${state.cVersionR}.${radixValExtended(state.cCompileTimeR)}`,
+    cCompileTimeRFormatted: state => formatFromTimestamp(state.cCompileTimeR),
+    needUpdate: state => state.fetchState == FetchState.NEED_UPDATE,
+    badState: state => state.fetchState < 0,
   },
   actions: {
     init() {

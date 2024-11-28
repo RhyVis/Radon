@@ -19,12 +19,6 @@ export const useSaveStore = defineStore("save", {
     loading: false,
   }),
   getters: {
-    query(state) {
-      return {
-        id: state.id,
-        text: state.qText,
-        note: state.qNote,
-      };
-    },
+    query: state => ({ id: state.id, text: state.qText, note: state.qNote }),
   },
 });
