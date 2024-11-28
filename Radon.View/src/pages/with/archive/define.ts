@@ -32,7 +32,7 @@ export const checkMdRecord = async (path: string): Promise<MdIndex> => {
 };
 
 export const updateMdRecord = async (path: string, name: string, desc: string, content: string): Promise<string> => {
-  const res = await apiPut<string>(`api/archive/${path}`, {
+  const res = await apiPut<string>(`/api/archive/${path}`, {
     path: path,
     name: name,
     desc: desc,
@@ -43,7 +43,7 @@ export const updateMdRecord = async (path: string, name: string, desc: string, c
 };
 
 export const createMdRecord = async (name: string, desc: string, content: string): Promise<string> => {
-  const res = await apiPostStr(`api/archive/create`, {
+  const res = await apiPostStr(`/api/archive/create`, {
     path: "",
     name: name,
     desc: desc,
@@ -53,5 +53,5 @@ export const createMdRecord = async (name: string, desc: string, content: string
 };
 
 export const deleteMdRecord = async (path: string): Promise<void> => {
-  await apiDeleteNoContent(`api/archive/${path}`);
+  await apiDeleteNoContent(`/api/archive/${path}`);
 };
