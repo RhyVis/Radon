@@ -4,14 +4,14 @@ import { CopyIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { useI18n } from "vue-i18n";
 
-const { target = "" } = defineProps<{ target: string }>();
+const { value = "" } = defineProps<{ value: string }>();
 const { t } = useI18n();
 const { copy } = useClipboard();
 
 const action = async () => {
-  if (target.length > 0) {
+  if (value.length > 0) {
     try {
-      await copy(target);
+      await copy(value);
       await MessagePlugin.success(t("msg.success"));
     } catch (e) {
       console.error(e);

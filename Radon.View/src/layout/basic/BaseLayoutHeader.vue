@@ -8,14 +8,14 @@ import { MenuFoldIcon, MenuUnfoldIcon, MoonIcon, SunnyIcon, UserIcon } from "tde
 import { computed, inject } from "vue";
 import { useRouter } from "vue-router";
 
-const dev = computed(() => import.meta.env.DEV);
 const router = useRouter();
-const global = useGlobalStore();
+const { asideVisible, authPassed } = storeToRefs(useGlobalStore());
+const dev = computed(() => import.meta.env.DEV);
 const dark = inject(darkModeKey)!;
 const toggleDark = useToggle(dark);
-const { asideVisible, authPassed } = storeToRefs(global);
+const toggleAside = useToggle(asideVisible);
 
-const handleAside = () => (asideVisible.value = !asideVisible.value);
+const handleAside = () => toggleAside();
 const handleAuth = () => router.push("/auth");
 </script>
 

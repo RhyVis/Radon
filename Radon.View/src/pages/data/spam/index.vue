@@ -36,6 +36,11 @@ const result = ref<TextEntry[]>([
 ]);
 const columns = computed(() => spamColumns(handleEntryCopy));
 const tagValid = computed(() => get(qIds).every(item => Number.isInteger(Number(item))));
+const mergedResult = computed(() =>
+  get(result)
+    .map(e => e.text)
+    .join("\n"),
+);
 
 const handleTabChange = (key: string | number) => {
   switch (key) {
@@ -225,7 +230,7 @@ watch(
                 <RefreshIcon v-if="!resultLoading" />
               </t-button>
             </t-tooltip>
-            <btn-copy :target="result.map(e => (e as TextEntry).text).join('\n')" />
+            <btn-copy :value="mergedResult" />
           </t-space>
         </t-form-item>
       </div>

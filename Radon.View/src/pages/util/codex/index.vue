@@ -92,7 +92,7 @@ const result = ref("");
         </t-form-item>
         <t-form-item label="工具">
           <t-space :size="5">
-            <btn-copy :target="result" />
+            <btn-copy :value="result" />
             <btn-read v-model="query.text" />
             <btn-clear v-model="query.text" />
           </t-space>

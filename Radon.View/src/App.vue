@@ -57,6 +57,7 @@ const tryRefreshToken = () => {
         NotificationPlugin.success({
           title: t("auth.message.tokenValidAndRefreshed.title"),
           content: t("auth.message.tokenValidAndRefreshed.content"),
+          duration: 1420,
           closeBtn: true,
         });
       } else {

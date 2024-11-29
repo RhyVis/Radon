@@ -17,7 +17,7 @@ const roman = computed(() => intToRoman(input.value));
       </t-form-item>
       <t-form-item label="操作">
         <t-space :size="5">
-          <btn-copy :target="roman" />
+          <btn-copy :value="roman" />
         </t-space>
       </t-form-item>
     </t-form>

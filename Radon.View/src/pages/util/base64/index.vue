@@ -63,7 +63,7 @@ const mode = ref(Mode.Encode);
       </t-form-item>
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
-          <btn-copy :target="output" />
+          <btn-copy :value="output" />
           <btn-read v-model="input" />
           <btn-clear v-model="input" />
         </t-space>

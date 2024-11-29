@@ -12,6 +12,7 @@ import {
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
 const records: RouteRecordRaw[] = [
+  // Homepage
   {
     path: "/",
     name: "Home",
@@ -31,6 +32,8 @@ const records: RouteRecordRaw[] = [
   ...drawRecords,
   ...mathRecords,
   ...utilRecords,
+  
+  // Err Handle
   {
     path: "/error",
     name: "404",

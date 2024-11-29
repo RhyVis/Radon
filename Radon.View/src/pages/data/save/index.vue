@@ -98,7 +98,7 @@ const handleSelect = async () => {
       </t-form-item>
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
-          <btn-copy :target="rText" />
+          <btn-copy :value="rText" />
           <btn-read v-model="qText" />
           <btn-clear v-model="qText" />
         </t-space>

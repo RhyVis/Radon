@@ -10,8 +10,8 @@ public class TextStoreRes : BaseApiRes<TextStoreRes.ResData>
     public class ResData
     {
         public long Id { get; set; }
-        public string Text { get; set; } = "";
-        public string Note { get; set; } = "";
+        public string Text { get; set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
     }
 
     public static TextStoreRes FromEntity(EntryTextStorage entity) =>

@@ -6,6 +6,12 @@ import { MessagePlugin } from "tdesign-vue-next";
 
 const { t } = i18n.global;
 
+const respMsg = (resp: AxiosResponse) => {
+  const k = `common.statusCode.${resp.status}`;
+  const rr = t(k);
+  return rr === k ? resp.statusText || "Unknown Server Error" : rr;
+};
+
 const axiosInstance = axios.create();
 
 axiosInstance.defaults.baseURL = import.meta.env.VITE_API_ROOT;
@@ -36,7 +42,7 @@ axiosInstance.interceptors.response.use(
         console.error(error);
         console.error(JSON.parse(errData.data));
       } else {
-        void MessagePlugin.error(`${t("common.networkError")}(${resp.status}): ${resp.statusText}`);
+        void MessagePlugin.error(`${t("common.networkError")}(${resp.status}): ${respMsg(resp)}`);
       }
     } else {
       void MessagePlugin.error(t("common.networkError"));
