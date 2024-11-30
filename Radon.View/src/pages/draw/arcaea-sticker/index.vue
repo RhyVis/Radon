@@ -2,16 +2,16 @@
 import { useKeyUpdate } from "@/composable/useKeyUpdate.ts";
 import { b64ToBlob } from "@/lib/util/imageTransform";
 import { copyImage, downloadImage } from "@/lib/util/imageUtil";
+import { arcaeaCharaList } from "@/pages/draw/arcaea-sticker/scripts/define.ts";
+import { useArcaeaStickerStore } from "@/pages/draw/arcaea-sticker/scripts/store.ts";
 import SelectChara from "@/pages/draw/pjsk-sticker/comps/SelectChara.vue";
 import StickerCanvas from "@/pages/draw/pjsk-sticker/comps/StickerCanvas.vue";
-import { pjskCharaList } from "@/pages/draw/pjsk-sticker/scripts/define.ts";
-import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
 import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { CopyIcon, DownloadIcon } from "tdesign-icons-vue-next";
 import { computed, onMounted } from "vue";
 
-const store = usePjskStore();
+const store = useArcaeaStickerStore();
 const { charaId, fontSize, spaceSize, rotate, x, y, text, curve, useCommercialFonts } = storeToRefs(store);
 const { key, updateKey } = useKeyUpdate();
 
@@ -24,7 +24,7 @@ const yProxy = computed({
 const textMultipleLines = computed(() => text.value.includes("\n"));
 
 const handleUpdate = (id: number) => {
-  const chara = pjskCharaList[id];
+  const chara = arcaeaCharaList[id];
   store.$patch({
     charaId: id,
     fontSize: chara.defaultText.s,
@@ -49,7 +49,7 @@ const handleCopyImage = async () => {
 };
 const handleDownloadImage = async () => {
   const canvas = document.getElementById("sticker-canvas") as HTMLCanvasElement;
-  await downloadImage(canvas.toDataURL(), `${pjskCharaList[get(charaId)].name}_sticker.png`);
+  await downloadImage(canvas.toDataURL(), `${arcaeaCharaList[get(charaId)].name}_sticker.png`);
 };
 
 store.$subscribe(() => updateKey());
@@ -60,7 +60,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <content-layout title="PJSK表情" subtitle="移植自Project Sekai Stickers">
+  <content-layout title="Arcaea表情" subtitle="资源来自Rosemoe/arcaea-stickers">
     <div class="mb-3 mt-1" style="text-align: center">
       <t-space :size="8" direction="vertical">
         <t-space :size="16" direction="horizontal">
@@ -76,8 +76,8 @@ onMounted(() => {
               :text="text"
               :curve="curve"
               :use-commercial-fonts="useCommercialFonts"
-              :chara-list="pjskCharaList"
-              res-endpoint="pjsk-sticker"
+              :chara-list="arcaeaCharaList"
+              res-endpoint="arcaea-sticker"
             />
           </div>
           <t-slider v-model="yProxy" :max="360" layout="vertical" />
@@ -88,7 +88,7 @@ onMounted(() => {
     <t-form>
       <t-form-item label="操作">
         <t-space>
-          <SelectChara :chara-list="pjskCharaList" res-endpoint="pjsk-sticker" @select="handleSelect" />
+          <SelectChara :chara-list="arcaeaCharaList" res-endpoint="arcaea-sticker" @select="handleSelect" />
           <t-space :size="5">
             <t-button shape="square" theme="default" @click="handleCopyImage">
               <CopyIcon />

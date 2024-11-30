@@ -1,8 +1,12 @@
 <script setup lang="tsx">
 import { RefreshIcon } from "tdesign-icons-vue-next";
-import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/define";
+import { assembleSrc, type CharacterDefinition } from "@/pages/draw/pjsk-sticker/scripts/define";
 import { useToggle } from "@vueuse/core";
 
+const { charaList, resEndpoint } = defineProps<{
+  charaList: CharacterDefinition[];
+  resEndpoint: string;
+}>();
 const emit = defineEmits(["select"]);
 
 const [visible, setVisible] = useToggle(false);
@@ -24,7 +28,7 @@ const handleSelect = (index: number) => {
           <t-image
             class="r-chara-select-inner-img"
             fit="contain"
-            :src="assembleSrc(chara.img)"
+            :src="assembleSrc(chara.img, resEndpoint)"
             :loading="renderIcon"
             :lazy="true"
             style="height: 115px; width: 115px"

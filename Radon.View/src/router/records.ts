@@ -121,6 +121,17 @@ export const drawRecords: RouteRecordRaw[] = [
     },
   },
   {
+    path: "/arcaea-sticker",
+    name: "Arcaea-Sticker",
+    component: () => import("@/pages/draw/arcaea-sticker/index.vue"),
+    meta: {
+      title: "Arcaea表情",
+      icon: "edit-2",
+      tKey: "route.draw.arcaeaSticker",
+      online: true,
+    },
+  },
+  {
     path: "/ba-banner",
     name: "BA-Banner",
     component: () => import("@/pages/draw/ba-banner/index.vue"),

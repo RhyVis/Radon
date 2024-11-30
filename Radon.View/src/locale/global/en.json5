@@ -71,6 +71,7 @@
     draw: {
       title: "Draw",
       pjskSticker: "PJSK Sticker",
+      arcaeaSticker: "Arcaea Sticker",
       baBanner: "BA Banner",
     },
     // Math

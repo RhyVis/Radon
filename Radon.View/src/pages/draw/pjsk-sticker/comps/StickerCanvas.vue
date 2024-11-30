@@ -1,12 +1,33 @@
 <script lang="ts" setup>
-import { assembleSrc, charaList } from "@/pages/draw/pjsk-sticker/scripts/define";
-import { usePjskStore } from "@/pages/draw/pjsk-sticker/scripts/store";
+import { assembleSrc, type CharacterDefinition } from "@/pages/draw/pjsk-sticker/scripts/define";
 import { get, useToggle } from "@vueuse/core";
-import { storeToRefs } from "pinia";
 import { computed, onMounted, ref } from "vue";
 
-const store = usePjskStore();
-const { charaId, fontSize, spaceSize, rotate, x, y, text, curve, useCommercialFonts } = storeToRefs(store);
+const {
+  charaId = 0,
+  fontSize = 10,
+  spaceSize = 1,
+  rotate = 0,
+  x = 0,
+  y = 0,
+  text = "",
+  curve = false,
+  useCommercialFonts = false,
+  resEndpoint = "",
+  charaList = [],
+} = defineProps<{
+  charaId: number;
+  fontSize: number;
+  spaceSize: number;
+  rotate: number;
+  x: number;
+  y: number;
+  text: string;
+  curve: boolean;
+  useCommercialFonts: boolean;
+  resEndpoint: string;
+  charaList: CharacterDefinition[];
+}>();
 const [loading, setLoading] = useToggle(false);
 
 const canvasRef = ref<HTMLCanvasElement>();
@@ -22,7 +43,7 @@ const draw = () => {
 
   const character = charaList[get(charaId)];
   imageRef.value.crossOrigin = "anonymous";
-  imageRef.value.src = assembleSrc(character.img);
+  imageRef.value.src = assembleSrc(character.img, get(resEndpoint));
 
   if (!canvasRef.value) return console.error("无法获取Canvas元素");
   const canvas = canvasRef.value;
@@ -61,15 +82,15 @@ const draw = () => {
     ctx.fillStyle = character.color;
 
     const lines = get(text).split("\n");
-    const angle = (Math.PI * text.value.length) / 7;
+    const angle = (Math.PI * text.length) / 7;
     if (get(curve)) {
       for (const line of lines) {
-        for (let i = 0; i < line.length; i++) {
+        for (const element of line) {
           ctx.rotate(angle / line.length / 2.5);
           ctx.save();
           ctx.translate(0, -1 * get(fontSize) * 3.5);
-          ctx.strokeText(line[i], 0, 0);
-          ctx.fillText(line[i], 0, 0);
+          ctx.strokeText(element, 0, 0);
+          ctx.fillText(element, 0, 0);
           ctx.restore();
         }
       }
@@ -86,9 +107,6 @@ const draw = () => {
 };
 
 onMounted(() => {
-  draw();
-});
-store.$subscribe(() => {
   draw();
 });
 </script>

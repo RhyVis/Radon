@@ -1,4 +1,4 @@
-import CharacterList from "@/assets/conf/characters.json";
+import CharacterList from "@/assets/conf/pjsk-characters.json";
 
 export type CharacterDefinition = {
   id: number;
@@ -15,6 +15,6 @@ export type CharacterDefinition = {
   };
 };
 
-export const charaList: CharacterDefinition[] = CharacterList;
+export const pjskCharaList: CharacterDefinition[] = CharacterList;
 
-export const assembleSrc = (s: string) => import.meta.env.VITE_RES_ROOT + "/pjsk-sticker/" + s;
+export const assembleSrc = (s: string, endpoint: string) => `${import.meta.env.VITE_RES_ROOT}/${endpoint}/${s}`;

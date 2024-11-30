@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
+﻿import { defineStore } from "pinia";
 
-export type PjskStore = {
+export type ArcaeaStickerStore = {
   charaId: number;
   fontSize: number;
   spaceSize: number;
@@ -12,10 +12,10 @@ export type PjskStore = {
   useCommercialFonts: boolean;
 };
 
-export const usePjskStore = defineStore("pjsk-sticker", {
-  state: (): PjskStore => ({
+export const useArcaeaStickerStore = defineStore("arcaea-sticker", {
+  state: (): ArcaeaStickerStore => ({
     charaId: 0,
-    fontSize: 5,
+    fontSize: 1,
     spaceSize: 1,
     rotate: 0,
     x: 0,
@@ -27,4 +27,4 @@ export const usePjskStore = defineStore("pjsk-sticker", {
   persist: {
     pick: ["charaId", "useCommercialFonts"],
   },
-});
+})

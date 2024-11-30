@@ -71,6 +71,7 @@
     draw: {
       title: "绘制",
       pjskSticker: "PJSK 表情",
+      arcaeaSticker: "Arcaea 表情",
       baBanner: "BA 横幅",
     },
     // 数学

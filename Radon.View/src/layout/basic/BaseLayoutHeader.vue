@@ -36,7 +36,7 @@ const handleAuth = () => router.push("/auth");
           </t-space>
         </div>
         <div v-if="dev">
-          <i class="text-primary r-ct-hd-content-dev"> Development Mode </i>
+          <i class="text-primary r-ct-hd-content-dev text-blue-500"> Development Mode </i>
         </div>
       </t-space>
     </div>
