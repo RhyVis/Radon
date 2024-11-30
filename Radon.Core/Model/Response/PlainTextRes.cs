@@ -7,12 +7,22 @@ namespace Radon.Core.Model.Response;
 public class PlainTextRes : BaseApiRes<string>
 {
     private PlainTextRes(string data)
-        : base(data) { }
+        : base(data)
+    {
+    }
 
     private PlainTextRes(string msg, string data)
-        : base(ResponseCodeType.SUCCESS.ToInt(), msg, data) { }
+        : base(ResponseCodeType.SUCCESS.ToInt(), msg, data)
+    {
+    }
 
-    public static PlainTextRes Of(string data) => new(data);
+    public static PlainTextRes Of(string data)
+    {
+        return new PlainTextRes(data);
+    }
 
-    public static PlainTextRes Of(string msg, string data) => new(msg, data);
+    public static PlainTextRes Of(string msg, string data)
+    {
+        return new PlainTextRes(msg, data);
+    }
 }

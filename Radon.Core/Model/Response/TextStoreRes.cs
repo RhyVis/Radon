@@ -7,15 +7,9 @@ namespace Radon.Core.Model.Response;
 
 public class TextStoreRes : BaseApiRes<TextStoreRes.ResData>
 {
-    public class ResData
+    public static TextStoreRes FromEntity(EntryTextStorage entity)
     {
-        public long Id { get; set; }
-        public string Text { get; set; } = string.Empty;
-        public string Note { get; set; } = string.Empty;
-    }
-
-    public static TextStoreRes FromEntity(EntryTextStorage entity) =>
-        new()
+        return new TextStoreRes
         {
             Code =
                 entity.Id < 0
@@ -25,7 +19,15 @@ public class TextStoreRes : BaseApiRes<TextStoreRes.ResData>
             {
                 Id = entity.Id,
                 Text = entity.Text,
-                Note = entity.Note,
-            },
+                Note = entity.Note
+            }
         };
+    }
+
+    public class ResData
+    {
+        public long Id { get; set; }
+        public string Text { get; set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
+    }
 }

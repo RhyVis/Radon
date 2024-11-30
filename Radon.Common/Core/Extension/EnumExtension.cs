@@ -11,7 +11,7 @@ public static class EnumExtension
     }
 
     /// <summary>
-    /// Parse a string to Enum, if failed return default value provided
+    ///     Parse a string to Enum, if failed return default value provided
     /// </summary>
     /// <param name="value">String presenting the name of enum</param>
     /// <param name="defaultValue">Default enum val, used as TEnum</param>
@@ -24,7 +24,7 @@ public static class EnumExtension
     }
 
     /// <summary>
-    /// Get Description attribute of Enum
+    ///     Get Description attribute of Enum
     /// </summary>
     /// <param name="val">Enum</param>
     /// <returns>The Description or its name</returns>
@@ -42,9 +42,8 @@ public static class EnumExtension
             Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
             is DescriptionAttribute attribute
         )
-        {
             return attribute.Description;
-        }
+
         return name;
     }
 }

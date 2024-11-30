@@ -2,5 +2,5 @@
 
 public enum PreservedStrStorageId
 {
-    PDX_LANG_PARSER_REPLACER = 2000,
+    PDX_LANG_PARSER_REPLACER = 2000
 }

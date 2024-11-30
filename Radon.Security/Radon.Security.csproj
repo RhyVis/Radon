@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Radon.Data\Radon.Data.csproj" />
+        <ProjectReference Include="..\Radon.Data\Radon.Data.csproj"/>
     </ItemGroup>
 
 </Project>

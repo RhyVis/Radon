@@ -9,7 +9,8 @@ using Radon.Core.Util;
 
 namespace Radon.Arc.Controller.Api;
 
-[ApiController, Route("api/pdx")]
+[ApiController]
+[Route("api/pdx")]
 public class PdxController(IParadoxProcessor processor, IPdxService service) : ControllerBase
 {
     [HttpGet("test")]
@@ -28,7 +29,7 @@ public class PdxController(IParadoxProcessor processor, IPdxService service) : C
         {
             var dummy = new List<PdxLangParsedItem>
             {
-                new() { Namespace = ["empty"], Value = "empty" },
+                new() { Namespace = ["empty"], Value = "empty" }
             };
             return Ok(new UnsetRes(dummy));
         }

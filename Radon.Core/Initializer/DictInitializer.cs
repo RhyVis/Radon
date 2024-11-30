@@ -9,11 +9,11 @@ namespace Radon.Core.Initializer;
 
 public class DictInitializer : IInitializer
 {
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private const string PATH = "Radon.Core.Resources.Dict.";
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private Dictionary<string, string> _dictEmojiHan = new();
 
     private Dictionary<string, string[]> _dictHanEmoji = new();
-    private Dictionary<string, string> _dictEmojiHan = new();
     private Dictionary<string, string> _dictHanSpark = new();
     private Dictionary<string, string> _dictSparkHan = new();
     private Dictionary<string, string> _dictUnicode = new();
@@ -65,7 +65,7 @@ public class DictInitializer : IInitializer
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var json = reader.ReadToEnd();
         return JsonSerializer.Deserialize<T>(json)
-            ?? throw new SerializationException($"Failed to deserialize {resourceName}.");
+               ?? throw new SerializationException($"Failed to deserialize {resourceName}.");
     }
 }
 
@@ -98,10 +98,7 @@ public static class DictData
 
     public static string GetHanEmoji(string han)
     {
-        if (!_isInitialized)
-        {
-            throw new InvalidOperationException("Dict not initialized");
-        }
+        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
 
         _dictHanEmoji.TryGetValue(han, out var result);
 
@@ -110,10 +107,7 @@ public static class DictData
 
     public static string GetEmojiHan(string emoji)
     {
-        if (!_isInitialized)
-        {
-            throw new InvalidOperationException("Dict not initialized");
-        }
+        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
 
         _dictEmojiHan.TryGetValue(emoji, out var result);
 
@@ -122,10 +116,7 @@ public static class DictData
 
     public static string GetHanSpark(string han)
     {
-        if (!_isInitialized)
-        {
-            throw new InvalidOperationException("Dict not initialized");
-        }
+        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
 
         _dictHanSpark.TryGetValue(han, out var result);
 
@@ -134,10 +125,7 @@ public static class DictData
 
     public static string GetSparkHan(string spark)
     {
-        if (!_isInitialized)
-        {
-            throw new InvalidOperationException("Dict not initialized");
-        }
+        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
 
         _dictSparkHan.TryGetValue(spark, out var result);
 
@@ -146,10 +134,7 @@ public static class DictData
 
     public static string GetUnicodeDiff(string unicode)
     {
-        if (!_isInitialized)
-        {
-            throw new InvalidOperationException("Dict not initialized");
-        }
+        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
 
         _dictUnicode.TryGetValue(unicode, out var result);
 

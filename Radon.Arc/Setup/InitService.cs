@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
-using Radon.Core.Data.Entity;
 using Radon.Core.Model.Base;
 using Radon.Data.Entity;
 using Radon.Security.Model;
@@ -32,11 +31,11 @@ public static class InitService
         // Radon.Security
         typeof(Passport).Assembly,
         // Radon.Arc
-        typeof(Init).Assembly,
+        typeof(Init).Assembly
     ];
 
     /// <summary>
-    /// Settings before the application built
+    ///     Settings before the application built
     /// </summary>
     public static WebApplicationBuilder SetupService(this WebApplicationBuilder builder)
     {
@@ -156,7 +155,7 @@ public static class InitService
 
                     ValidIssuer = conf.Issuer,
                     ValidAudience = conf.Audience,
-                    IssuerSigningKey = conf.SigningCredentials.Key,
+                    IssuerSigningKey = conf.SigningCredentials.Key
                 };
             });
     }
@@ -166,10 +165,7 @@ public static class InitService
         Logger.Debug("Register Other Service");
         services.AddHttpClient();
 
-        if (!dev)
-        {
-            return;
-        }
+        if (!dev) return;
         services.AddEndpointsApiExplorer();
         services.AddOpenApi();
     }

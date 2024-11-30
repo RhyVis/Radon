@@ -11,10 +11,9 @@ namespace Radon.Core.Service;
 [ServiceScoped]
 public class MarkdownService(MdIndexRepository repo) : IMarkdownService
 {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
     private const string NoContent = "### No content available.";
     private const string Void = "void";
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public MdIndexFullDto CheckContent(string path)
     {
@@ -82,7 +81,7 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
             {
                 Name = name,
                 Desc = desc,
-                Content = content,
+                Content = content
             };
 
             var newEntity = repo.Insert(newIndex);
@@ -102,7 +101,7 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
             {
                 Name = name,
                 Desc = desc,
-                Content = content,
+                Content = content
             };
 
             var newEntity = repo.Insert(newIndex);

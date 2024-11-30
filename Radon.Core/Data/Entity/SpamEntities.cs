@@ -4,7 +4,7 @@ using Radon.Data.Entity;
 namespace Radon.Core.Data.Entity;
 
 /// <summary>
-/// Basic entity for SpamService.
+///     Basic entity for SpamService.
 /// </summary>
 [Table(DisableSyncStructure = true)]
 public abstract class SpamEntity : BaseIdEntity
@@ -12,7 +12,10 @@ public abstract class SpamEntity : BaseIdEntity
     [Column(StringLength = -1, IsNullable = false)]
     public string Text { get; set; } = null!;
 
-    public static DummySpamEntity Dummy() => new();
+    public static DummySpamEntity Dummy()
+    {
+        return new DummySpamEntity();
+    }
 }
 
 [Table(DisableSyncStructure = true)]

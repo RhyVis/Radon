@@ -6,14 +6,21 @@ using Radon.Core.Service.Interface;
 
 namespace Radon.Arc.Controller.Api;
 
-[ApiController, Route("api/archive")]
+[ApiController]
+[Route("api/archive")]
 public class ArchiveController(IMarkdownService md) : ControllerBase
 {
-    [HttpGet, Route("{path}")]
+    [HttpGet]
+    [Route("{path}")]
     [ProducesResponseType<MdRes>(StatusCodes.Status200OK)]
-    public IActionResult Provide(string path) => Ok(new MdRes { Data = md.ProvideContent(path) });
+    public IActionResult Provide(string path)
+    {
+        return Ok(new MdRes { Data = md.ProvideContent(path) });
+    }
 
-    [HttpPut, Route("{path}"), Authorize]
+    [HttpPut]
+    [Route("{path}")]
+    [Authorize]
     [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
     public IActionResult Update(string path, MdReq req)
     {
@@ -22,7 +29,9 @@ public class ArchiveController(IMarkdownService md) : ControllerBase
         return Ok(PlainTextRes.Of(p));
     }
 
-    [HttpDelete, Route("{path}"), Authorize]
+    [HttpDelete]
+    [Route("{path}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult Delete(string path)
     {
@@ -30,7 +39,9 @@ public class ArchiveController(IMarkdownService md) : ControllerBase
         return NoContent();
     }
 
-    [HttpPost, Route("create"), Authorize]
+    [HttpPost]
+    [Route("create")]
+    [Authorize]
     [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
     public IActionResult Create(MdReq req)
     {
@@ -39,11 +50,20 @@ public class ArchiveController(IMarkdownService md) : ControllerBase
         return Ok(PlainTextRes.Of(p));
     }
 
-    [HttpGet, Route("check/{path}"), Authorize]
+    [HttpGet]
+    [Route("check/{path}")]
+    [Authorize]
     [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
-    public IActionResult Check(string path) => Ok(new UnsetRes(md.CheckContent(path)));
+    public IActionResult Check(string path)
+    {
+        return Ok(new UnsetRes(md.CheckContent(path)));
+    }
 
-    [HttpGet, Route("index")]
+    [HttpGet]
+    [Route("index")]
     [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
-    public IActionResult Index() => Ok(new UnsetRes(md.ListIndex()));
+    public IActionResult Index()
+    {
+        return Ok(new UnsetRes(md.ListIndex()));
+    }
 }

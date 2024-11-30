@@ -5,18 +5,30 @@ namespace Radon.Core.Data.Repository;
 
 # region SpamRepository
 
-public class GachaAkRepository(IFreeSql fsql) : BaseIdRepository<GachaAk>(fsql);
+public class BaseSpamRepository<TEntity> : BaseIdRepository<TEntity> where TEntity : SpamEntity
+{
+    protected BaseSpamRepository(IFreeSql fsql) : base(fsql)
+    {
+    }
 
-public class GachaGsRepository(IFreeSql fsql) : BaseIdRepository<GachaGs>(fsql);
+    public bool CheckIfDuplicate(string text)
+    {
+        return Select.Where(x => x.Text.Trim() == text.Trim()).Any();
+    }
+}
 
-public class GachaMlRepository(IFreeSql fsql) : BaseIdRepository<GachaMl>(fsql);
+public class GachaAkRepository(IFreeSql fsql) : BaseSpamRepository<GachaAk>(fsql);
 
-public class MemeAcgnRepository(IFreeSql fsql) : BaseIdRepository<MemeAcgn>(fsql);
+public class GachaGsRepository(IFreeSql fsql) : BaseSpamRepository<GachaGs>(fsql);
 
-public class MemeDinnerRepository(IFreeSql fsql) : BaseIdRepository<MemeDinner>(fsql);
+public class GachaMlRepository(IFreeSql fsql) : BaseSpamRepository<GachaMl>(fsql);
 
-public class SpamMaxRepository(IFreeSql fsql) : BaseIdRepository<SpamMax>(fsql);
+public class MemeAcgnRepository(IFreeSql fsql) : BaseSpamRepository<MemeAcgn>(fsql);
 
-public class SpamMinRepository(IFreeSql fsql) : BaseIdRepository<SpamMin>(fsql);
+public class MemeDinnerRepository(IFreeSql fsql) : BaseSpamRepository<MemeDinner>(fsql);
+
+public class SpamMaxRepository(IFreeSql fsql) : BaseSpamRepository<SpamMax>(fsql);
+
+public class SpamMinRepository(IFreeSql fsql) : BaseSpamRepository<SpamMin>(fsql);
 
 # endregion

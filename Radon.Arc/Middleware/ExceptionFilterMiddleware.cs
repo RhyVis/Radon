@@ -10,6 +10,13 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
 {
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
+    private static readonly JsonSerializerOptions _jsonSerializerOptions =
+        new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new ExceptionConverter() }
+        };
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -34,7 +41,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status401Unauthorized,
             Msg = "Mismatched username or password.",
-            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions),
+            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions)
         };
         return WriteResponseAsync(context, response, StatusCodes.Status401Unauthorized);
     }
@@ -45,7 +52,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status500InternalServerError,
             Msg = "An error occurred while processing your request.",
-            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions),
+            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions)
         };
         return WriteResponseAsync(context, response);
     }
@@ -63,13 +70,6 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
 
         return context.Response.WriteAsync(json);
     }
-
-    private static readonly JsonSerializerOptions _jsonSerializerOptions =
-        new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new ExceptionConverter() },
-        };
 
     private class ExceptionConverter : JsonConverter<Exception>
     {
@@ -97,6 +97,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
                 writer.WritePropertyName("innerException");
                 JsonSerializer.Serialize(writer, value.InnerException, options);
             }
+
             writer.WriteEndObject();
         }
     }

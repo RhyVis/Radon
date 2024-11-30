@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Radon.Common\Radon.Common.csproj" />
+        <ProjectReference Include="..\Radon.Common\Radon.Common.csproj"/>
     </ItemGroup>
 
 </Project>

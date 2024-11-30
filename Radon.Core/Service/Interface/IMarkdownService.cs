@@ -8,13 +8,13 @@ public interface IMarkdownService
     MdIndexFullDto CheckContent(string path);
 
     /// <summary>
-    /// Read markdown content from the given path.
+    ///     Read markdown content from the given path.
     /// </summary>
     /// <param name="path">name under appResource/md</param>
     MdRecord ProvideContent(string path);
 
     /// <summary>
-    /// Update content of the markdown file.
+    ///     Update content of the markdown file.
     /// </summary>
     /// <param name="path">null if going to create new one</param>
     /// <param name="name"></param>
@@ -24,7 +24,7 @@ public interface IMarkdownService
     string UpdateContent(string? path, string name, string desc, string content);
 
     /// <summary>
-    /// Delete the markdown file, throw if any error occurs.
+    ///     Delete the markdown file, throw if any error occurs.
     /// </summary>
     void DeleteContent(string path);
 

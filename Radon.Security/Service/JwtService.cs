@@ -42,14 +42,11 @@ public class JwtService(IRedisClient cli) : IJwtService
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = conf.Issuer,
                     ValidAudience = conf.Audience,
-                    IssuerSigningKey = conf.SigningCredentials.Key,
+                    IssuerSigningKey = conf.SigningCredentials.Key
                 },
                 out _
             );
-            if (checkSession && cli.Get(token) == null)
-            {
-                throw new SessionNotExistException();
-            }
+            if (checkSession && cli.Get(token) == null) throw new SessionNotExistException();
             var userId =
                 principal.FindFirst("userId")?.Value.ToInt64(long.MaxValue)
                 ?? throw new CredentialRejectionException("User ID not found in token");
@@ -69,14 +66,14 @@ public class JwtService(IRedisClient cli) : IJwtService
         }
     }
 
-    public void InvalidateToken(string token) => cli.Del(token);
+    public void InvalidateToken(string token)
+    {
+        cli.Del(token);
+    }
 
     public void InvalidateAllToken(long userId)
     {
-        if (cli.ScamByVal(userId, out var find))
-        {
-            find.ForEach(key => cli.Del(key));
-        }
+        if (cli.ScamByVal(userId, out var find)) find.ForEach(key => cli.Del(key));
     }
 
     private static Passport GenPassport(User user)
@@ -88,16 +85,16 @@ public class JwtService(IRedisClient cli) : IJwtService
         {
             new("id", user.Id.ToString()),
             new("userId", user.Id.ToString()),
-            new("role", user.Role.ToString()),
+            new("role", user.Role.ToString())
         };
 
         var token = new JwtSecurityToken(
-            issuer: conf.Issuer,
-            audience: conf.Audience,
-            claims: claims,
-            notBefore: DateTime.Now,
-            expires: expr,
-            signingCredentials: conf.SigningCredentials
+            conf.Issuer,
+            conf.Audience,
+            claims,
+            DateTime.Now,
+            expr,
+            conf.SigningCredentials
         );
         var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 

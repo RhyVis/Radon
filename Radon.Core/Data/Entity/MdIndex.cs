@@ -6,8 +6,7 @@ namespace Radon.Core.Data.Entity;
 [Table(Name = "md_index")]
 public class MdIndex : BaseEntity
 {
-    [Column(IsPrimary = true)]
-    public Guid Path { get; set; }
+    [Column(IsPrimary = true)] public Guid Path { get; set; }
 
     [Column(StringLength = 64, IsNullable = false)]
     public string Name { get; set; } = string.Empty;
@@ -32,7 +31,7 @@ public class MdIndex : BaseEntity
             Name = Name,
             Desc = Desc,
             CreateTime = CreateTime,
-            UpdateTime = UpdateTime,
+            UpdateTime = UpdateTime
         };
     }
 
@@ -45,7 +44,7 @@ public class MdIndex : BaseEntity
             Desc = Desc,
             Content = Content,
             CreateTime = CreateTime,
-            UpdateTime = UpdateTime,
+            UpdateTime = UpdateTime
         };
     }
 }

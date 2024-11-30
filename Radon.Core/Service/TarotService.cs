@@ -14,21 +14,27 @@ namespace Radon.Core.Service;
 [ServiceTransient]
 public class TarotService : ITarotService
 {
-    public TarotRes HandleTarot() => new(DrawShuffled("waite", 1));
+    public TarotRes HandleTarot()
+    {
+        return new TarotRes(DrawShuffled("waite", 1));
+    }
 
-    public TarotRes HandleTarotComplex(TarotReq req) => new(HandleRequest(req));
+    public TarotRes HandleTarotComplex(TarotReq req)
+    {
+        return new TarotRes(HandleRequest(req));
+    }
 
-    public UnsetRes HandleTarotInfo() => new(TarotData.GetDeckInfoDict());
+    public UnsetRes HandleTarotInfo()
+    {
+        return new UnsetRes(TarotData.GetDeckInfoDict());
+    }
 
     public UnsetRes GetTarotDeckData(string name, bool full, bool shuffle)
     {
-        var canBeFull = TarotData.GetDeckInfoDict()[name].Full;
+        var canBeFull = TarotData.GetDeckInfo(name)?.Full ?? false;
 
-        var deck = TarotData.GetDeck(name + (canBeFull && !full ? "_main" : ""));
-        if (!shuffle)
-        {
-            return new UnsetRes(deck);
-        }
+        var deck = TarotData.GetDeck(name + (canBeFull && !full ? "_main" : string.Empty));
+        if (!shuffle) return new UnsetRes(deck);
 
         var newDeck = new TarotDeck
         {
@@ -36,7 +42,7 @@ public class TarotService : ITarotService
             Loc = deck.Loc,
             Full = deck.Full,
             HasR = deck.HasR,
-            Deck = GetShuffledList(deck),
+            Deck = GetShuffledList(deck)
         };
         return new UnsetRes(newDeck);
     }
@@ -46,14 +52,8 @@ public class TarotService : ITarotService
         var deck = req.Data.Deck;
         var full = req.Data.Full;
         var size = req.Data.Size;
-        if (!TarotData.GetDeckInfoDict().ContainsKey(deck))
-        {
-            return [];
-        }
-        if (TarotData.IsMainOnly(deck))
-        {
-            return DrawShuffled(deck, size);
-        }
+        if (!TarotData.GetDeckInfoDict().ContainsKey(deck)) return [];
+        if (TarotData.IsMainOnly(deck)) return DrawShuffled(deck, size);
         return full ? DrawShuffled(deck, size) : DrawShuffled(deck + "_main", size);
     }
 
@@ -66,17 +66,36 @@ public class TarotService : ITarotService
         var imgPrefix = UrlBuilder.Create(imgEndpoint).Append("tarot", "img").Build();
         var deckPicked = deckList.Take(count);
 
+        var rand = new Random();
+
         var deckProcessed = deck.HasR
-            ? deckPicked.Select(c => c.BuildDrawn(imgPrefix, new Random().NextBool()))
+            ? deckPicked.Select(c => c.BuildDrawn(imgPrefix, rand.NextBool()))
             : deckPicked.Select(c => c.BuildDrawn(imgPrefix));
 
         return deckProcessed.ToList();
     }
 
-    private static List<TarotCard> GetShuffledList(TarotDeck deck)
+    private static List<TarotCard> GetShuffledList(TarotDeck deck, bool cut = true)
     {
         var list = deck.Deck.DeepClone(true);
-        list.Sort((_, _) => new Random().Next(-1, 1));
-        return list;
+        var rand = new Random();
+
+        list.Sort((_, _) => rand.Next(-1, 1));
+
+        if (!cut) return list;
+
+        var firstCutIndex = rand.Next(1, list.Count - 1);
+        var secondCutIndex = rand.Next(firstCutIndex + 1, list.Count);
+
+        var firstPart = list.Take(firstCutIndex).ToList();
+        var secondPart = list.Skip(firstCutIndex).Take(secondCutIndex - firstCutIndex).ToList();
+        var thirdPart = list.Skip(secondCutIndex).ToList();
+
+        var combinedDeck = new List<TarotCard>();
+        combinedDeck.AddRange(firstPart);
+        combinedDeck.AddRange(secondPart);
+        combinedDeck.AddRange(thirdPart);
+
+        return combinedDeck;
     }
 }

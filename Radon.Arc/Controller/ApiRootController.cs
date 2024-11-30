@@ -9,5 +9,8 @@ public class ApiRootController : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<object>(StatusCodes.Status200OK)]
-    public IActionResult Get() => Ok(new { AppSettings.Get().Name, AppSettings.Get().Version });
+    public IActionResult Get()
+    {
+        return Ok(new { AppSettings.Get().Name, AppSettings.Get().Version });
+    }
 }

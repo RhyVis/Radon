@@ -7,26 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Radon.Common\Radon.Common.csproj" />
-      <ProjectReference Include="..\Radon.Data\Radon.Data.csproj" />
-      <ProjectReference Include="..\Radon.Security\Radon.Security.csproj" />
+        <ProjectReference Include="..\Radon.Common\Radon.Common.csproj"/>
+        <ProjectReference Include="..\Radon.Data\Radon.Data.csproj"/>
+        <ProjectReference Include="..\Radon.Security\Radon.Security.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\Dict\" />
+        <Folder Include="Resources\Dict\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\Dict\DictEmojiHan.json" />
-      <EmbeddedResource Include="Resources\Dict\DictEmojiHan.json" />
-      <None Remove="Resources\Dict\DictHanEmoji.json" />
-      <EmbeddedResource Include="Resources\Dict\DictHanEmoji.json" />
-      <None Remove="Resources\Dict\DictHanSpark.json" />
-      <EmbeddedResource Include="Resources\Dict\DictHanSpark.json" />
-      <None Remove="Resources\Dict\DictSparkHan.json" />
-      <EmbeddedResource Include="Resources\Dict\DictSparkHan.json" />
-      <None Remove="Resources\Dict\DictUnicodeDiff.json" />
-      <EmbeddedResource Include="Resources\Dict\DictUnicodeDiff.json" />
+        <None Remove="Resources\Dict\DictEmojiHan.json"/>
+        <EmbeddedResource Include="Resources\Dict\DictEmojiHan.json"/>
+        <None Remove="Resources\Dict\DictHanEmoji.json"/>
+        <EmbeddedResource Include="Resources\Dict\DictHanEmoji.json"/>
+        <None Remove="Resources\Dict\DictHanSpark.json"/>
+        <EmbeddedResource Include="Resources\Dict\DictHanSpark.json"/>
+        <None Remove="Resources\Dict\DictSparkHan.json"/>
+        <EmbeddedResource Include="Resources\Dict\DictSparkHan.json"/>
+        <None Remove="Resources\Dict\DictUnicodeDiff.json"/>
+        <EmbeddedResource Include="Resources\Dict\DictUnicodeDiff.json"/>
     </ItemGroup>
 
 </Project>

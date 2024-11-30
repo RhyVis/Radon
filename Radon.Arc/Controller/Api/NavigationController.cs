@@ -6,10 +6,14 @@ using Radon.Core.Service.Interface;
 namespace Radon.Arc.Controller.Api;
 
 [Authorize]
-[ApiController, Route("api/nav")]
+[ApiController]
+[Route("api/nav")]
 public class NavigationController(INavigationService service) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<NavigationRes>(StatusCodes.Status200OK)]
-    public IActionResult GetNavigation() => Ok(service.HandleNavigation());
+    public IActionResult GetNavigation()
+    {
+        return Ok(service.HandleNavigation());
+    }
 }

@@ -9,11 +9,10 @@ namespace Radon.Core.Initializer;
 
 public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializer
 {
-    private Logger _logger = LogManager.GetCurrentClassLogger();
-
-    private Dictionary<string, TarotDeck> _deckDict = new();
-    private Dictionary<string, bool> _deckMainOnlyDict = new();
-    private Dictionary<string, TarotDeckInfo> _deckInfoDict = new();
+    private readonly Dictionary<string, TarotDeck> _deckDict = new();
+    private readonly Dictionary<string, TarotDeckInfo> _deckInfoDict = new();
+    private readonly Dictionary<string, bool> _deckMainOnlyDict = new();
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     public async Task<object> InitAsync()
     {
@@ -22,7 +21,7 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
             var baseUrl = AppSettings.Get().ResourceEndpoint;
             var serializerOptions = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true,
+                PropertyNameCaseInsensitive = true
             };
 
             var client = httpClientFactory.CreateClient("TarotClient");
@@ -52,7 +51,7 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
                         Loc = deck.Loc,
                         Full = false,
                         HasR = deck.HasR,
-                        Deck = deck.Deck.Take(22).ToList(),
+                        Deck = deck.Deck.Take(22).ToList()
                     };
                     _deckDict[altName] = altDeck;
                     _deckMainOnlyDict[mapping.Key] = false;
@@ -86,7 +85,7 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
         }
     }
 
-    private class TarotConfMapping
+    private sealed class TarotConfMapping
     {
         public Dictionary<string, string> Mappings { get; init; } = null!;
     }
@@ -115,28 +114,25 @@ public static class TarotData
 
     public static TarotDeck GetDeck(string deckName)
     {
-        if (!_initialized)
-        {
-            throw new InvalidOperationException("TarotConfig not initialized");
-        }
-        return _deckDict[deckName];
+        if (!_initialized) throw new InvalidOperationException("TarotConfig not initialized");
+        return _deckDict.TryGetValue(deckName, out var deck) ? deck : _deckDict["waite"];
     }
 
     public static bool IsMainOnly(string deckName)
     {
-        if (!_initialized)
-        {
-            throw new InvalidOperationException("TarotConfig not initialized");
-        }
+        if (!_initialized) throw new InvalidOperationException("TarotConfig not initialized");
         return _deckMainOnlyDict[deckName];
     }
 
     public static Dictionary<string, TarotDeckInfo> GetDeckInfoDict()
     {
-        if (!_initialized)
-        {
-            throw new InvalidOperationException("TarotConfig not initialized");
-        }
+        if (!_initialized) throw new InvalidOperationException("TarotConfig not initialized");
         return _deckInfoDict;
+    }
+
+    public static TarotDeckInfo? GetDeckInfo(string name)
+    {
+        var dict = GetDeckInfoDict();
+        return dict.TryGetValue(name, out var info) ? info : null;
     }
 }

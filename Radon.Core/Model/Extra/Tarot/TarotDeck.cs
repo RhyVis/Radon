@@ -8,11 +8,13 @@ public class TarotDeck
     public bool HasR { get; init; }
     public List<TarotCard> Deck { get; init; } = [];
 
-    public TarotDeckInfo BuildInfo() =>
-        new()
+    public TarotDeckInfo BuildInfo()
+    {
+        return new TarotDeckInfo
         {
             Name = Name,
             Loc = Loc,
-            Full = Full,
+            Full = Full
         };
+    }
 }

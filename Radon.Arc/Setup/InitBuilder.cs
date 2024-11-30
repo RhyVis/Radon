@@ -1,5 +1,4 @@
 ﻿using NLog.Web;
-using OpenCCNET;
 using Radon.Common.Core.Config;
 using Radon.Common.Utils;
 
@@ -8,7 +7,7 @@ namespace Radon.Arc.Setup;
 public static class InitBuilder
 {
     /// <summary>
-    /// Setup before services configuration
+    ///     Setup before services configuration
     /// </summary>
     public static WebApplicationBuilder SetupBuilder(this WebApplicationBuilder builder)
     {

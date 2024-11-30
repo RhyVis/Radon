@@ -5,7 +5,12 @@ namespace Radon.Core.Model.Response;
 public class PlainNumberRes : BaseApiRes<long>
 {
     private PlainNumberRes(long data)
-        : base(data) { }
+        : base(data)
+    {
+    }
 
-    public static PlainNumberRes Of(long data) => new(data);
+    public static PlainNumberRes Of(long data)
+    {
+        return new PlainNumberRes(data);
+    }
 }

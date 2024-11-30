@@ -1,7 +1,7 @@
 ﻿namespace Radon.Core.Model.Base;
 
 /// <summary>
-/// Base Api Request Model
+///     Base Api Request Model
 /// </summary>
 /// <typeparam name="T">Type of inner data</typeparam>
 public abstract class BaseApiReq<T>()
@@ -14,7 +14,7 @@ public abstract class BaseApiReq<T>()
     }
 
     /// <summary>
-    /// Data
+    ///     Data
     /// </summary>
     public T Data { get; init; } = default!;
 }

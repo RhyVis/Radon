@@ -6,15 +6,12 @@ namespace Radon.Common.Utils;
 public partial class UrlBuilder
 {
     private const char SEP = '/';
-    private StringBuilder _builder;
+    private readonly StringBuilder _builder;
 
     private UrlBuilder(string baseUrl, bool defaultAppend = true)
     {
         _builder = new StringBuilder(baseUrl);
-        if (defaultAppend)
-        {
-            _builder.Append(SEP);
-        }
+        if (defaultAppend) _builder.Append(SEP);
     }
 
     [GeneratedRegex("(?<!:)/{2,}")]
@@ -38,10 +35,7 @@ public partial class UrlBuilder
 
     public UrlBuilder Append(params string[] paths)
     {
-        foreach (var path in paths)
-        {
-            _builder.Append(SEP).Append(path);
-        }
+        foreach (var path in paths) _builder.Append(SEP).Append(path);
         return this;
     }
 

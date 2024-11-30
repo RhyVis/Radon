@@ -11,7 +11,7 @@ public static class InitApplication
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    /// Settings after the application is built
+    ///     Settings after the application is built
     /// </summary>
     public static WebApplication SetupApplication(this WebApplication app)
     {
@@ -39,10 +39,7 @@ public static class InitApplication
 
         app.MapFallbackToFile("/index.html");
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.DevTest();
-        }
+        if (app.Environment.IsDevelopment()) app.DevTest();
 
         return app;
     }
@@ -55,7 +52,6 @@ public static class InitApplication
         {
             var services = scope.ServiceProvider.GetServicesByInterface<IInitializer>();
             foreach (var service in services)
-            {
                 try
                 {
                     Logger.Debug($"Trying to Initialize {service.GetType().Name}");
@@ -67,7 +63,6 @@ public static class InitApplication
                     Logger.Info($"Retrying to Initialize {service.GetType().Name}");
                     service.InitAsync().GetAwaiter().GetResult();
                 }
-            }
         }
         catch (Exception ex)
         {
@@ -83,7 +78,9 @@ public static class InitApplication
     {
         Logger.Info("Starting tester");
         var scope = app.ApplicationServices.CreateScope();
-        try { }
+        try
+        {
+        }
         catch (Exception ex)
         {
             Logger.Error(ex, "Test err");

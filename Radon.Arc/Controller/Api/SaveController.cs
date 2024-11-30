@@ -13,9 +13,15 @@ public class SaveController(ITextStoreService service) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType<TextStoreRes>(200)]
-    public IActionResult Query(TextStoreReq req) => Ok(service.HandleTextStoreQuery(req));
+    public IActionResult Query(TextStoreReq req)
+    {
+        return Ok(service.HandleTextStoreQuery(req));
+    }
 
     [HttpPut]
     [ProducesResponseType<StateRes>(200)]
-    public IActionResult Update(TextStoreReq req) => Ok(service.HandleTextStoreUpdate(req));
+    public IActionResult Update(TextStoreReq req)
+    {
+        return Ok(service.HandleTextStoreUpdate(req));
+    }
 }

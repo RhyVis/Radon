@@ -6,12 +6,9 @@ namespace Radon.Core.Data.Entity;
 [Table(Name = "storage_text")]
 public class EntryTextStorage : BaseEntity
 {
-    [Column(IsPrimary = true)]
-    public long Id { get; init; }
+    [Column(IsPrimary = true)] public long Id { get; init; }
 
-    [Column(StringLength = -1)]
-    public string Text { get; set; } = "";
+    [Column(StringLength = -1)] public string Text { get; set; } = "";
 
-    [Column(StringLength = 30)]
-    public string Note { get; set; } = "";
+    [Column(StringLength = 30)] public string Note { get; set; } = "";
 }

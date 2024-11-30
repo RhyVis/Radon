@@ -9,7 +9,8 @@ using Radon.Security.Service.Interface;
 namespace Radon.Arc.Controller.Api;
 
 [Authorize]
-[ApiController, Route("api/auth")]
+[ApiController]
+[Route("api/auth")]
 public class AuthenticationController(IUsernameAuthService service) : ControllerBase
 {
     [AllowAnonymous]
@@ -41,7 +42,10 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
 
     [HttpPost("validate")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Validate() => NoContent();
+    public IActionResult Validate()
+    {
+        return NoContent();
+    }
 
     [HttpPost("refresh")]
     [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]

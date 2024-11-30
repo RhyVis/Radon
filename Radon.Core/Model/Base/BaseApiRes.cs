@@ -4,7 +4,7 @@ using Radon.Common.Enums;
 namespace Radon.Core.Model.Base;
 
 /// <summary>
-/// Base Api Response Model
+///     Base Api Response Model
 /// </summary>
 /// <typeparam name="D">Type of inner data</typeparam>
 public abstract class BaseApiRes<D>()
@@ -26,17 +26,17 @@ public abstract class BaseApiRes<D>()
     }
 
     /// <summary>
-    /// Status Code
+    ///     Status Code
     /// </summary>
     public int Code { get; set; }
 
     /// <summary>
-    /// Assigned Message
+    ///     Assigned Message
     /// </summary>
     public string Msg { get; set; } = "";
 
     /// <summary>
-    /// Data
+    ///     Data
     /// </summary>
     public D Data { get; set; } = default!;
 }

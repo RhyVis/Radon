@@ -4,6 +4,7 @@ using Org.BouncyCastle.Security;
 using Radon.Common.Core.DI;
 using Radon.Security.Data.Entity;
 using Radon.Security.Data.Repository;
+using Radon.Security.Exceptions;
 using Radon.Security.Model;
 using Radon.Security.Service.Interface;
 
@@ -70,11 +71,20 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
         }
     }
 
-    public void LogoutById(long userId) => jwt.InvalidateAllToken(userId);
+    public void LogoutById(long userId)
+    {
+        jwt.InvalidateAllToken(userId);
+    }
 
-    public void LogoutByName(string username) => LogoutById(repo.FindByUsername(username).Id);
+    public void LogoutByName(string username)
+    {
+        LogoutById(repo.FindByUsername(username).Id);
+    }
 
-    public void LogoutByToken(string token) => LogoutById(jwt.CheckToken(token, false, false));
+    public void LogoutByToken(string token)
+    {
+        LogoutById(jwt.CheckToken(token, false, false));
+    }
 
     public Passport Authenticate(string username, string password)
     {
@@ -85,7 +95,7 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
 
             return jwt.GenerateToken(user);
         }
-        catch (Exceptions.CredentialRejectionException)
+        catch (CredentialRejectionException)
         {
             _logger.Warn($"Password does not match for user {username}");
             throw;
@@ -119,8 +129,6 @@ public class UsernameAuthService(UserRepository repo, IJwtService jwt) : IUserna
     private static void CheckHash(string hash, string password)
     {
         if (!OpenBsdBCrypt.CheckPassword(hash, password.ToCharArray()))
-        {
-            throw new Exceptions.CredentialRejectionException("Password does not match");
-        }
+            throw new CredentialRejectionException("Password does not match");
     }
 }

@@ -5,14 +5,21 @@ using Radon.Core.Service.Interface;
 
 namespace Radon.Arc.Controller.Api;
 
-[ApiController, Route("api/escape")]
+[ApiController]
+[Route("api/escape")]
 public class EscapeController(IEscapeService service) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<EscapeRes>(200)]
-    public IActionResult Get() => Ok(EscapeRes.Dummy());
+    public IActionResult Get()
+    {
+        return Ok(EscapeRes.Dummy());
+    }
 
     [HttpPost]
     [ProducesResponseType<EscapeRes>(200)]
-    public IActionResult Post(EscapeReq req) => Ok(service.HandleEscape(req));
+    public IActionResult Post(EscapeReq req)
+    {
+        return Ok(service.HandleEscape(req));
+    }
 }

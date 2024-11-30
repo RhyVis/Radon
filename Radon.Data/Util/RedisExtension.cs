@@ -6,7 +6,7 @@ namespace Radon.Data.Util;
 public static class RedisExtension
 {
     /// <summary>
-    /// Find all matching keys by value
+    ///     Find all matching keys by value
     /// </summary>
     public static bool ScamByVal(
         this IRedisClient cli,
@@ -30,7 +30,7 @@ public static class RedisExtension
     }
 
     /// <summary>
-    /// Find all matching keys by value
+    ///     Find all matching keys by value
     /// </summary>
     public static bool ScamByVal(
         this IRedisClient cli,

@@ -19,8 +19,12 @@ public class NavigationRes : BaseApiRes<EntryNavigation[]>
             Code = ResponseCodeType.SUCCESS.ToInt();
             Msg = $"Navigation data found with {data.Length}.";
         }
+
         Data = data;
     }
 
-    public static NavigationRes Of(EntryNavigation[] data) => new(data);
+    public static NavigationRes Of(EntryNavigation[] data)
+    {
+        return new NavigationRes(data);
+    }
 }

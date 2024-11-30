@@ -4,5 +4,5 @@ public enum ResponseCodeType
 {
     UNKNOWN = -900,
     SUCCESS = 0,
-    NOT_FOUND = -5,
+    NOT_FOUND = -5
 }

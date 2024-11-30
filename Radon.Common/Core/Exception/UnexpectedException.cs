@@ -3,5 +3,7 @@
 public class UnexpectedException(string msg) : BaseException(msg)
 {
     public UnexpectedException()
-        : this("?") { }
+        : this("?")
+    {
+    }
 }

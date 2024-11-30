@@ -5,7 +5,7 @@ namespace Radon.Core.Util;
 public class PdxLangParser
 {
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-    private string[] _lines;
+    private readonly string[] _lines;
 
     private PdxLangParser(string[] lines)
     {
@@ -34,10 +34,7 @@ public class PdxLangParser
             while (true)
             {
                 var line = reader.ReadLine();
-                if (line == null)
-                {
-                    break;
-                }
+                if (line == null) break;
 
                 lines.Add(line);
             }
@@ -62,7 +59,7 @@ public class PdxLangParser
             .Select(pts => new PdxLangParsedItem
             {
                 Namespace = pts[0].Trim().Split('.'),
-                Value = pts[1].Trim().TrimStart('0').Trim().Trim('"'),
+                Value = pts[1].Trim().TrimStart('0').Trim().Trim('"')
             })
             .Where(x => x.Namespace.Length >= 1)
             .ToList();

@@ -9,10 +9,7 @@ public class CacheControlMiddleware(RequestDelegate next)
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Path == "/index.html")
-        {
-            context.Response.Headers.Append("Cache-Control", NO_CACHE);
-        }
+        if (context.Request.Path == "/index.html") context.Response.Headers.Append("Cache-Control", NO_CACHE);
 
         await next(context);
     }

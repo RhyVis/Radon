@@ -3,7 +3,7 @@
 public static class ServiceProviderExtension
 {
     /// <summary>
-    /// Get all services that implement the interface
+    ///     Get all services that implement the interface
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <typeparam name="T">Interface</typeparam>
@@ -19,9 +19,6 @@ public static class ServiceProviderExtension
             .Where(type => interfaceType.IsAssignableFrom(type))
             .Where(type => type is { IsAbstract: false, IsClass: true });
 
-        foreach (var type in types)
-        {
-            yield return (T)serviceProvider.GetService(type)!;
-        }
+        foreach (var type in types) yield return (T)serviceProvider.GetService(type)!;
     }
 }
