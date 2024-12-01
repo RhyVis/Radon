@@ -1,7 +1,7 @@
-﻿<script setup lang="tsx">
+﻿<script lang="tsx" setup>
 import { checkMdRecord, updateMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useDark, useToggle } from "@vueuse/core";
+import { get, set, useDark, useTitle, useToggle } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -36,6 +36,7 @@ const updateContent = async (path: string) => {
     set(name, check.name);
     set(desc, check.desc);
     set(content, check.content);
+    useTitle(check.name);
   }
 };
 const handleUpdate = () => {
@@ -115,28 +116,28 @@ watch(
 </script>
 
 <template>
-  <content-layout :title="name" :subtitle="desc">
+  <content-layout :subtitle="desc" :title="name">
     <div>
-      <div class="mt-6" v-if="content.length === 0">
+      <div v-if="content.length === 0" class="mt-6">
         <t-empty :title="t('common.loading')" />
       </div>
       <MdEditor
         v-else
         v-model="content"
-        @onChange="setChanged(true)"
-        @onSave="handleUpdate()"
-        :readOnly="updating"
-        :theme="theme"
         :language="localeStandard"
         :preview="!tooNarrow"
-        previewTheme="cyanosis"
+        :readOnly="updating"
+        :theme="theme"
         codeTheme="github"
         noUploadImg
+        previewTheme="cyanosis"
+        @onChange="setChanged(true)"
+        @onSave="handleUpdate()"
       />
     </div>
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/archive')">
+      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="router.push('/archive')">
         <ArrowLeftIcon />
       </t-button>
     </template>
@@ -147,6 +148,7 @@ watch(
 .r-note-box {
   width: 100%;
   text-align: right;
+
   .r-note-box-inner {
     width: auto;
     margin-top: 4px;

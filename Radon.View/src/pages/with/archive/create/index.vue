@@ -1,7 +1,7 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { createMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, useDark, useToggle } from "@vueuse/core";
+import { get, useDark, useTitle, useToggle } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -94,6 +94,8 @@ onMounted(() => {
     MessagePlugin.warning(t("msg.invalidCreate"));
     setComplete(true);
     router.push("/archive");
+  } else {
+    useTitle(get(createName) as string);
   }
 });
 </script>
@@ -102,18 +104,18 @@ onMounted(() => {
   <content-layout title="Create">
     <MdEditor
       v-model="content"
-      @onSave="handleCreate()"
-      :readOnly="updating"
-      :theme="theme"
       :language="localeStandard"
       :preview="!tooNarrow"
-      previewTheme="cyanosis"
+      :readOnly="updating"
+      :theme="theme"
       codeTheme="github"
       noUploadImg
+      previewTheme="cyanosis"
+      @onSave="handleCreate()"
     />
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/archive')">
+      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="router.push('/archive')">
         <ArrowLeftIcon />
       </t-button>
     </template>
@@ -124,6 +126,7 @@ onMounted(() => {
 .r-note-box {
   width: 100%;
   text-align: right;
+
   .r-note-box-inner {
     width: auto;
     margin-top: 4px;

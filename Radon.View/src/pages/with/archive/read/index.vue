@@ -1,8 +1,8 @@
-﻿<script setup lang="ts">
+﻿<script lang="ts" setup>
 import { useNarrow } from "@/composable/useNarrow.ts";
 import { getMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useDark } from "@vueuse/core";
+import { get, set, useDark, useTitle } from "@vueuse/core";
 import { useRouteParams, useRouteQuery } from "@vueuse/router";
 import { MdCatalog, MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
@@ -39,6 +39,7 @@ const updateContent = async (path: string) => {
   set(name, record.name);
   set(desc, record.desc);
   set(content, record.content);
+  useTitle(record.name);
 };
 
 watch(
@@ -57,31 +58,31 @@ watch(
 </script>
 
 <template>
-  <content-layout id="md-read-container" :title="name" :subtitle="desc">
-    <div class="mt-6" v-if="content.length === 0">
+  <content-layout id="md-read-container" :subtitle="desc" :title="name">
+    <div v-if="content.length === 0" class="mt-6">
       <t-empty :title="t('common.loading')" />
     </div>
     <div v-else>
       <t-layout class="r-md-container">
         <MdPreview
-          class="r-md-preview"
           id="preview-only"
+          :language="localeStandard"
           :model-value="content"
           :theme="theme"
-          :language="localeStandard"
-          previewTheme="cyanosis"
+          class="r-md-preview"
           codeTheme="github"
+          previewTheme="cyanosis"
         />
         <t-aside :width="sideWidth">
-          <t-affix :offset-top="160" :offset-bottom="60" container="#base-content">
-            <MdCatalog v-if="!narrow" editorId="preview-only" :theme="theme" :scrollElement="scrollEl" />
+          <t-affix :offset-bottom="60" :offset-top="160" container="#base-content">
+            <MdCatalog v-if="!narrow" :scrollElement="scrollEl" :theme="theme" editorId="preview-only" />
           </t-affix>
         </t-aside>
       </t-layout>
     </div>
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="handleBack">
+      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="handleBack">
         <ArrowLeftIcon />
       </t-button>
     </template>
@@ -91,6 +92,7 @@ watch(
 <style scoped>
 .r-md-container {
   background: var(--td-bg-color-container);
+
   .r-md-preview {
     border-radius: 16px;
   }
