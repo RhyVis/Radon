@@ -8,9 +8,9 @@ namespace Radon.Arc.Middleware;
 
 public class ExceptionFilterMiddleware(RequestDelegate next)
 {
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    private static readonly JsonSerializerOptions _jsonSerializerOptions =
+    private static readonly JsonSerializerOptions JsonSerializerOptions =
         new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -25,12 +25,12 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         }
         catch (BaseSecurityException ex)
         {
-            _logger.Error(ex, "User authentication failed.");
+            Logger.Error(ex, "User authentication failed.");
             await HandleAuthenticationAsync(context, ex);
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "An error occurred while processing requests.");
+            Logger.Error(ex, "An error occurred while processing requests.");
             await HandleUnknownAsync(context, ex);
         }
     }
@@ -41,7 +41,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status401Unauthorized,
             Msg = "Mismatched username or password.",
-            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions)
+            Data = JsonSerializer.Serialize(exception, JsonSerializerOptions)
         };
         return WriteResponseAsync(context, response, StatusCodes.Status401Unauthorized);
     }
@@ -52,7 +52,7 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         {
             Code = StatusCodes.Status500InternalServerError,
             Msg = "An error occurred while processing your request.",
-            Data = JsonSerializer.Serialize(exception, _jsonSerializerOptions)
+            Data = JsonSerializer.Serialize(exception, JsonSerializerOptions)
         };
         return WriteResponseAsync(context, response);
     }
@@ -66,12 +66,12 @@ public class ExceptionFilterMiddleware(RequestDelegate next)
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = code;
 
-        var json = JsonSerializer.Serialize(response, _jsonSerializerOptions);
+        var json = JsonSerializer.Serialize(response, JsonSerializerOptions);
 
         return context.Response.WriteAsync(json);
     }
 
-    private class ExceptionConverter : JsonConverter<Exception>
+    private sealed class ExceptionConverter : JsonConverter<Exception>
     {
         public override Exception Read(
             ref Utf8JsonReader reader,

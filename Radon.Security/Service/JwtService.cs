@@ -3,7 +3,6 @@ using System.Security.Claims;
 using FreeRedis;
 using Masuit.Tools;
 using Microsoft.IdentityModel.Tokens;
-using NLog;
 using Radon.Common.Core.Config;
 using Radon.Common.Core.DI;
 using Radon.Data.Util;
@@ -17,8 +16,6 @@ namespace Radon.Security.Service;
 [ServiceSingleton]
 public class JwtService(IRedisClient cli) : IJwtService
 {
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
     public Passport GenerateToken(User user)
     {
         var p = GenPassport(user);
@@ -56,12 +53,10 @@ public class JwtService(IRedisClient cli) : IJwtService
         }
         catch (SessionNotExistException)
         {
-            _logger.Warn("Invalid token rejected by session check");
             throw;
         }
         catch (Exception ex)
         {
-            _logger.Warn("Invalid token rejected by validation");
             throw new CredentialRejectionException("Invalid token", ex);
         }
     }
@@ -98,6 +93,6 @@ public class JwtService(IRedisClient cli) : IJwtService
         );
         var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new Passport(tokenStr, user.Id, expr);
+        return new Passport(tokenStr, user.Id);
     }
 }

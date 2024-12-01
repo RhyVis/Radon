@@ -1,10 +1,11 @@
 ﻿using NLog;
+using Radon.Core.Exceptions;
 
 namespace Radon.Core.Util;
 
 public class PdxLangParser
 {
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private readonly string[] _lines;
 
     private PdxLangParser(string[] lines)
@@ -20,8 +21,8 @@ public class PdxLangParser
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Failed to read PdxLang file");
-            throw;
+            Logger.Error(e, "Failed to read PdxLang file");
+            throw new ServiceFailureException("Failed to read Pdx Lang file", e);
         }
     }
 
@@ -43,14 +44,14 @@ public class PdxLangParser
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Failed to read PdxLang file");
-            throw;
+            Logger.Error(e, "Failed to read PdxLang file");
+            throw new ServiceFailureException("Failed to read Pdx Lang file", e);
         }
     }
 
     public List<PdxLangParsedItem> Parse()
     {
-        _logger.Info($"Reading PdxLang for {_lines[0].Trim().TrimEnd(':')}");
+        Logger.Info($"Reading PdxLang for {_lines[0].Trim().TrimEnd(':')}");
         return _lines
             .Skip(1)
             .Where(l => !(string.IsNullOrWhiteSpace(l) || l.TrimStart().StartsWith('#')))
