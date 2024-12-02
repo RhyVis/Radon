@@ -16,11 +16,11 @@ const fontList: FontInfo[] = [
   },
   {
     name: "LilitaOne",
-    url: "/font/LilitaOne-Regular.ttf",
+    url: "/font/LilitaOne-Regular.woff2",
   },
   {
     name: "ChildFunSansFusion-Z",
-    url: "/font/ChildFunSansFusion-Z.ttf",
+    url: "/font/ChildFunSansFusion-Z.woff2",
   },
   {
     name: "RoGSanSrfStd-Bd",
@@ -32,7 +32,7 @@ const fontList: FontInfo[] = [
   },
   {
     name: "GlowSans",
-    url: "/font/GlowSansSC-Normal-Heavy.otf",
+    url: "/font/GlowSansSC-Normal-Heavy.woff2",
   },
   {
     name: "IosevkaRx",

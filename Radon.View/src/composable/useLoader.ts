@@ -12,6 +12,7 @@ export type Loader = {
 
 export const useLoader = (loaders: Loader[], loaderName: string = "Loader") => {
   const current = ref("?");
+  const [initiated, setInitiated] = useToggle(false);
   const [completed, setCompleted] = useToggle(false);
 
   const error = ref<string[]>([]);
@@ -20,6 +21,7 @@ export const useLoader = (loaders: Loader[], loaderName: string = "Loader") => {
   const online = useOnline();
 
   const load = async () => {
+    setInitiated(true);
     if (!get(online)) {
       await MessagePlugin.warning(t("loader.notOnline", { name: loaderName }));
       error.value.push("OFFLINE");
@@ -37,9 +39,9 @@ export const useLoader = (loaders: Loader[], loaderName: string = "Loader") => {
         await MessagePlugin.warning(t("loader.loadFailed", { name: loader.name }));
       }
     }
-    current.value = get(hasError) ? `×[${error.value.join("|")}]` : "√";
+    set(current, get(hasError) ? `×[${get(error).join("|")}]` : "√");
     setCompleted(true);
   };
 
-  return { load, current, completed, error, hasError };
+  return { load, current, initiated, completed, error, hasError };
 };

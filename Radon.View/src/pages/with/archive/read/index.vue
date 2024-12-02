@@ -1,4 +1,5 @@
 ﻿<script lang="ts" setup>
+import { useKeyUpdate } from "@/composable/useKeyUpdate.ts";
 import { useNarrow } from "@/composable/useNarrow.ts";
 import { getMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
@@ -19,6 +20,7 @@ const path = useRouteParams("p");
 const other = useRouteQuery("other");
 
 const { localeStandard } = storeToRefs(useGlobalStore());
+const { key, updateKey } = useKeyUpdate();
 const name = ref("");
 const desc = ref("");
 const content = ref("");
@@ -43,6 +45,13 @@ const updateContent = async (path: string) => {
 };
 
 watch(
+  () => narrow.value,
+  () => {
+    updateKey();
+  },
+  { immediate: true },
+);
+watch(
   () => path.value,
   async newPath => {
     if (newPath) {
@@ -59,21 +68,21 @@ watch(
 
 <template>
   <content-layout id="md-read-container" :subtitle="desc" :title="name">
-    <div v-if="content.length === 0" class="mt-6">
+    <div class="mt-6" v-if="content.length === 0">
       <t-empty :title="t('common.loading')" />
     </div>
     <div v-else>
       <t-layout class="r-md-container">
         <MdPreview
+          class="r-md-preview"
           id="preview-only"
           :language="localeStandard"
           :model-value="content"
           :theme="theme"
-          class="r-md-preview"
           codeTheme="github"
           previewTheme="cyanosis"
         />
-        <t-aside :width="sideWidth">
+        <t-aside :width="sideWidth" :key="key">
           <t-affix :offset-bottom="60" :offset-top="160" container="#base-content">
             <MdCatalog v-if="!narrow" :scrollElement="scrollEl" :theme="theme" editorId="preview-only" />
           </t-affix>
@@ -96,12 +105,5 @@ watch(
   .r-md-preview {
     border-radius: 16px;
   }
-}
-
-.r-md-catalog {
-  position: fixed;
-  top: 160px;
-  right: 5px;
-  width: 168px;
 }
 </style>
