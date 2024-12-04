@@ -1,42 +1,115 @@
-﻿<script setup lang="tsx">
+﻿<script lang="ts" setup>
+import { useNarrow } from "@/composable/useNarrow.ts";
 import { apiPostWithFile } from "@/lib/common/apiMethods";
+import "@/pages/util/pdx-parser/pdx-color.css";
+import type { PdxLangEventItem, PdxLangItem } from "@/pages/util/pdx-parser/scripts/define";
+import {
+  buildPdxLangTree,
+  getPdxLangParsedEventItemById,
+  getPdxLangParsedItemById,
+  renderPdxColor,
+  replacePdxAlias,
+} from "@/pages/util/pdx-parser/scripts/function.ts";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
-import type { PdxParsedLangItem } from "@/pages/util/pdx-parser/scripts/type";
 import { useGlobalStore } from "@/store/global";
-import { get, useDark, useToggle } from "@vueuse/core";
+import { get, set, useDark, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import {
   AddIcon,
   DeleteIcon,
   DownloadIcon,
   HomeIcon,
+  ListIcon,
   RefreshIcon,
   SettingIcon,
   Upload1Icon,
   UploadIcon,
 } from "tdesign-icons-vue-next";
-import type { RequestMethodResponse, TreeNodeValue, UploadFile } from "tdesign-vue-next";
-import { onMounted, ref } from "vue";
+import {
+  MessagePlugin,
+  Content as TContent,
+  type RequestMethodResponse,
+  type TdStickyItemProps,
+  type TreeNodeValue,
+  type TreeProps,
+  type UploadFile,
+} from "tdesign-vue-next";
+import { computed, onMounted, ref, shallowRef } from "vue";
 
 const global = useGlobalStore();
 const store = usePdxStore();
+const narrow = useNarrow();
+const [treeDialogVisible, setTreeDialogVisible] = useToggle(false);
 const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
 const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
-const { initialized, replacer, parseLangResult, addReplacerKey, addReplacerValue } = storeToRefs(store);
+const [idFetchLoading, setIdFetchLoading] = useToggle(false);
+const { initialized, replacer, addReplacerKey, addReplacerValue } = storeToRefs(store);
 const { authPassed } = storeToRefs(global);
-const treeVal = ref<TreeNodeValue[]>([]);
 const regQuote = /\\"/g;
 const dark = useDark();
+const requestTextStorageId = ref(0);
+const treeVal = ref<TreeNodeValue[]>([]);
+const treeSel = computed(() => {
+  const val = treeVal.value[0];
+  if (val) {
+    return sepTextContent(val.toString());
+  } else {
+    return [];
+  }
+});
+const sideWidth = computed(() => (!get(narrow) ? "245px" : "0"));
 
+const eventResult = shallowRef<PdxLangEventItem[]>([]);
+const resultTree = shallowRef<TreeProps["data"]>([]);
+const sepTextContent = (raw: string) =>
+  raw
+    .replace(regQuote, '"')
+    .replace(/(\\n)+/, "\\n")
+    .split("\\n");
+const textRender = (raw: string) => renderPdxColor(raw, get(replacer), get(dark));
+const textAlias = (raw: string) => replacePdxAlias(raw, get(replacer));
+const parse = (list: PdxLangItem[]) => set(resultTree, buildPdxLangTree(list));
+const requestEventById = async () => {
+  if (get(requestTextStorageId) <= 0) {
+    void MessagePlugin.warning("ID 无效");
+    return;
+  }
+  try {
+    setIdFetchLoading(true);
+    const d = await getPdxLangParsedEventItemById(get(requestTextStorageId));
+    set(eventResult, d);
+    setMenuUploadVisible(false);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setIdFetchLoading(false);
+  }
+};
+const requestItemById = async () => {
+  if (get(requestTextStorageId) <= 0) {
+    void MessagePlugin.warning("ID 无效");
+    return;
+  }
+  try {
+    setIdFetchLoading(true);
+    const d = await getPdxLangParsedItemById(get(requestTextStorageId));
+    parse(d);
+    setMenuUploadVisible(false);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setIdFetchLoading(false);
+  }
+};
 const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> => {
   try {
-    const response = await apiPostWithFile<PdxParsedLangItem[]>(
-      "api/pdx/parse/lang",
+    const { data } = await apiPostWithFile<PdxLangItem[]>(
+      "/api/pdx/parse/lang",
       new Blob([file.raw!], { type: file.type }),
     );
 
-    store.updateParsedLang(response.data);
+    parse(data);
     setMenuUploadVisible(false);
 
     return { status: "success", response: { success: true } };
@@ -45,98 +118,166 @@ const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> =
     return { status: "fail", error: "失败", response: {} };
   }
 };
-const renderText = (raw: string) => {
-  return raw
-    .replace(/§([beghlmprstwy])/gi, (_, p1) => `<span class='r-pdx-c${get(dark) ? "-dark" : ""}-${p1.toLowerCase()}'>`)
-    .replace(/§!/g, "</span>")
-    .replace(
-      /\$(\w+)\$/g,
-      (_, key) => `<span style="font-weight: bold">${replacer.value[key] ?? "(" + key + ")"}</span>`,
-    )
-    .replace(/\[(.+?)]/g, (_, key) => `<span>${replacer.value[key] ?? "[" + key + "]"}</span>`);
+const handleStickyTool = (context: { e: MouseEvent; item: TdStickyItemProps }) => {
+  if (context.item.label === "Replace") {
+    setMenuReplaceVisible();
+  }
 };
 
 onMounted(() => {
   if (!get(initialized)) {
-    store.init();
+    set(initialized, true);
   }
 });
 </script>
 
 <template>
   <content-layout title="PDX Parser">
-    <div class="r-pdx-container">
-      <div>
-        <t-card class="r-pdx-cd">
-          <div class="r-pdx-cd-content">
-            <t-space direction="vertical">
-              <div
-                v-for="(item, index) in (treeVal[0] ?? '')
-                  .toString()
-                  .replace(regQuote, '')
-                  .replace(/(\\n)+/, '\\n')
-                  .split('\\n')"
-                v-html="renderText(item)"
-                :key="index"
-              />
+    <div class="r-pdx-container" v-if="resultTree!.length > 0">
+      <t-layout>
+        <t-content>
+          <t-card class="r-pdx-card">
+            <t-space class="break-words" direction="vertical">
+              <div v-for="(item, index) in treeSel" v-html="textRender(item)" :key="index" />
             </t-space>
-          </div>
-        </t-card>
-        <t-divider />
-      </div>
-      <div class="r-pdx-inner">
-        <t-space>
-          <t-tree
-            v-model:actived="treeVal"
-            :data="parseLangResult"
-            :activable="true"
-            :hover="true"
-            :line="true"
-            :transition="true"
-          />
-        </t-space>
-      </div>
+          </t-card>
+        </t-content>
+        <t-aside :width="sideWidth">
+          <t-card>
+            <t-tree
+              class="r-pdx-tree"
+              v-model:actived="treeVal"
+              :activable="true"
+              :data="resultTree"
+              :hover="true"
+              :line="true"
+              :transition="true"
+            />
+          </t-card>
+        </t-aside>
+      </t-layout>
     </div>
+    <div class="w-full" v-else-if="eventResult.length > 0">
+      <t-space class="w-full" direction="vertical">
+        <t-card
+          class="w-full"
+          v-for="(event, eventKey) in eventResult"
+          :key="eventKey"
+          :header-bordered="true"
+          :hover-shadow="true"
+          :title="textAlias(event.name)"
+        >
+          <t-space class="w-full" direction="vertical">
+            <div v-for="(line, lineKey) in sepTextContent(event.desc)" v-html="textRender(line)" :key="lineKey" />
+            <t-space class="m-auto w-3/4" direction="vertical">
+              <t-tag class="r-no-select m-auto w-full" v-for="(opt, optKey) in event.options" :key="optKey">
+                <span class="text-center">{{ textAlias(opt.name) }}</span>
+              </t-tag>
+            </t-space>
+          </t-space>
+        </t-card>
+      </t-space>
+    </div>
+    <div class="mt-6" v-else>
+      <t-empty />
+    </div>
+
     <template #actions>
-      <t-button variant="text" theme="primary" shape="circle" @click="setMenuReplaceVisible()">
+      <t-button shape="circle" theme="primary" variant="text" @click="setMenuReplaceVisible()">
         <RefreshIcon />
       </t-button>
-      <t-button variant="text" theme="primary" shape="circle" @click="setMenuUploadVisible()">
+      <t-button v-if="narrow" shape="circle" theme="primary" variant="text" @click="setTreeDialogVisible()">
+        <ListIcon />
+      </t-button>
+      <t-button shape="circle" theme="primary" variant="text" @click="setMenuUploadVisible()">
         <UploadIcon />
       </t-button>
       <RouterLink to="/">
-        <t-button variant="text" theme="primary" shape="circle">
+        <t-button shape="circle" theme="primary" variant="text">
           <HomeIcon />
         </t-button>
       </RouterLink>
     </template>
+
+    <t-space>
+      <t-sticky-tool
+        :offset="[-50, 20]"
+        placement="right-bottom"
+        shape="round"
+        type="compact"
+        @click="handleStickyTool"
+      >
+        <t-sticky-item label="Replace">
+          <template #icon>
+            <RefreshIcon />
+          </template>
+        </t-sticky-item>
+      </t-sticky-tool>
+    </t-space>
+
+    <!-- Tree Dialog (Only when narrow) -->
+    <t-drawer v-model:visible="treeDialogVisible" :footer="false">
+      <t-card>
+        <t-tree
+          v-model:actived="treeVal"
+          :activable="true"
+          :data="resultTree"
+          :hover="true"
+          :line="true"
+          :transition="true"
+          @click="setTreeDialogVisible(false)"
+        />
+      </t-card>
+    </t-drawer>
+
     <!-- Upload Dialog -->
-    <t-dialog v-model:visible="menuUploadVisible" header="上传" :footer="false" width="85%">
-      <t-space direction="vertical" align="baseline">
-        <t-upload
-          :request-method="requestMethod"
-          theme="file-input"
-          placeholder="Paradox Yaml Lang"
-          tips="支持YAML，不要反复上传文件，你的浏览器把持不住"
-        >
-          <t-button variant="outline" theme="default" shape="circle">
-            <Upload1Icon />
-          </t-button>
-        </t-upload>
-      </t-space>
+    <t-dialog v-model:visible="menuUploadVisible" :footer="false" header="上传" width="85%">
+      <div class="w-full">
+        <t-space v-if="!idFetchLoading" align="baseline" direction="vertical">
+          <t-upload
+            :request-method="requestMethod"
+            placeholder="Paradox Yaml Lang"
+            theme="file-input"
+            tips="支持YAML，不要反复上传文件，你的浏览器把持不住"
+          >
+            <t-button shape="circle" theme="default" variant="outline">
+              <Upload1Icon />
+            </t-button>
+          </t-upload>
+        </t-space>
+        <template v-if="authPassed">
+          <t-divider v-if="!idFetchLoading" />
+          <t-form label-align="top">
+            <t-form-item label="ID">
+              <t-input v-model="requestTextStorageId" :auto-width="true" />
+            </t-form-item>
+            <t-form-item label="从数据库加载全部">
+              <t-button :loading="idFetchLoading" theme="primary" @click="requestItemById">
+                <DownloadIcon v-if="!idFetchLoading" />
+              </t-button>
+            </t-form-item>
+            <t-form-item label="从数据库加载事件">
+              <t-button :loading="idFetchLoading" theme="primary" @click="requestEventById">
+                <DownloadIcon v-if="!idFetchLoading" />
+              </t-button>
+            </t-form-item>
+          </t-form>
+        </template>
+      </div>
     </t-dialog>
+
     <!-- Replace Dialog -->
     <t-dialog v-model:visible="menuReplaceVisible" header="替换值" width="85%">
       <div v-if="!menuReplaceAddVisible">
-        <t-list :stripe="true" :split="true" style="max-height: 280px" size="small">
+        <t-list :split="true" :stripe="true" size="small" style="max-height: 280px">
           <t-list-item v-for="(value, key) in replacer" :key="key">
-            <t-list-item-meta :title="key.toString()" :description="value" />
+            <t-list-item-meta :description="value" :title="key.toString()" />
             <template #action>
               <t-button
                 shape="circle"
+                size="small"
                 theme="warning"
                 variant="outline"
-                size="small"
                 @click="store.removeReplacer(key.toString())"
               >
                 <DeleteIcon />
@@ -169,7 +310,7 @@ onMounted(() => {
         </t-form>
       </div>
       <template #footer>
-        <t-button theme="default" shape="circle" @click="setMenuReplaceAddVisible()">
+        <t-button shape="circle" theme="default" @click="setMenuReplaceAddVisible()">
           <SettingIcon />
         </t-button>
       </template>
@@ -177,20 +318,21 @@ onMounted(() => {
   </content-layout>
 </template>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 .r-pdx-container {
-  .r-pdx-cd {
-    max-width: 100%;
-    height: 34vh;
-    overflow: auto;
+  max-height: 75vh;
+  max-width: 100%;
+  width: 100%;
 
-    .r-pdx-cd-content {
-      height: 100%;
-      overflow-y: auto;
-    }
+  .r-pdx-card {
+    height: 70.3vh;
+    max-height: 70.3vh;
+    overflow: auto;
+    scrollbar-width: thin;
   }
-  .r-pdx-inner {
-    height: 33vh;
+
+  .r-pdx-tree {
+    max-height: 66vh;
     overflow: auto;
     scrollbar-width: thin;
   }
@@ -199,88 +341,14 @@ onMounted(() => {
 .move-enter-active {
   transition: all 0.3s ease-out;
 }
+
 .move-leave-active {
   transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
+
 .move-enter-from,
 .move-leave-to {
   transform: translateX(-20px);
   opacity: 0;
-}
-</style>
-
-<style lang="less">
-.r-pdx-c-b {
-  color: blue;
-}
-.r-pdx-c-e {
-  color: teal;
-}
-.r-pdx-c-g {
-  color: green;
-}
-.r-pdx-c-h {
-  color: orange;
-}
-.r-pdx-c-l {
-  color: brown;
-}
-.r-pdx-c-m {
-  color: purple;
-}
-.r-pdx-c-p {
-  color: orangered;
-}
-.r-pdx-c-r {
-  color: red;
-}
-.r-pdx-c-s {
-  color: darkorange;
-}
-.r-pdx-c-t {
-  color: grey;
-}
-.r-pdx-c-w {
-  font-style: italic;
-}
-.r-pdx-c-y {
-  color: yellow;
-}
-
-.r-pdx-c-dark-b {
-  color: blue;
-}
-.r-pdx-c-dark-e {
-  color: teal;
-}
-.r-pdx-c-dark-g {
-  color: green;
-}
-.r-pdx-c-dark-h {
-  color: orange;
-}
-.r-pdx-c-dark-l {
-  color: brown;
-}
-.r-pdx-c-dark-m {
-  color: purple;
-}
-.r-pdx-c-dark-p {
-  color: orangered;
-}
-.r-pdx-c-dark-r {
-  color: red;
-}
-.r-pdx-c-dark-s {
-  color: darkorange;
-}
-.r-pdx-c-dark-t {
-  color: lightgray;
-}
-.r-pdx-c-dark-w {
-  color: white;
-}
-.r-pdx-c-dark-y {
-  color: yellow;
 }
 </style>

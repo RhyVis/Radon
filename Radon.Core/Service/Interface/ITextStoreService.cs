@@ -6,5 +6,8 @@ namespace Radon.Core.Service.Interface;
 public interface ITextStoreService
 {
     TextStoreRes HandleTextStoreQuery(TextStoreReq req);
+
     StateRes HandleTextStoreUpdate(TextStoreReq req);
+
+    UnsetRes GetAll();
 }

@@ -1,15 +1,30 @@
 <script lang="ts" setup>
-import { apiPost, apiPutState } from "@/lib/common/apiMethods";
+import { apiGet, apiPost, apiPutState } from "@/lib/common/apiMethods";
+import type { SaveBrief, SaveEntry } from "@/pages/data/save/scripts/define.ts";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { DownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
-import { MessagePlugin } from "tdesign-vue-next";
+import { DownloadIcon, FileDownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
+import { MessagePlugin, type TableProps, Tag } from "tdesign-vue-next";
+import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 
 const store = useSaveStore();
 const { t } = useI18n();
 const { loading, id, qText, qNote, rText, rNote } = storeToRefs(store);
+const all = shallowRef<SaveEntry[]>([]);
+const allColumns = ref<TableProps["columns"]>([
+  {
+    colKey: "id",
+    title: "ID",
+    width: 75,
+    cell: (h, props) => h(Tag, { type: "primary" }, props.row.id),
+  },
+  {
+    colKey: "note",
+    title: t("col.note"),
+  },
+]);
 
 const handleStore = async () => {
   if (get(qText).length === 0) {
@@ -18,9 +33,10 @@ const handleStore = async () => {
   }
 
   set(loading, true);
+  void MessagePlugin.warning(t("msg.warning"));
 
   try {
-    const b = await apiPutState("/api/text-store", store.query);
+    const b = await apiPutState("/api/text-store", store.query, { timeout: 30000 });
     if (b) {
       await MessagePlugin.success(t("msg.store"));
     } else {
@@ -35,12 +51,9 @@ const handleStore = async () => {
 };
 const handleSelect = async () => {
   set(loading, true);
+  void MessagePlugin.warning(t("msg.warning"));
   try {
-    const { data, code } = await apiPost<{
-      id: number;
-      text: string;
-      note: string;
-    }>("/api/text-store", store.query);
+    const { data, code } = await apiPost<SaveEntry>("/api/text-store", store.query, { timeout: 30000 });
 
     if (code < 0) {
       void MessagePlugin.warning(t("msg.selectNothing"));
@@ -63,10 +76,32 @@ const handleSelect = async () => {
     set(loading, false);
   }
 };
+const handleSelectAll = async () => {
+  set(loading, true);
+  void MessagePlugin.warning(t("msg.warning"));
+  try {
+    const { data, code } = await apiGet<SaveBrief[]>("/api/text-store", { timeout: 120000 });
+
+    if (code < 0) {
+      void MessagePlugin.warning(t("msg.selectNothing"));
+      set(loading, false);
+      return;
+    }
+
+    set(all, data);
+
+    void MessagePlugin.success(t("msg.select"));
+  } catch (e) {
+    console.error(e);
+    void MessagePlugin.error(t("msg.selectFail"));
+  } finally {
+    set(loading, false);
+  }
+};
 </script>
 
 <template>
-  <content-layout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :subtitle="t('st')" :title="t('tt')">
     <t-form>
       <t-form-item :label="t('form.store')">
         <t-textarea v-model="qText" :autosize="true" placeholder="" />
@@ -78,7 +113,7 @@ const handleSelect = async () => {
         <t-textarea :autosize="true" :readonly="true" :value="rText" placeholder="" />
       </t-form-item>
       <t-form-item :label="t('form.readNote')">
-        <t-input :value="rNote" :readonly="true" placeholder="" />
+        <t-input :readonly="true" :value="rNote" placeholder="" />
       </t-form-item>
       <t-divider />
       <t-form-item label="ID">
@@ -93,6 +128,9 @@ const handleSelect = async () => {
             <t-button shape="rectangle" theme="primary" @click="handleSelect">
               <DownloadIcon />
             </t-button>
+            <t-button shape="rectangle" theme="warning" @click="handleSelectAll">
+              <FileDownloadIcon />
+            </t-button>
           </t-space>
         </t-loading>
       </t-form-item>
@@ -104,6 +142,10 @@ const handleSelect = async () => {
         </t-space>
       </t-form-item>
     </t-form>
+    <div v-if="all.length > 0">
+      <t-divider />
+      <t-table :columns="allColumns" :data="all" :stripe="true" size="small" />
+    </div>
   </content-layout>
 </template>
 
@@ -117,6 +159,9 @@ form:
   readNote: "Read Note"
   operation: "Data Operation"
   tool: "Tool"
+col:
+  text: "Text"
+  note: "Note"
 msg:
   empty: "Do not store empty"
   id: "ID cannot be less than 0"
@@ -125,6 +170,7 @@ msg:
   select: "Select Success"
   selectFail: "Select Fail"
   selectNothing: "Select Nothing"
+  warning: "This may take a while, please wait patiently."
 </i18n>
 
 <i18n locale="zh-CN">
@@ -137,6 +183,9 @@ form:
   readNote: "读取备注"
   operation: "数据操作"
   tool: "工具"
+col:
+  text: "文本"
+  note: "备注"
 msg:
   empty: "不可存储空内容"
   id: "ID不可小于0"
@@ -145,4 +194,5 @@ msg:
   select: "选择成功"
   selectFail: "选择失败"
   selectNothing: "选择无内容"
+  warning: "这可能需要一段时间，请耐心等待。"
 </i18n>

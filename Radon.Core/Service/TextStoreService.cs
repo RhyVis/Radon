@@ -21,6 +21,16 @@ public class TextStoreService(TextStorageRepository repo) : ITextStoreService
         return new StateRes();
     }
 
+    public UnsetRes GetAll()
+    {
+        var brief = repo.Select.ToList(e => new
+        {
+            e.Id,
+            e.Note
+        });
+        return new UnsetRes(brief);
+    }
+
     private EntryTextStorage Query(long id)
     {
         return repo.Get(id)

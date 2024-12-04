@@ -42,6 +42,7 @@ public static class InitService
         builder.Services.SetupSql();
         builder.Services.SetupRedis();
         builder.Services.RegisterService();
+        builder.Services.AddMemoryCache();
         builder
             .Services.AddControllers()
             .AddJsonOptions(options =>

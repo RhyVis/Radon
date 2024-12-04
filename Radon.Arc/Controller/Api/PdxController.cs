@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Radon.Arc.Util;
 using Radon.Core.Model.Request;
 using Radon.Core.Model.Response;
@@ -11,14 +12,14 @@ namespace Radon.Arc.Controller.Api;
 
 [ApiController]
 [Route("api/pdx")]
-public class PdxController(IParadoxProcessor processor, IPdxService service) : ControllerBase
+public class PdxController(IParadoxProcessor processor, IPdxService service, IMemoryCache cache) : ControllerBase
 {
     [HttpGet("test")]
     [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
     public IActionResult GetTest()
     {
         var test = PdxLangParser.Create(["00_TESTER.LINE_EOF_O:0 \"Testing §rParser§! Item\""]);
-        return Ok(new UnsetRes(test.Parse()));
+        return Ok(new UnsetRes(test.GetParsedItems()));
     }
 
     [HttpPost("parse/lang")]
@@ -38,6 +39,40 @@ public class PdxController(IParadoxProcessor processor, IPdxService service) : C
         var ls = processor.ParseLang(stream);
 
         return Ok(new UnsetRes(ls));
+    }
+
+    [Authorize]
+    [HttpGet("parse/lang/{id:long}")]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
+    public IActionResult ParseLangFromTextStorage(long id)
+    {
+        var cacheKey = $"pdx_lang_item_{id}";
+        var r = cache.GetOrCreate(cacheKey, entry =>
+        {
+            var parsed = processor.ParseLangFromTextStorage(id);
+            entry.SlidingExpiration = TimeSpan.FromHours(2);
+            entry.Value = parsed;
+            return parsed;
+        });
+
+        return Ok(new UnsetRes(r!));
+    }
+
+    [Authorize]
+    [HttpGet("parse/event/{id:long}")]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
+    public IActionResult ParseEventFromTextStorage(long id)
+    {
+        var cacheKey = $"pdx_event_item_{id}";
+        var r = cache.GetOrCreate(cacheKey, entry =>
+        {
+            var events = processor.ParseEventFromTextStorage(id);
+            entry.SlidingExpiration = TimeSpan.FromHours(2);
+            entry.Value = events;
+            return events;
+        });
+
+        return Ok(new UnsetRes(r!));
     }
 
     [Authorize]

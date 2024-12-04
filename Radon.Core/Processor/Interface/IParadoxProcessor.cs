@@ -4,8 +4,13 @@ namespace Radon.Core.Processor.Interface;
 
 public interface IParadoxProcessor
 {
-    [Obsolete("Not useful in server")]
-    List<PdxLangParsedItem> ParseLang(string paradoxYamlPath);
+    List<PdxLangParsedItem> ParseLang(string paradoxYaml);
 
     List<PdxLangParsedItem> ParseLang(Stream inputStream);
+
+    List<PdxLangParsedItem> ParseLangFromTextStorage(long textStorageId);
+
+    List<PdxLangEventItem> ParseEvent(string paradoxYaml);
+
+    List<PdxLangEventItem> ParseEventFromTextStorage(long textStorageId);
 }

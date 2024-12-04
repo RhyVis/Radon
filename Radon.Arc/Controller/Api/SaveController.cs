@@ -12,16 +12,23 @@ namespace Radon.Arc.Controller.Api;
 public class SaveController(ITextStoreService service) : ControllerBase
 {
     [HttpPost]
-    [ProducesResponseType<TextStoreRes>(200)]
+    [ProducesResponseType<TextStoreRes>(StatusCodes.Status200OK)]
     public IActionResult Query(TextStoreReq req)
     {
         return Ok(service.HandleTextStoreQuery(req));
     }
 
     [HttpPut]
-    [ProducesResponseType<StateRes>(200)]
+    [ProducesResponseType<StateRes>(StatusCodes.Status200OK)]
     public IActionResult Update(TextStoreReq req)
     {
         return Ok(service.HandleTextStoreUpdate(req));
+    }
+
+    [HttpGet]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
+    public IActionResult All()
+    {
+        return Ok(service.GetAll());
     }
 }
