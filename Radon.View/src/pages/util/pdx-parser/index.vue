@@ -13,6 +13,7 @@ import {
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import { useGlobalStore } from "@/store/global";
 import { get, set, useDark, useToggle } from "@vueuse/core";
+import { useRouteHash } from "@vueuse/router";
 import { storeToRefs } from "pinia";
 import {
   AddIcon,
@@ -26,9 +27,10 @@ import {
   UploadIcon,
 } from "tdesign-icons-vue-next";
 import {
-  MessagePlugin,
   Content as TContent,
+  MessagePlugin,
   type RequestMethodResponse,
+  type SizeEnum,
   type TdStickyItemProps,
   type TreeNodeValue,
   type TreeProps,
@@ -36,10 +38,12 @@ import {
 } from "tdesign-vue-next";
 import { computed, onMounted, ref, shallowRef } from "vue";
 
+const hash = useRouteHash();
 const global = useGlobalStore();
 const store = usePdxStore();
 const narrow = useNarrow();
-const [treeDialogVisible, setTreeDialogVisible] = useToggle(false);
+const [eventDrawerVisible, setEventDrawerVisible] = useToggle(false);
+const [treeDrawerVisible, setTreeDrawerVisible] = useToggle(false);
 const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
 const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
@@ -119,9 +123,21 @@ const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> =
   }
 };
 const handleStickyTool = (context: { e: MouseEvent; item: TdStickyItemProps }) => {
-  if (context.item.label === "Replace") {
+  const { label } = context.item;
+  if (label === "Replace") {
     setMenuReplaceVisible();
+  } else if (label === "Event") {
+    setEventDrawerVisible();
   }
+};
+const handleJumpToEvent = (id: number) => {
+  const i = `pdx-event-${id}`;
+  set(hash, i);
+  const el = document.getElementById(i);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth" });
+  }
+  setEventDrawerVisible(false);
 };
 
 onMounted(() => {
@@ -133,52 +149,61 @@ onMounted(() => {
 
 <template>
   <content-layout title="PDX Parser">
-    <div class="r-pdx-container" v-if="resultTree!.length > 0">
+    <div v-if="resultTree!.length > 0" class="r-pdx-container">
       <t-layout>
         <t-content>
           <t-card class="r-pdx-card">
             <t-space class="break-words" direction="vertical">
-              <div v-for="(item, index) in treeSel" v-html="textRender(item)" :key="index" />
+              <div v-for="(item, index) in treeSel" :key="index" v-html="textRender(item)" />
             </t-space>
           </t-card>
         </t-content>
         <t-aside :width="sideWidth">
           <t-card>
             <t-tree
-              class="r-pdx-tree"
               v-model:actived="treeVal"
               :activable="true"
               :data="resultTree"
               :hover="true"
               :line="true"
               :transition="true"
+              class="r-pdx-tree"
             />
           </t-card>
         </t-aside>
       </t-layout>
     </div>
-    <div class="w-full" v-else-if="eventResult.length > 0">
+    <div v-else-if="eventResult.length > 0" class="w-full">
       <t-space class="w-full" direction="vertical">
         <t-card
-          class="w-full"
           v-for="(event, eventKey) in eventResult"
+          :id="`pdx-event-${eventKey}`"
           :key="eventKey"
           :header-bordered="true"
           :hover-shadow="true"
           :title="textAlias(event.name)"
+          class="w-full"
         >
           <t-space class="w-full" direction="vertical">
-            <div v-for="(line, lineKey) in sepTextContent(event.desc)" v-html="textRender(line)" :key="lineKey" />
+            <div v-for="(line, lineKey) in sepTextContent(event.desc)" :key="lineKey" v-html="textRender(line)" />
             <t-space class="m-auto w-3/4" direction="vertical">
-              <t-tag class="r-no-select m-auto w-full" v-for="(opt, optKey) in event.options" :key="optKey">
+              <t-card
+                v-for="(opt, optKey) in event.options"
+                :key="optKey"
+                class="r-no-select m-auto w-full"
+                size="small"
+              >
                 <span class="text-center">{{ textAlias(opt.name) }}</span>
-              </t-tag>
+              </t-card>
             </t-space>
           </t-space>
+          <template #actions>
+            <span class="r-no-select">{{ eventKey }}</span>
+          </template>
         </t-card>
       </t-space>
     </div>
-    <div class="mt-6" v-else>
+    <div v-else class="mt-6">
       <t-empty />
     </div>
 
@@ -186,7 +211,16 @@ onMounted(() => {
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuReplaceVisible()">
         <RefreshIcon />
       </t-button>
-      <t-button v-if="narrow" shape="circle" theme="primary" variant="text" @click="setTreeDialogVisible()">
+      <t-button v-if="narrow" shape="circle" theme="primary" variant="text" @click="setTreeDrawerVisible()">
+        <ListIcon />
+      </t-button>
+      <t-button
+        v-if="eventResult.length > 0"
+        shape="circle"
+        theme="primary"
+        variant="text"
+        @click="setEventDrawerVisible()"
+      >
         <ListIcon />
       </t-button>
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuUploadVisible()">
@@ -199,6 +233,7 @@ onMounted(() => {
       </RouterLink>
     </template>
 
+    <!-- Sticky Tool -->
     <t-space>
       <t-sticky-tool
         :offset="[-50, 20]"
@@ -212,11 +247,35 @@ onMounted(() => {
             <RefreshIcon />
           </template>
         </t-sticky-item>
+        <t-sticky-item v-if="eventResult.length > 0" label="Event">
+          <template #icon>
+            <ListIcon />
+          </template>
+        </t-sticky-item>
       </t-sticky-tool>
     </t-space>
 
-    <!-- Tree Dialog (Only when narrow) -->
-    <t-drawer v-model:visible="treeDialogVisible" :footer="false">
+    <!-- Event Drawer -->
+    <t-drawer v-model:visible="eventDrawerVisible" :footer="false">
+      <t-list :stripe="true" size="small">
+        <t-list-item v-for="(event, eventKey) in eventResult" :key="eventKey">
+          <span>{{ textAlias(event.name) }}</span>
+          <template #action>
+            <t-button
+              :size="'extra-small' as SizeEnum"
+              shape="round"
+              variant="text"
+              @click="handleJumpToEvent(eventKey)"
+            >
+              >
+            </t-button>
+          </template>
+        </t-list-item>
+      </t-list>
+    </t-drawer>
+
+    <!-- Tree Drawer (Only when narrow) -->
+    <t-drawer v-model:visible="treeDrawerVisible" :footer="false">
       <t-card>
         <t-tree
           v-model:actived="treeVal"
@@ -225,7 +284,7 @@ onMounted(() => {
           :hover="true"
           :line="true"
           :transition="true"
-          @click="setTreeDialogVisible(false)"
+          @click="setTreeDrawerVisible(false)"
         />
       </t-card>
     </t-drawer>
