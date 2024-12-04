@@ -1,7 +1,8 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { RefreshIcon } from "tdesign-icons-vue-next";
 import { assembleSrc, type CharacterDefinition } from "@/pages/draw/pjsk-sticker/scripts/define";
 import { useToggle } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 
 const { charaList, resEndpoint } = defineProps<{
   charaList: CharacterDefinition[];
@@ -9,6 +10,7 @@ const { charaList, resEndpoint } = defineProps<{
 }>();
 const emit = defineEmits(["select"]);
 
+const { t } = useI18n();
 const [visible, setVisible] = useToggle(false);
 const renderIcon = () => <RefreshIcon />;
 
@@ -20,17 +22,17 @@ const handleSelect = (index: number) => {
 </script>
 
 <template>
-  <t-button @click="handleDrawer">选择角色</t-button>
-  <t-drawer v-model:visible="visible" size="360px" :footer="false" header="Pick one!">
+  <t-button @click="handleDrawer">{{ t("button") }}</t-button>
+  <t-drawer v-model:visible="visible" :footer="false" :header="t('header')" size="360px">
     <t-row :gutter="[2, 0]">
-      <t-col v-for="(chara, index) in charaList" :span="4" :key="index">
+      <t-col v-for="(chara, index) in charaList" :key="index" :span="4">
         <span class="r-chara-select-option" @click="handleSelect(index)">
           <t-image
+            :lazy="true"
+            :loading="renderIcon"
+            :src="assembleSrc(chara.img, resEndpoint)"
             class="r-chara-select-inner-img"
             fit="contain"
-            :src="assembleSrc(chara.img, resEndpoint)"
-            :loading="renderIcon"
-            :lazy="true"
             style="height: 115px; width: 115px"
           />
         </span>
@@ -49,3 +51,13 @@ const handleSelect = (index: number) => {
   }
 }
 </style>
+
+<i18n locale="en">
+button: "Select Character"
+header: "Pick one!"
+</i18n>
+
+<i18n locale="zh-CN">
+button: "选择角色"
+header: "选择！"
+</i18n>

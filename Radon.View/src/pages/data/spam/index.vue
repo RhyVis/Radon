@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { apiPost, apiPutNumber } from "@/lib/common/apiMethods";
 import { codeTypes, spamColumns, SpamType, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
@@ -12,6 +12,7 @@ import {
   PlayCircleStrokeAddIcon,
   RefreshIcon,
   ReplayIcon,
+  RollbackIcon,
   ToolsIcon,
 } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -41,7 +42,9 @@ const mergedResult = computed(() =>
     .map(e => e.text)
     .join("\n"),
 );
+const resetAble = computed(() => get(qSize) > 1);
 
+const handleResetCount = () => set(qSize, 1);
 const handleTabChange = (key: string | number) => {
   switch (key) {
     case "spam":
@@ -165,7 +168,7 @@ watch(
 </script>
 
 <template>
-  <content-layout title="弹药库" subtitle="对线宝典">
+  <content-layout subtitle="对线宝典" title="弹药库">
     <t-form>
       <t-tabs v-model="activeTab" @change="handleTabChange">
         <!--祖安-->
@@ -224,26 +227,31 @@ watch(
           <SelSimple v-model="qDict" :options="codeTypes" />
         </t-form-item>
         <t-form-item v-if="!precise" label="妙语连珠">
-          <t-input-number v-model="qSize" :min="1" :max="10" :auto-width="true" :allow-input-over-limit="false" />
+          <t-space :size="8">
+            <t-input-number v-model="qSize" :allow-input-over-limit="false" :auto-width="true" :max="10" :min="1" />
+            <t-button v-if="resetAble" shape="circle" theme="default" variant="outline" @click="handleResetCount">
+              <RollbackIcon />
+            </t-button>
+          </t-space>
         </t-form-item>
         <t-form-item v-if="precise" label="ID">
-          <t-tag-input v-model="qIds" :status="preciseStatus" :clearable="true" @change="handleTagInput" />
+          <t-tag-input v-model="qIds" :clearable="true" :status="preciseStatus" @change="handleTagInput" />
         </t-form-item>
-        <t-form-item label="精确ID" help="指定选择的条目ID">
+        <t-form-item help="指定选择的条目ID" label="精确ID">
           <t-switch v-model="precise" />
         </t-form-item>
         <t-form-item label="开火！">
           <t-space>
-            <t-button shape="round" theme="danger" @click="handleFetch" :loading="resultLoading">
+            <t-button :loading="resultLoading" shape="round" theme="danger" @click="handleFetch">
               <LoudspeakerIcon v-if="!resultLoading" />
             </t-button>
-            <t-tooltip placement="bottom" content="重新获取上一次的内容，可以改变转义模式">
+            <t-tooltip content="重新获取上一次的内容，可以改变转义模式" placement="bottom">
               <t-button
                 :disabled="!used"
+                :loading="resultLoading"
                 shape="circle"
                 theme="default"
                 @click="handleFetchAgain"
-                :loading="resultLoading"
               >
                 <RefreshIcon v-if="!resultLoading" />
               </t-button>
@@ -255,24 +263,24 @@ watch(
     </t-form>
     <!--结果-->
     <t-divider />
-    <div class="mb-2 mt-2" v-if="result.length > 0">
+    <div v-if="result.length > 0" class="mb-2 mt-2">
       <t-table
-        size="small"
-        row-key="id"
+        :bordered="true"
         :columns="columns"
         :data="result"
-        :stripe="true"
         :hover="true"
-        :bordered="true"
         :loading="resultLoading"
+        :stripe="true"
+        row-key="id"
+        size="small"
       />
     </div>
     <template #actions>
-      <t-button v-if="global.authPassed" variant="text" shape="circle" theme="primary" @click="setAppendDialog(true)">
+      <t-button v-if="global.authPassed" shape="circle" theme="primary" variant="text" @click="setAppendDialog(true)">
         <ToolsIcon />
       </t-button>
       <RouterLink to="/">
-        <t-button variant="text" theme="primary" shape="circle">
+        <t-button shape="circle" theme="primary" variant="text">
           <HomeIcon />
         </t-button>
       </RouterLink>
@@ -289,13 +297,13 @@ watch(
       <template #footer>
         <t-space>
           <btn-read v-model="aText" />
-          <t-button theme="default" shape="round" @click="setAppendDialog(false)">
+          <t-button shape="round" theme="default" @click="setAppendDialog(false)">
             <CloseIcon />
           </t-button>
-          <t-button theme="primary" shape="round" @click="handleAppend()" :loading="appendLoading">
+          <t-button :loading="appendLoading" shape="round" theme="primary" @click="handleAppend()">
             <PlayCircleStrokeAddIcon v-if="!appendLoading" />
           </t-button>
-          <t-button theme="primary" shape="round" @click="handleAppend(true)" :loading="appendLoading">
+          <t-button :loading="appendLoading" shape="round" theme="primary" @click="handleAppend(true)">
             <ReplayIcon v-if="!appendLoading" />
           </t-button>
         </t-space>
@@ -304,7 +312,7 @@ watch(
   </content-layout>
 </template>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 @import "@/assets/style/mixin.less";
 
 :global(.r-sp-column-tag) {

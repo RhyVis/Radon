@@ -106,14 +106,12 @@ const draw = () => {
   };
 };
 
-onMounted(() => {
-  draw();
-});
+onMounted(draw);
 </script>
 
 <template>
   <div id="sticker-container">
-    <t-loading :loading="loading" size="small" :delay="50">
+    <t-loading :delay="50" :loading="loading" size="small">
       <canvas id="sticker-canvas" ref="canvasRef" />
     </t-loading>
   </div>

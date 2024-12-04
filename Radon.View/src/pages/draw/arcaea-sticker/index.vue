@@ -23,6 +23,7 @@ const yProxy = computed({
 });
 const textMultipleLines = computed(() => text.value.includes("\n"));
 
+const canvasEl = () => document.getElementById("sticker-canvas") as HTMLCanvasElement;
 const handleUpdate = (id: number) => {
   const chara = arcaeaCharaList[id];
   store.$patch({
@@ -43,24 +44,17 @@ const handleSelect = (index: number) => {
   set(charaId, index);
   handleUpdate(index);
 };
-const handleCopyImage = async () => {
-  const canvas = document.getElementById("sticker-canvas") as HTMLCanvasElement;
-  await copyImage(b64ToBlob(canvas?.toDataURL().split(",")[1]));
-};
-const handleDownloadImage = async () => {
-  const canvas = document.getElementById("sticker-canvas") as HTMLCanvasElement;
-  await downloadImage(canvas.toDataURL(), `${arcaeaCharaList[get(charaId)].name}_sticker.png`);
-};
+const handleCopyImage = async () => await copyImage(b64ToBlob(canvasEl().toDataURL().split(",")[1]));
+const handleDownloadImage = async () =>
+  await downloadImage(canvasEl().toDataURL(), `${arcaeaCharaList[get(charaId)].name}_sticker.png`);
 
 store.$subscribe(() => updateKey());
 
-onMounted(() => {
-  handleUpdate(get(charaId));
-});
+onMounted(() => handleUpdate(get(charaId)));
 </script>
 
 <template>
-  <content-layout title="Arcaea表情" subtitle="资源来自Rosemoe/arcaea-stickers">
+  <content-layout subtitle="资源来自Rosemoe/arcaea-stickers" title="Arcaea表情">
     <div class="mb-3 mt-1" style="text-align: center">
       <t-space :size="8" direction="vertical">
         <t-space :size="16" direction="horizontal">
@@ -68,15 +62,15 @@ onMounted(() => {
             <StickerCanvas
               :key="key"
               :chara-id="charaId"
+              :chara-list="arcaeaCharaList"
+              :curve="curve"
               :font-size="fontSize"
-              :space-size="spaceSize"
               :rotate="rotate"
+              :space-size="spaceSize"
+              :text="text"
+              :use-commercial-fonts="useCommercialFonts"
               :x="x"
               :y="y"
-              :text="text"
-              :curve="curve"
-              :use-commercial-fonts="useCommercialFonts"
-              :chara-list="arcaeaCharaList"
               res-endpoint="arcaea-sticker"
             />
           </div>
@@ -100,7 +94,7 @@ onMounted(() => {
         </t-space>
       </t-form-item>
       <t-form-item label="显示文字">
-        <t-textarea v-model="text" :maxlength="30" :autosize="true" @change="handleText" />
+        <t-textarea v-model="text" :autosize="true" :maxlength="30" @change="handleText" />
       </t-form-item>
       <t-form-item label="字体尺寸">
         <t-slider v-model="fontSize" :input-number-props="true" :max="100" :min="5" />
@@ -111,10 +105,10 @@ onMounted(() => {
       <t-form-item label="旋转">
         <t-slider v-model="rotate" :input-number-props="true" :max="63" :min="0" />
       </t-form-item>
-      <t-form-item label="曲度" help="非长字符串渲染时使用">
+      <t-form-item help="非长字符串渲染时使用" label="曲度">
         <t-switch v-model="curve" />
       </t-form-item>
-      <t-form-item label="商业字体" help="商业字体仅供非商业用途使用">
+      <t-form-item help="商业字体仅供非商业用途使用" label="商业字体">
         <t-switch v-model="useCommercialFonts" />
       </t-form-item>
     </t-form>

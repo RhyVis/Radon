@@ -8,7 +8,7 @@ async function loadImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-async function loadAllBaseImg(): Promise<Record<string, HTMLImageElement>> {
+export async function loadAllBaseImg(): Promise<Record<string, HTMLImageElement>> {
   const baseUrl = import.meta.env.VITE_RES_ROOT;
   const halo = await loadImage(baseUrl + "/ba-banner/halo.png");
   const cross = await loadImage(baseUrl + "/ba-banner/cross.png");
@@ -17,5 +17,3 @@ async function loadAllBaseImg(): Promise<Record<string, HTMLImageElement>> {
     cross: cross,
   };
 }
-
-export { loadAllBaseImg };
