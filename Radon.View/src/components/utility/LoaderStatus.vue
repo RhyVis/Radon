@@ -1,45 +1,46 @@
 ﻿<script lang="ts" setup>
-import { computed } from "vue";
+import type { UseLoader } from "@/composable/useLoader.ts";
+import { get } from "@vueuse/core";
+import { RefreshIcon } from "tdesign-icons-vue-next";
+import { computed, inject, type InjectionKey } from "vue";
 
-const {
-  name,
-  label,
-  current,
-  completed,
-  hasError = false,
-} = defineProps<{
+const { name, label, loaderKey } = defineProps<{
   name: string;
   label: string;
-  current: string;
-  completed: boolean;
-  hasError?: boolean;
+  loaderKey: InjectionKey<UseLoader>;
 }>();
+
+const loader = inject(loaderKey)!;
+const { hasError, completed, current, restore } = loader;
 
 const id = computed(() => `loader-${name}`);
 const theme = computed(() => {
-  if (hasError) return "danger";
-  if (completed) return "success";
+  if (get(hasError)) return "danger";
+  if (get(completed)) return "success";
   return "default";
 });
 const tag = computed(() => {
-  if (!completed) return `${label}: ${current}`;
+  if (!get(completed)) return `${label}: ${get(current)}`;
   return label;
 });
 const icon = computed(() => {
-  if (hasError) return "error-circle";
-  if (!completed) return "help-circle";
+  if (get(hasError)) return "error-circle";
+  if (!get(completed)) return "help-circle";
   return "check-circle";
 });
 </script>
 
 <template>
-  <div class="r-ls-div" :id="id">
-    <t-loading size="small" :delay="100" :loading="!completed">
-      <t-tag :theme="theme" variant="light" size="small">
+  <div :id="id" class="r-ls-div">
+    <t-loading :delay="100" :loading="!completed" size="small">
+      <t-tag :theme="theme" size="small" variant="light">
         <template #icon>
           <t-icon :name="icon" />
         </template>
         <span class="r-no-select">{{ tag }}</span>
+        <template v-if="hasError">
+          <RefreshIcon @click="restore" />
+        </template>
       </t-tag>
     </t-loading>
   </div>

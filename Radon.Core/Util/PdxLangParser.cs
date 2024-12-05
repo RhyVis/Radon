@@ -62,11 +62,20 @@ public class PdxLangParser
             .Where(l => !(string.IsNullOrWhiteSpace(l) || l.TrimStart().StartsWith('#')))
             .Select(l => l.Split(':', 2))
             .Where(pts => pts.Length == 2)
-            .Select(pts => new PdxLangParsedItem
+            .Select(pts =>
             {
-                Name = pts[0].Trim(),
-                Namespace = pts[0].Trim().Split('.'),
-                Value = pts[1].Trim().TrimStart('0').Trim().Trim('"')
+                var ptKey = pts[0].Trim();
+                var ptVal = pts[1].Trim().TrimStart('0').Trim();
+
+                if (ptVal.StartsWith('\"')) ptVal = ptVal[1..];
+                if (ptVal.EndsWith('\"')) ptVal = ptVal[..^1];
+
+                return new PdxLangParsedItem
+                {
+                    Name = ptKey,
+                    Namespace = ptKey.Split('.'),
+                    Value = ptVal
+                };
             })
             .Where(x => x.Namespace.Length >= 1)
             .ToList();
@@ -80,12 +89,12 @@ public class PdxLangParser
     public List<PdxLangEventItem> GetEventItems()
     {
         var prefixes = _parsedItems
-            .Where(item => item.Namespace.Last() is "name" && item.Namespace.Length > 1)
+            .Where(item => item.Namespace.Last() is "name" or "desc" && item.Namespace.Length > 1)
             .Select(item => item.Namespace.Take(item.Namespace.Length - 1).Join("/"))
             .Distinct()
             .Where(prefix => _parsedItems.Any(item =>
-                item.Namespace.Take(prefix.Split('/').Length).Join("/") == prefix &&
-                (item.Namespace.Last().StartsWith("desc") || item.Namespace[^2] is "desc")
+                    item.Namespace.Take(prefix.Split('/').Length).Join("/") == prefix
+                //&& (item.Namespace.Last().StartsWith("desc") || item.Namespace[^2] is "desc")
             ))
             .ToList();
 
@@ -106,6 +115,7 @@ public class PdxLangParser
                         !item.Namespace.Last().StartsWith("desc") &&
                         item.Namespace[^2] != "desc")
                     .ToArray();
+
                 var respItems = contentItems
                     .Where(item => item.Namespace.Last().StartsWith("resp"))
                     .ToArray();
@@ -122,31 +132,86 @@ public class PdxLangParser
                     .Where(item => respItemLookup.Contains(item.Namespace.Last()))
                     .ToArray();
 
+                var tooltipItems = contentItems
+                    .Where(item => item.Namespace.Last().StartsWith("tooltip"))
+                    .ToArray();
+                var tooltipItemInfo = tooltipItems
+                    .Select(item => new
+                    {
+                        Ref = item.Namespace[^2],
+                        Content = item.Value
+                    }).ToArray();
+                var tooltipItemLookup = tooltipItemInfo
+                    .Select(info => info.Ref)
+                    .ToArray();
+                var tooltipItemRefs = contentItems
+                    .Where(item => tooltipItemLookup.Contains(item.Namespace.Last()))
+                    .ToArray();
+
+                var optionsWithRespAndTooltip = respItemRefs
+                    .Where(item => tooltipItemLookup.Contains(item.Namespace.Last()))
+                    .Select(item => new PdxLangEventItem.Option(
+                        item.Namespace.Last(),
+                        item.Value,
+                        respItemInfo.First(info => info.Ref == item.Namespace.Last()).Content,
+                        tooltipItemInfo.First(info => info.Ref == item.Namespace.Last()).Content
+                    ));
+
                 var optionsWithResp = respItemRefs
+                    .Where(item => !tooltipItemLookup.Contains(item.Namespace.Last()))
                     .Select(item => new PdxLangEventItem.Option(
                         item.Namespace.Last(),
                         item.Value,
                         respItemInfo.First(info => info.Ref == item.Namespace.Last()).Content
                     ));
+
+                var optionsWithTooltip = tooltipItemRefs
+                    .Where(item => !respItemLookup.Contains(item.Namespace.Last()))
+                    .Select(item => new PdxLangEventItem.Option(
+                        item.Namespace.Last(),
+                        item.Value,
+                        "",
+                        tooltipItemInfo.First(info => info.Ref == item.Namespace.Last()).Content
+                    ));
+
                 var optionsOther = contentItems
-                    .Where(item => !respItems.Contains(item) && !respItemRefs.Contains(item))
+                    .Except(respItems)
+                    .Except(respItemRefs)
+                    .Except(tooltipItems)
+                    .Except(tooltipItemRefs)
                     .Select(item => new PdxLangEventItem.Option(
                         item.Namespace.Last(), item.Value
                     ));
+
+                var desc = group.Items
+                    .Any(item => item.Namespace.Last().StartsWith("desc"))
+                    ? group.Items
+                        .Where(i => i.Namespace.Last().StartsWith("desc") || i.Namespace[^2] is "desc")
+                        .Select(i => i.Value)
+                        .Join("\n")
+                    : group.Items
+                        .Where(item => item.Namespace[^2] is "desc")
+                        .Select(item => new[] { item.Namespace.Last().ToUpper(), item.Value })
+                        .Select(arr => arr.Join("\n"))
+                        .Join("\n");
+
+                var options = optionsOther
+                    .Concat(optionsWithRespAndTooltip)
+                    .Concat(optionsWithResp)
+                    .Concat(optionsWithTooltip)
+                    .OrderBy(opt => opt.Key)
+                    .ToArray();
 
                 return new PdxLangEventItem
                 {
                     Key = group.Key,
                     Name = group.Items.FirstOrDefault(item => item.Namespace.Last() == "name")?.Value ?? string.Empty,
-                    Desc = group.Items
-                        .Where(i => i.Namespace.Last().StartsWith("desc") || i.Namespace[^2] is "desc")
-                        .Select(i => i.Value)
-                        .Join("\n"),
-                    Options = optionsOther.Concat(optionsWithResp).ToArray()
+                    Desc = desc,
+                    Options = options
                 };
             });
 
-        return events.ToList();
+        return events.OrderBy(e => e.Key).ToList();
     }
 
     // Unchecked
@@ -185,5 +250,17 @@ public class PdxLangEventItem
     public string Desc { get; init; } = string.Empty;
     public Option[] Options { get; init; } = [];
 
-    public record Option(string Key, string Name = "", string Resp = "");
+    public override string ToString()
+    {
+        return
+            $"{Key} - {Name} - {Desc} - {
+                Options
+                    .Select(opt =>
+                        new[] { opt.Key, opt.Name, opt.Resp, opt.Tooltip, opt.ShowResp.ToString() }
+                            .Select(arr => arr.Join("|"))
+                    )
+                    .Join()}";
+    }
+
+    public record Option(string Key, string Name = "", string Resp = "", string Tooltip = "", bool ShowResp = false);
 }

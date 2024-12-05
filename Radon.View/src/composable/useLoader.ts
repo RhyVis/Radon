@@ -10,6 +10,8 @@ export type Loader = {
   action: Promise<void>;
 };
 
+export type UseLoader = ReturnType<typeof useLoader>;
+
 export const useLoader = (loaders: Loader[], loaderName: string = "Loader") => {
   const current = ref("?");
   const [initiated, setInitiated] = useToggle(false);
@@ -39,9 +41,42 @@ export const useLoader = (loaders: Loader[], loaderName: string = "Loader") => {
         await MessagePlugin.warning(t("loader.loadFailed", { name: loader.name }));
       }
     }
+
     set(current, get(hasError) ? `×[${get(error).join("|")}]` : "√");
     setCompleted(true);
   };
 
-  return { load, current, initiated, completed, error, hasError };
+  const restore = async () => {
+    if (!get(hasError)) return;
+
+    setCompleted(false);
+
+    if (!get(online)) {
+      await MessagePlugin.warning(t("loader.notOnline", { name: loaderName }));
+      error.value.push("OFFLINE");
+      set(current, "× OFFLINE");
+      setCompleted(true);
+      return;
+    }
+
+    for (const loader of loaders) {
+      if (error.value.includes(loader.name)) {
+        set(current, loader.name);
+        try {
+          await loader.action;
+          error.value = error.value.filter(e => e !== loader.name);
+        } catch (e) {
+          console.error(e);
+          await MessagePlugin.warning(t("loader.loadFailed", { name: loader.name }));
+        }
+      } else {
+        console.debug(`Skipping ${loader.name}`);
+      }
+    }
+
+    set(current, get(hasError) ? `×[${get(error).join("|")}]` : "√");
+    setCompleted(true);
+  };
+
+  return { load, restore, current, initiated, completed, error, hasError };
 };

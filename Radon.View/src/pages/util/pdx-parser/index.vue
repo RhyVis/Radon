@@ -9,6 +9,7 @@ import {
   getPdxLangParsedItemById,
   renderPdxColor,
   replacePdxAlias,
+  sepTextContent,
 } from "@/pages/util/pdx-parser/scripts/function.ts";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import { useGlobalStore } from "@/store/global";
@@ -28,8 +29,8 @@ import {
   UploadIcon,
 } from "tdesign-icons-vue-next";
 import {
-  Content as TContent,
   MessagePlugin,
+  Content as TContent,
   type RequestMethodResponse,
   type SizeEnum,
   type TdStickyItemProps,
@@ -50,7 +51,6 @@ const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
 const [idFetchLoading, setIdFetchLoading] = useToggle(false);
 const { initialized, replacer, addReplacerKey, addReplacerValue, requestTextStorageId } = storeToRefs(store);
 const { authPassed } = storeToRefs(global);
-const regQuote = /\\"/g;
 const dark = useDark();
 const treeVal = ref<TreeNodeValue[]>([]);
 const treeSel = computed(() => {
@@ -66,15 +66,23 @@ const sideWidth = computed(() => (!get(narrow) ? "245px" : "0"));
 const treeMode = computed(() => resultTree.value?.length ?? -1 > 0);
 const eventMode = computed(() => eventResult.value.length > 0);
 
-const eventSel = computed(() => eventResult.value[eventSelId.value]);
+const eventSel = computed(() => {
+  const findNonEmptyName = (id: number): string => {
+    if (id < 0) return "";
+    const name = eventResult.value[id]?.name || "";
+    return name.length > 0 ? name : findNonEmptyName(id - 1);
+  };
+
+  const id = eventSelId.value;
+  const event = eventResult.value[id];
+  return {
+    ...event,
+    name: event?.name.length > 0 ? event.name : findNonEmptyName(id - 1),
+  };
+});
 const eventSelId = ref(0);
-const eventResult = shallowRef<PdxLangEventItem[]>([]);
+const eventResult = ref<PdxLangEventItem[]>([]);
 const resultTree = shallowRef<TreeProps["data"]>([]);
-const sepTextContent = (raw: string) =>
-  raw
-    .replace(regQuote, '"')
-    .replace(/(\\n)+/, "\\n")
-    .split("\\n");
 const textRender = (raw: string) => renderPdxColor(raw, get(replacer), get(dark));
 const textAlias = (raw: string) => replacePdxAlias(raw, get(replacer));
 const parse = (list: PdxLangItem[]) => set(resultTree, buildPdxLangTree(list));
@@ -209,7 +217,6 @@ onMounted(() => {
           :id="`pdx-event-${eventSelId}`"
           :key="eventSelId"
           :header-bordered="true"
-          :hover-shadow="true"
           :title="textAlias(eventSel.name)"
           class="w-full"
         >
@@ -219,10 +226,26 @@ onMounted(() => {
               <t-card
                 v-for="(opt, optKey) in eventSel.options"
                 :key="optKey"
+                :title="opt.showResp ? textAlias(opt.name) : undefined"
                 class="r-no-select m-auto w-full"
                 size="small"
+                @click="
+                  () => {
+                    if (opt.resp.length > 0) opt.showResp = !opt.showResp;
+                  }
+                "
               >
-                <span class="text-center">{{ textAlias(opt.name) }}</span>
+                <t-tooltip :content="opt.tooltip.length > 0 ? opt.tooltip : undefined">
+                  <span v-if="!opt.showResp" class="text-center">
+                    {{ textAlias(opt.name) }}
+                  </span>
+                  <div
+                    v-for="(respLine, respKey) in sepTextContent(opt.resp)"
+                    v-else
+                    :key="respKey"
+                    v-html="textRender(respLine)"
+                  />
+                </t-tooltip>
               </t-card>
             </t-space>
           </t-space>
@@ -299,11 +322,11 @@ onMounted(() => {
           <template #action>
             <t-button
               :size="'extra-small' as SizeEnum"
-              shape="round"
-              variant="text"
+              shape="circle"
+              variant="outline"
               @click="handleSwitchEvent(eventKey)"
             >
-              >
+              {{ eventKey }}
             </t-button>
           </template>
         </t-list-item>

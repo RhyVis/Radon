@@ -1,19 +1,21 @@
 <script lang="ts" setup>
+import { useKeyUpdate } from "@/composable/useKeyUpdate.ts";
 import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
 import { useVersionStore } from "@/store/version.ts";
 import { get } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { LogoGithubIcon } from "tdesign-icons-vue-next";
-import { inject, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
-const fontLoader = inject(fontLoaderKey)!;
 const version = useVersionStore();
 const { t } = useI18n();
-const { current, completed, hasError } = fontLoader;
+const { key: versionKey, updateKey: updateVersionKey } = useKeyUpdate();
 const { needUpdate, initialized, badState } = storeToRefs(version);
 
 const jumpToGithub = () => window.open("https://github.com/RhyVis/Radon", "_blank");
+
+version.$subscribe(updateVersionKey);
 
 onMounted(() => {
   if (get(initialized) && get(badState)) {
@@ -35,32 +37,29 @@ onMounted(() => {
     </t-paragraph>
 
     <t-title level="h4">{{ t("loading-status.tt") }}</t-title>
+    <t-text>{{ t("loading-status.font") }}</t-text>
     <t-paragraph>
-      <loader-status
-        name="font"
-        :label="t('loading-status.font')"
-        :current="current"
-        :completed="completed"
-        :has-error="hasError"
-      />
+      <loader-status :label="t('loading-status.font')" :loader-key="fontLoaderKey" name="font" />
     </t-paragraph>
 
     <t-title level="h4">{{ t("status.tt") }}</t-title>
     <!-- Prompts -->
-    <t-space direction="vertical" :size="6">
-      <t-space align="center" :size="6">
+    <t-space :size="6" direction="vertical">
+      <t-space :size="6" align="center">
         <prompt-online />
         <prompt-server-available />
       </t-space>
-      <prompt-version-client />
-      <prompt-version-server />
+      <t-space :key="versionKey" :size="6" align="center">
+        <prompt-version-client />
+        <prompt-version-server />
+      </t-space>
     </t-space>
     <t-paragraph>
       <t-text v-if="needUpdate">{{ t("status.hint") }}</t-text>
     </t-paragraph>
 
     <template #actions>
-      <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="jumpToGithub">
+      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="jumpToGithub">
         <LogoGithubIcon />
       </t-button>
     </template>

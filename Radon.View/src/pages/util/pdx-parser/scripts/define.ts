@@ -10,6 +10,9 @@ export type PdxLangEventItem = {
   options: {
     key: string;
     name: string;
+    resp: string;
+    tooltip: string;
+    showResp: boolean;
   }[];
 };
 
