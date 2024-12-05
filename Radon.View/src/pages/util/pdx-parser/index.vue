@@ -12,7 +12,7 @@ import {
 } from "@/pages/util/pdx-parser/scripts/function.ts";
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import { useGlobalStore } from "@/store/global";
-import { get, set, useDark, useToggle } from "@vueuse/core";
+import { get, onKeyStroke, set, useDark, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import {
   AddIcon,
@@ -62,6 +62,9 @@ const treeSel = computed(() => {
   }
 });
 const sideWidth = computed(() => (!get(narrow) ? "245px" : "0"));
+
+const treeMode = computed(() => resultTree.value?.length ?? -1 > 0);
+const eventMode = computed(() => eventResult.value.length > 0);
 
 const eventSel = computed(() => eventResult.value[eventSelId.value]);
 const eventSelId = ref(0);
@@ -136,14 +139,10 @@ const handleStickyTool = (context: { e: MouseEvent; item: TdStickyItemProps }) =
       setEventDrawerVisible();
       break;
     case "Event+":
-      if (eventSelId.value < eventResult.value.length - 1) {
-        eventSelId.value++;
-      }
+      handleEventPlus();
       break;
     case "Event-":
-      if (eventSelId.value > 0) {
-        eventSelId.value--;
-      }
+      handleEventMinus();
       break;
   }
 };
@@ -154,6 +153,21 @@ const handleSwitchEvent = (id: number) => {
   set(eventSelId, id);
   setEventDrawerVisible(false);
 };
+const handleEventPlus = () => {
+  if (eventMode.value && eventSelId.value < eventResult.value.length - 1) {
+    eventSelId.value++;
+  }
+};
+const handleEventMinus = () => {
+  if (eventMode.value && eventSelId.value > 0) {
+    eventSelId.value--;
+  }
+};
+
+onKeyStroke("ArrowUp", handleEventMinus);
+onKeyStroke("ArrowLeft", handleEventMinus);
+onKeyStroke("ArrowDown", handleEventPlus);
+onKeyStroke("ArrowRight", handleEventPlus);
 
 onMounted(() => {
   if (!get(initialized)) {
@@ -164,7 +178,7 @@ onMounted(() => {
 
 <template>
   <content-layout title="PDX Parser">
-    <div v-if="resultTree!.length > 0" class="r-pdx-container">
+    <div v-if="treeMode" class="r-pdx-container">
       <t-layout class="r-pdx-layout">
         <t-content>
           <t-card class="r-pdx-card">
@@ -188,7 +202,7 @@ onMounted(() => {
         </t-aside>
       </t-layout>
     </div>
-    <div v-else-if="eventResult.length > 0" class="w-full">
+    <div v-else-if="eventMode" class="w-full">
       <t-space class="w-full" direction="vertical">
         <t-card
           v-if="eventSel"
@@ -219,7 +233,7 @@ onMounted(() => {
       </t-space>
     </div>
     <div v-else class="mt-6">
-      <t-empty />
+      <t-empty description="点击右上角的上传按钮来解析内容" />
     </div>
 
     <!-- TopBar Actions -->
@@ -227,22 +241,10 @@ onMounted(() => {
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuReplaceVisible()">
         <RefreshIcon />
       </t-button>
-      <t-button
-        v-if="resultTree?.length > 0 && narrow"
-        shape="circle"
-        theme="primary"
-        variant="text"
-        @click="setTreeDrawerVisible()"
-      >
+      <t-button v-if="treeMode && narrow" shape="circle" theme="primary" variant="text" @click="setTreeDrawerVisible()">
         <ListIcon />
       </t-button>
-      <t-button
-        v-if="eventResult.length > 0"
-        shape="circle"
-        theme="primary"
-        variant="text"
-        @click="setEventDrawerVisible()"
-      >
+      <t-button v-if="eventMode" shape="circle" theme="primary" variant="text" @click="setEventDrawerVisible()">
         <ListIcon />
       </t-button>
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuUploadVisible()">
@@ -269,7 +271,7 @@ onMounted(() => {
             <RefreshIcon />
           </template>
         </t-sticky-item>
-        <template v-if="eventResult.length > 0">
+        <template v-if="eventMode">
           <t-sticky-item label="Event">
             <template #icon>
               <ListIcon />

@@ -1,11 +1,10 @@
-﻿using System.Text.RegularExpressions;
-using Masuit.Tools;
+﻿using Masuit.Tools;
 using NLog;
 using Radon.Core.Exceptions;
 
 namespace Radon.Core.Util;
 
-public partial class PdxLangParser
+public class PdxLangParser
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private readonly string[] _lines;
@@ -55,9 +54,6 @@ public partial class PdxLangParser
         }
     }
 
-    [GeneratedRegex("^(name|desc|[a-z])$")]
-    private partial Regex EventSpec();
-
     private List<PdxLangParsedItem> Parse()
     {
         Logger.Info($"Reading PdxLang for {_lines[0].Trim().TrimEnd(':')}");
@@ -83,17 +79,74 @@ public partial class PdxLangParser
 
     public List<PdxLangEventItem> GetEventItems()
     {
-        var groupedItems = _parsedItems.Where(item => EventSpec().IsMatch(item.Namespace.Last()))
-            .GroupBy(item => item.Namespace.Take(item.Namespace.Length - 1).Join("/"))
-            .Where(group => group.Any(item => item.Namespace.Last() is "name"))
-            .Select(group => new PdxLangEventItem
+        var prefixes = _parsedItems
+            .Where(item => item.Namespace.Last() is "name" && item.Namespace.Length > 1)
+            .Select(item => item.Namespace.Take(item.Namespace.Length - 1).Join("/"))
+            .Distinct()
+            .Where(prefix => _parsedItems.Any(item =>
+                item.Namespace.Take(prefix.Split('/').Length).Join("/") == prefix &&
+                (item.Namespace.Last().StartsWith("desc") || item.Namespace[^2] is "desc")
+            ))
+            .ToList();
+
+        var groups = prefixes
+            .Select(prefix => new
             {
-                Name = group.FirstOrDefault(item => item.Namespace.Last() == "name")?.Value ?? string.Empty,
-                Desc = group.FirstOrDefault(item => item.Namespace.Last() == "desc")?.Value ?? string.Empty,
-                Options = group.Where(item => item.Namespace.Last() is not "name" and not "desc")
-                    .Select(item => new PdxLangEventItem.Option(item.Namespace.Last(), item.Value)).ToArray()
+                Key = prefix,
+                Items = _parsedItems
+                    .Where(item => item.Namespace.Take(prefix.Split('/').Length).Join("/") == prefix)
             });
-        return groupedItems.ToList();
+
+        var events = groups
+            .Select(group =>
+            {
+                var contentItems = group.Items
+                    .Where(item =>
+                        item.Namespace.Last() != "name" &&
+                        !item.Namespace.Last().StartsWith("desc") &&
+                        item.Namespace[^2] != "desc")
+                    .ToArray();
+                var respItems = contentItems
+                    .Where(item => item.Namespace.Last().StartsWith("resp"))
+                    .ToArray();
+                var respItemInfo = respItems
+                    .Select(item => new
+                    {
+                        Ref = item.Namespace[^2],
+                        Content = item.Value
+                    }).ToArray();
+                var respItemLookup = respItemInfo
+                    .Select(info => info.Ref)
+                    .ToArray();
+                var respItemRefs = contentItems
+                    .Where(item => respItemLookup.Contains(item.Namespace.Last()))
+                    .ToArray();
+
+                var optionsWithResp = respItemRefs
+                    .Select(item => new PdxLangEventItem.Option(
+                        item.Namespace.Last(),
+                        item.Value,
+                        respItemInfo.First(info => info.Ref == item.Namespace.Last()).Content
+                    ));
+                var optionsOther = contentItems
+                    .Where(item => !respItems.Contains(item) && !respItemRefs.Contains(item))
+                    .Select(item => new PdxLangEventItem.Option(
+                        item.Namespace.Last(), item.Value
+                    ));
+
+                return new PdxLangEventItem
+                {
+                    Key = group.Key,
+                    Name = group.Items.FirstOrDefault(item => item.Namespace.Last() == "name")?.Value ?? string.Empty,
+                    Desc = group.Items
+                        .Where(i => i.Namespace.Last().StartsWith("desc") || i.Namespace[^2] is "desc")
+                        .Select(i => i.Value)
+                        .Join("\n"),
+                    Options = optionsOther.Concat(optionsWithResp).ToArray()
+                };
+            });
+
+        return events.ToList();
     }
 
     // Unchecked
@@ -127,9 +180,10 @@ public class PdxLangParsedItem
 
 public class PdxLangEventItem
 {
+    public string Key { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;
     public string Desc { get; init; } = string.Empty;
     public Option[] Options { get; init; } = [];
 
-    public record Option(string Key, string Name);
+    public record Option(string Key, string Name = "", string Resp = "");
 }
