@@ -11,8 +11,6 @@ jobs:
     steps:
       - uses: benjlevesque/short-sha@v3.0
         id: short-sha
-        
-      - run: dotnet restore
 
       - name: Test Run
         run: dotnet test Radon.AppTest/Radon.AppTest.csproj --no-build --verbosity normal
