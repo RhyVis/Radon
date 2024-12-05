@@ -11,6 +11,7 @@ interface PdxStore {
   replacer: PdxReplacerEntry;
   addReplacerKey: string;
   addReplacerValue: string;
+  requestTextStorageId: number;
 }
 
 export const usePdxStore = defineStore("pdx-parser", {
@@ -21,6 +22,7 @@ export const usePdxStore = defineStore("pdx-parser", {
     },
     addReplacerKey: "",
     addReplacerValue: "",
+    requestTextStorageId: 0,
   }),
   actions: {
     updateReplacer() {
@@ -56,6 +58,6 @@ export const usePdxStore = defineStore("pdx-parser", {
     },
   },
   persist: {
-    pick: ["replacer"],
+    pick: ["replacer", "requestTextStorageId"],
   },
 });

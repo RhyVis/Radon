@@ -13,10 +13,11 @@ import {
 import { usePdxStore } from "@/pages/util/pdx-parser/scripts/store";
 import { useGlobalStore } from "@/store/global";
 import { get, set, useDark, useToggle } from "@vueuse/core";
-import { useRouteHash } from "@vueuse/router";
 import { storeToRefs } from "pinia";
 import {
   AddIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
   DeleteIcon,
   DownloadIcon,
   HomeIcon,
@@ -38,7 +39,6 @@ import {
 } from "tdesign-vue-next";
 import { computed, onMounted, ref, shallowRef } from "vue";
 
-const hash = useRouteHash();
 const global = useGlobalStore();
 const store = usePdxStore();
 const narrow = useNarrow();
@@ -48,11 +48,10 @@ const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
 const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
 const [idFetchLoading, setIdFetchLoading] = useToggle(false);
-const { initialized, replacer, addReplacerKey, addReplacerValue } = storeToRefs(store);
+const { initialized, replacer, addReplacerKey, addReplacerValue, requestTextStorageId } = storeToRefs(store);
 const { authPassed } = storeToRefs(global);
 const regQuote = /\\"/g;
 const dark = useDark();
-const requestTextStorageId = ref(0);
 const treeVal = ref<TreeNodeValue[]>([]);
 const treeSel = computed(() => {
   const val = treeVal.value[0];
@@ -64,6 +63,8 @@ const treeSel = computed(() => {
 });
 const sideWidth = computed(() => (!get(narrow) ? "245px" : "0"));
 
+const eventSel = computed(() => eventResult.value[eventSelId.value]);
+const eventSelId = ref(0);
 const eventResult = shallowRef<PdxLangEventItem[]>([]);
 const resultTree = shallowRef<TreeProps["data"]>([]);
 const sepTextContent = (raw: string) =>
@@ -83,6 +84,7 @@ const requestEventById = async () => {
     setIdFetchLoading(true);
     const d = await getPdxLangParsedEventItemById(get(requestTextStorageId));
     set(eventResult, d);
+    set(resultTree, []);
     setMenuUploadVisible(false);
   } catch (e) {
     console.error(e);
@@ -99,6 +101,7 @@ const requestItemById = async () => {
     setIdFetchLoading(true);
     const d = await getPdxLangParsedItemById(get(requestTextStorageId));
     parse(d);
+    set(eventResult, []);
     setMenuUploadVisible(false);
   } catch (e) {
     console.error(e);
@@ -114,6 +117,7 @@ const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> =
     );
 
     parse(data);
+    set(eventResult, []);
     setMenuUploadVisible(false);
 
     return { status: "success", response: { success: true } };
@@ -124,19 +128,30 @@ const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> =
 };
 const handleStickyTool = (context: { e: MouseEvent; item: TdStickyItemProps }) => {
   const { label } = context.item;
-  if (label === "Replace") {
-    setMenuReplaceVisible();
-  } else if (label === "Event") {
-    setEventDrawerVisible();
+  switch (label) {
+    case "Replace":
+      setMenuReplaceVisible();
+      break;
+    case "Event":
+      setEventDrawerVisible();
+      break;
+    case "Event+":
+      if (eventSelId.value < eventResult.value.length - 1) {
+        eventSelId.value++;
+      }
+      break;
+    case "Event-":
+      if (eventSelId.value > 0) {
+        eventSelId.value--;
+      }
+      break;
   }
 };
-const handleJumpToEvent = (id: number) => {
-  const i = `pdx-event-${id}`;
-  set(hash, i);
-  const el = document.getElementById(i);
-  if (el) {
-    el.scrollIntoView({ behavior: "smooth" });
+const handleSwitchEvent = (id: number) => {
+  if (id < 0 || id >= eventResult.value.length) {
+    return;
   }
+  set(eventSelId, id);
   setEventDrawerVisible(false);
 };
 
@@ -150,7 +165,7 @@ onMounted(() => {
 <template>
   <content-layout title="PDX Parser">
     <div v-if="resultTree!.length > 0" class="r-pdx-container">
-      <t-layout>
+      <t-layout class="r-pdx-layout">
         <t-content>
           <t-card class="r-pdx-card">
             <t-space class="break-words" direction="vertical">
@@ -159,7 +174,7 @@ onMounted(() => {
           </t-card>
         </t-content>
         <t-aside :width="sideWidth">
-          <t-card>
+          <t-card :header-bordered="true" title="Tree">
             <t-tree
               v-model:actived="treeVal"
               :activable="true"
@@ -176,19 +191,19 @@ onMounted(() => {
     <div v-else-if="eventResult.length > 0" class="w-full">
       <t-space class="w-full" direction="vertical">
         <t-card
-          v-for="(event, eventKey) in eventResult"
-          :id="`pdx-event-${eventKey}`"
-          :key="eventKey"
+          v-if="eventSel"
+          :id="`pdx-event-${eventSelId}`"
+          :key="eventSelId"
           :header-bordered="true"
           :hover-shadow="true"
-          :title="textAlias(event.name)"
+          :title="textAlias(eventSel.name)"
           class="w-full"
         >
           <t-space class="w-full" direction="vertical">
-            <div v-for="(line, lineKey) in sepTextContent(event.desc)" :key="lineKey" v-html="textRender(line)" />
-            <t-space class="m-auto w-3/4" direction="vertical">
+            <div v-for="(line, lineKey) in sepTextContent(eventSel.desc)" :key="lineKey" v-html="textRender(line)" />
+            <t-space class="m-auto w-full" direction="vertical">
               <t-card
-                v-for="(opt, optKey) in event.options"
+                v-for="(opt, optKey) in eventSel.options"
                 :key="optKey"
                 class="r-no-select m-auto w-full"
                 size="small"
@@ -198,7 +213,7 @@ onMounted(() => {
             </t-space>
           </t-space>
           <template #actions>
-            <span class="r-no-select">{{ eventKey }}</span>
+            <span class="r-no-select">{{ eventSelId }}</span>
           </template>
         </t-card>
       </t-space>
@@ -207,11 +222,18 @@ onMounted(() => {
       <t-empty />
     </div>
 
+    <!-- TopBar Actions -->
     <template #actions>
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuReplaceVisible()">
         <RefreshIcon />
       </t-button>
-      <t-button v-if="narrow" shape="circle" theme="primary" variant="text" @click="setTreeDrawerVisible()">
+      <t-button
+        v-if="resultTree?.length > 0 && narrow"
+        shape="circle"
+        theme="primary"
+        variant="text"
+        @click="setTreeDrawerVisible()"
+      >
         <ListIcon />
       </t-button>
       <t-button
@@ -247,17 +269,29 @@ onMounted(() => {
             <RefreshIcon />
           </template>
         </t-sticky-item>
-        <t-sticky-item v-if="eventResult.length > 0" label="Event">
-          <template #icon>
-            <ListIcon />
-          </template>
-        </t-sticky-item>
+        <template v-if="eventResult.length > 0">
+          <t-sticky-item label="Event">
+            <template #icon>
+              <ListIcon />
+            </template>
+          </t-sticky-item>
+          <t-sticky-item label="Event-">
+            <template #icon>
+              <ArrowUpIcon />
+            </template>
+          </t-sticky-item>
+          <t-sticky-item label="Event+">
+            <template #icon>
+              <ArrowDownIcon />
+            </template>
+          </t-sticky-item>
+        </template>
       </t-sticky-tool>
     </t-space>
 
     <!-- Event Drawer -->
     <t-drawer v-model:visible="eventDrawerVisible" :footer="false">
-      <t-list :stripe="true" size="small">
+      <t-list :scroll="{ type: 'virtual' }" :stripe="true" size="small">
         <t-list-item v-for="(event, eventKey) in eventResult" :key="eventKey">
           <span>{{ textAlias(event.name) }}</span>
           <template #action>
@@ -265,7 +299,7 @@ onMounted(() => {
               :size="'extra-small' as SizeEnum"
               shape="round"
               variant="text"
-              @click="handleJumpToEvent(eventKey)"
+              @click="handleSwitchEvent(eventKey)"
             >
               >
             </t-button>
@@ -310,12 +344,12 @@ onMounted(() => {
             <t-form-item label="ID">
               <t-input v-model="requestTextStorageId" :auto-width="true" />
             </t-form-item>
-            <t-form-item label="从数据库加载全部">
+            <t-form-item label="从数据库解析树">
               <t-button :loading="idFetchLoading" theme="primary" @click="requestItemById">
                 <DownloadIcon v-if="!idFetchLoading" />
               </t-button>
             </t-form-item>
-            <t-form-item label="从数据库加载事件">
+            <t-form-item label="从数据库解析事件">
               <t-button :loading="idFetchLoading" theme="primary" @click="requestEventById">
                 <DownloadIcon v-if="!idFetchLoading" />
               </t-button>
@@ -379,21 +413,25 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .r-pdx-container {
-  max-height: 75vh;
+  max-height: 100%;
   max-width: 100%;
   width: 100%;
 
-  .r-pdx-card {
-    height: 70.3vh;
-    max-height: 70.3vh;
-    overflow: auto;
-    scrollbar-width: thin;
-  }
+  .r-pdx-layout {
+    background: var(--td-bg-color-container);
 
-  .r-pdx-tree {
-    max-height: 66vh;
-    overflow: auto;
-    scrollbar-width: thin;
+    .r-pdx-card {
+      height: 67vh;
+      max-height: 67vh;
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+
+    .r-pdx-tree {
+      max-height: 55.4vh;
+      overflow: auto;
+      scrollbar-width: thin;
+    }
   }
 }
 
