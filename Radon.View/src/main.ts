@@ -6,6 +6,7 @@ import "tdesign-vue-next/es/style/index.css";
 import { createApp } from "vue";
 
 import App from "@/App.vue";
+import { printBanner } from "@/lib/util/banner.ts";
 import { setupWindowListener } from "@/lib/util/windowListener";
 import i18n from "@/locale";
 import router from "@/router";
@@ -13,6 +14,7 @@ import store from "@/store";
 import { registerSW } from "virtual:pwa-register";
 
 console.log("RN: main");
+printBanner();
 
 registerSW({ immediate: true });
 
