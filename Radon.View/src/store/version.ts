@@ -1,6 +1,5 @@
 import LocalVersion from "@/assets/local/version.json";
 import { getClientCompileTimeRemote, getClientVersionRemote, getServerVersion } from "@/lib/common/apiMethods.ts";
-import { formatFromTimestamp } from "@/lib/util/dateFormatter.ts";
 import { radixValExtended } from "@/pages/math/radix/scripts/radix.ts";
 import { get, useOnline } from "@vueuse/core";
 import { defineStore } from "pinia";
@@ -43,7 +42,7 @@ export const useVersionStore = defineStore("version", {
   getters: {
     cAssembleTimeL: state => `${state.cVersionL}.${radixValExtended(state.cCompileTimeL)}`,
     cAssembleTimeR: state => `${state.cVersionR}.${radixValExtended(state.cCompileTimeR)}`,
-    cCompileTimeRFormatted: state => formatFromTimestamp(state.cCompileTimeR),
+    cCompileTimeRFormatted: state => new Date(state.cCompileTimeR).toLocaleString(),
     needUpdate: state => state.fetchState == FetchState.NEED_UPDATE,
     badState: state => state.fetchState < 0,
   },

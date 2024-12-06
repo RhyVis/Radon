@@ -32,6 +32,12 @@
       confirm: "离开",
       cancel: "停留",
     },
+    image: {
+      copySuccess: "图像已复制到剪贴板",
+      copyFail: "无法将图像复制到剪贴板",
+      downloadSuccess: "图像已下载",
+      downloadFail: "无法下载图像",
+    }
   },
   auth: {
     message: {

@@ -4,3 +4,7 @@
     metaThemeColor.setAttribute("content", color);
   }
 };
+
+export const changeMetaColorDark = (dark: boolean) => {
+  changeMetaColor(dark ? "#121212" : "#ffffff");
+};

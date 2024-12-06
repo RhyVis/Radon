@@ -1,4 +1,7 @@
-﻿export const setupWindowListener = () => {
+﻿/**
+ * Prevents the default behavior of the browser when the user tries to zoom in or out.
+ */
+export const setupWindowListener = () => {
   window.onload = () => {
     document.addEventListener("touchstart", event => {
       if (event.touches.length > 1) {

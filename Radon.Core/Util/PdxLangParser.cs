@@ -88,25 +88,34 @@ public class PdxLangParser
 
     public List<PdxLangEventItem> GetEventItems()
     {
+        // Find Namespace Prefixes for Event Items
         var prefixes = _parsedItems
+            // Find all items with name or desc as last namespace, and more than 1 namespace len
             .Where(item => item.Namespace.Last() is "name" or "desc" && item.Namespace.Length > 1)
-            .Select(item => item.Namespace.Take(item.Namespace.Length - 1).Join("/"))
+            .Select(item => item.Namespace
+                .Take(item.Namespace.Length - 1)
+                .Join("/"))
             .Distinct()
-            .Where(prefix => _parsedItems.Any(item =>
-                    item.Namespace.Take(prefix.Split('/').Length).Join("/") == prefix
-                //&& (item.Namespace.Last().StartsWith("desc") || item.Namespace[^2] is "desc")
-            ))
-            .ToList();
-
-        var groups = prefixes
             .Select(prefix => new
             {
-                Key = prefix,
-                Items = _parsedItems
-                    .Where(item => item.Namespace.Take(prefix.Split('/').Length).Join("/") == prefix)
-            });
+                Len = prefix.Split('/').Length,
+                Pfx = prefix
+            })
+            .Where(prefix => _parsedItems.Any(item =>
+                item.Namespace
+                    .Take(prefix.Len)
+                    .Join("/") == prefix.Pfx))
+            .ToHashSet();
 
-        var events = groups
+        var events = prefixes
+            // Create Namespace Group
+            .Select(prefix => new
+            {
+                Key = prefix.Pfx,
+                Items = _parsedItems
+                    .Where(item => item.Namespace.Take(prefix.Len).Join("/") == prefix.Pfx)
+            })
+            // Each Group: Create Event Item
             .Select(group =>
             {
                 var contentItems = group.Items
@@ -114,48 +123,52 @@ public class PdxLangParser
                         item.Namespace.Last() != "name" &&
                         !item.Namespace.Last().StartsWith("desc") &&
                         item.Namespace[^2] != "desc")
-                    .ToArray();
+                    .ToHashSet();
 
                 var respItems = contentItems
                     .Where(item => item.Namespace.Last().StartsWith("resp"))
-                    .ToArray();
+                    .ToHashSet();
                 var respItemInfo = respItems
                     .Select(item => new
                     {
                         Ref = item.Namespace[^2],
                         Content = item.Value
-                    }).ToArray();
+                    }).ToHashSet();
                 var respItemLookup = respItemInfo
                     .Select(info => info.Ref)
-                    .ToArray();
+                    .ToHashSet();
                 var respItemRefs = contentItems
                     .Where(item => respItemLookup.Contains(item.Namespace.Last()))
-                    .ToArray();
+                    .ToHashSet();
 
                 var tooltipItems = contentItems
                     .Where(item => item.Namespace.Last().StartsWith("tooltip"))
-                    .ToArray();
+                    .ToHashSet();
                 var tooltipItemInfo = tooltipItems
                     .Select(item => new
                     {
                         Ref = item.Namespace[^2],
                         Content = item.Value
-                    }).ToArray();
+                    }).ToHashSet();
                 var tooltipItemLookup = tooltipItemInfo
                     .Select(info => info.Ref)
-                    .ToArray();
+                    .ToHashSet();
                 var tooltipItemRefs = contentItems
                     .Where(item => tooltipItemLookup.Contains(item.Namespace.Last()))
-                    .ToArray();
+                    .ToHashSet();
 
                 var optionsWithRespAndTooltip = respItemRefs
                     .Where(item => tooltipItemLookup.Contains(item.Namespace.Last()))
-                    .Select(item => new PdxLangEventItem.Option(
-                        item.Namespace.Last(),
-                        item.Value,
-                        respItemInfo.First(info => info.Ref == item.Namespace.Last()).Content,
-                        tooltipItemInfo.First(info => info.Ref == item.Namespace.Last()).Content
-                    ));
+                    .Select(item =>
+                    {
+                        var last = item.Namespace.Last();
+                        return new PdxLangEventItem.Option(
+                            last,
+                            item.Value,
+                            respItemInfo.First(info => info.Ref == last).Content,
+                            tooltipItemInfo.First(info => info.Ref == last).Content
+                        );
+                    });
 
                 var optionsWithResp = respItemRefs
                     .Where(item => !tooltipItemLookup.Contains(item.Namespace.Last()))
@@ -211,7 +224,9 @@ public class PdxLangParser
                 };
             });
 
-        return events.OrderBy(e => e.Key).ToList();
+        return events
+            .OrderBy(e => e.Key)
+            .ToList();
     }
 
     // Unchecked

@@ -49,7 +49,7 @@ onMounted(() => {
         <prompt-online />
         <prompt-server-available />
       </t-space>
-      <t-space :key="versionKey" :size="6" align="center">
+      <t-space :key="versionKey" :size="6" align="center" direction="vertical">
         <prompt-version-client />
         <prompt-version-server />
       </t-space>

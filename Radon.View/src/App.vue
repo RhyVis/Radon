@@ -7,7 +7,7 @@ import { authValidateWithRefresh } from "@/lib/common/authMethods";
 import { fontLoaderKey } from "@/lib/symbol/loaderSymbols";
 import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { getFontLoaders } from "@/lib/util/fontLoader";
-import { changeMetaColor } from "@/lib/util/themeUtil";
+import { changeMetaColorDark } from "@/lib/util/themeUtil";
 import { useGlobalStore } from "@/store/global";
 import { useVersionStore } from "@/store/version.ts";
 import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
@@ -33,10 +33,10 @@ const dark = useDark({
   onChanged: v => {
     if (v) {
       document.documentElement.setAttribute("theme-mode", "dark");
-      changeMetaColor("#1f2937");
+      changeMetaColorDark(true);
     } else {
       document.documentElement.removeAttribute("theme-mode");
-      changeMetaColor("#ffffff");
+      changeMetaColorDark(false);
     }
   },
 });
