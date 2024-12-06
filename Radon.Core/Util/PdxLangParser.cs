@@ -56,7 +56,7 @@ public class PdxLangParser
 
     private List<PdxLangParsedItem> Parse()
     {
-        Logger.Info($"Reading PdxLang for {_lines[0].Trim().TrimEnd(':')}");
+        Logger.Info($"Parse PdxLang for {_lines[0].Trim().TrimEnd(':')}");
         return _lines
             .Skip(1)
             .Where(l => !(string.IsNullOrWhiteSpace(l) || l.TrimStart().StartsWith('#')))
@@ -94,35 +94,42 @@ public class PdxLangParser
             .Where(item => item.Namespace.Last() is "name" or "desc" && item.Namespace.Length > 1)
             .Select(item => item.Namespace
                 .Take(item.Namespace.Length - 1)
-                .Join("/"))
+                .Join("."))
             .Distinct()
             .Select(prefix => new
             {
-                Len = prefix.Split('/').Length,
-                Pfx = prefix
+                Name = prefix,
+                Len = prefix.Length
             })
             .Where(prefix => _parsedItems.Any(item =>
-                item.Namespace
-                    .Take(prefix.Len)
-                    .Join("/") == prefix.Pfx))
+                {
+                    if (item.Name.Length < prefix.Len) return false;
+                    return item.Name[..prefix.Len] == prefix.Name;
+                })
+            )
             .ToHashSet();
 
         var events = prefixes
             // Create Namespace Group
             .Select(prefix => new
             {
-                Key = prefix.Pfx,
+                Key = prefix.Name,
                 Items = _parsedItems
-                    .Where(item => item.Namespace.Take(prefix.Len).Join("/") == prefix.Pfx)
+                    .Where(item =>
+                    {
+                        if (item.Name.Length < prefix.Len) return false;
+                        return item.Name[..prefix.Len] == prefix.Name;
+                    })
             })
             // Each Group: Create Event Item
             .Select(group =>
             {
                 var contentItems = group.Items
                     .Where(item =>
-                        item.Namespace.Last() != "name" &&
-                        !item.Namespace.Last().StartsWith("desc") &&
-                        item.Namespace[^2] != "desc")
+                    {
+                        var last = item.Namespace.Last();
+                        return last is not "name" and not "desc" && item.Namespace[^2] is not "desc";
+                    })
                     .ToHashSet();
 
                 var respItems = contentItems
@@ -218,7 +225,7 @@ public class PdxLangParser
                 return new PdxLangEventItem
                 {
                     Key = group.Key,
-                    Name = group.Items.FirstOrDefault(item => item.Namespace.Last() == "name")?.Value ?? string.Empty,
+                    Name = group.Items.FirstOrDefault(item => item.Namespace.Last() is "name")?.Value ?? string.Empty,
                     Desc = desc,
                     Options = options
                 };

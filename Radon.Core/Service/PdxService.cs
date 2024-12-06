@@ -15,11 +15,10 @@ public class PdxService(TextStorageRepository textRepo) : IPdxService
             .Select.Where(e =>
                 e.Id == (long)PreservedStrStorageId.PDX_LANG_PARSER_REPLACER + userId
             )
-            .ToOne()
-            ?.Text ?? "{}";
+            .ToOne(e => e.Text) ?? "{}";
     }
 
-    public bool SetLangParserReplacer(long userId, string jsonData)
+    public void SetLangParserReplacer(long userId, string jsonData)
     {
         var entity = new EntryTextStorage
         {
@@ -28,6 +27,5 @@ public class PdxService(TextStorageRepository textRepo) : IPdxService
             Note = $"LangParserReplacer for user {userId}"
         };
         textRepo.InsertOrUpdate(entity);
-        return true;
     }
 }

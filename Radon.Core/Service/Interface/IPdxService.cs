@@ -3,5 +3,5 @@
 public interface IPdxService
 {
     string GetLangParserReplacer(long userId);
-    bool SetLangParserReplacer(long userId, string jsonData);
+    void SetLangParserReplacer(long userId, string jsonData);
 }
