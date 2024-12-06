@@ -26,6 +26,8 @@ const allColumns = ref<TableProps["columns"]>([
   },
 ]);
 
+const baseEl = document.getElementById("base-content");
+
 const handleStore = async () => {
   if (get(qText).length === 0) {
     await MessagePlugin.warning(t("msg.empty"));
@@ -88,6 +90,7 @@ const handleSelectAll = async () => {
       return;
     }
 
+    data.sort((a, b) => a.id - b.id);
     set(all, data);
 
     void MessagePlugin.success(t("msg.select"));
@@ -97,6 +100,9 @@ const handleSelectAll = async () => {
   } finally {
     set(loading, false);
   }
+};
+const moveToActions = () => {
+  if (baseEl) baseEl.scrollIntoView({ behavior: "smooth" });
 };
 </script>
 
@@ -137,7 +143,7 @@ const handleSelectAll = async () => {
       <t-form-item :label="t('form.tool')">
         <t-space :size="5">
           <btn-copy :value="rText" />
-          <btn-read v-model="qText" />
+          <btn-read v-model="qText" @success="moveToActions" />
           <btn-clear v-model="qText" />
         </t-space>
       </t-form-item>

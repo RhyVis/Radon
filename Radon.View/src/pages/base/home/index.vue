@@ -18,9 +18,7 @@ const jumpToGithub = () => window.open("https://github.com/RhyVis/Radon", "_blan
 version.$subscribe(updateVersionKey);
 
 onMounted(() => {
-  if (get(initialized) && get(badState)) {
-    version.init();
-  }
+  if (get(initialized) && get(badState)) version.init();
 });
 </script>
 
@@ -49,7 +47,7 @@ onMounted(() => {
         <prompt-online />
         <prompt-server-available />
       </t-space>
-      <t-space :key="versionKey" :size="6" align="center" direction="vertical">
+      <t-space :key="versionKey" :size="6" direction="vertical">
         <prompt-version-client />
         <prompt-version-server />
       </t-space>

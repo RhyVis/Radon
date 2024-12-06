@@ -47,13 +47,13 @@ export const useVersionStore = defineStore("version", {
     badState: state => state.fetchState < 0,
   },
   actions: {
-    init() {
+    async init() {
       if (!get(useOnline())) {
         this.fetchState = FetchState.NOT_ONLINE;
         return;
       }
 
-      getClientCompileTimeRemote()
+      await getClientCompileTimeRemote()
         .then(time => (this.cCompileTimeR = time))
         .then(() => {
           if (this.cCompileTimeL != this.cCompileTimeR) {
@@ -66,13 +66,13 @@ export const useVersionStore = defineStore("version", {
           console.error(e);
           this.fetchState = FetchState.ERROR;
         });
-      getClientVersionRemote()
+      await getClientVersionRemote()
         .then(version => (this.cVersionR = version))
         .catch(e => {
           console.error(e);
           this.fetchState = FetchState.ERROR;
         });
-      getServerVersion()
+      await getServerVersion()
         .then(version => (this.sVersion = version))
         .catch(e => {
           console.error(e);
