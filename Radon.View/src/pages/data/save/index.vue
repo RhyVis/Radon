@@ -169,25 +169,9 @@ const moveToActions = () => {
             <t-button shape="rectangle" theme="warning" @click="handleQueryAll">
               <FileDownloadIcon />
             </t-button>
-            <template v-if="all.length > 0">
-              <t-popconfirm
-                :cancel-btn="{
-                  content: t('common.no'),
-                  theme: 'default',
-                }"
-                :confirm-btn="{
-                  content: t('common.yes'),
-                  theme: 'danger',
-                }"
-                :content="t('common.confirm')"
-                theme="danger"
-                @confirm="handleDelete"
-              >
-                <t-button shape="rectangle" theme="danger">
-                  <DeleteIcon />
-                </t-button>
-              </t-popconfirm>
-            </template>
+            <btn-confirm v-if="all.length > 0" shape="rectangle" theme="danger" @confirm="handleDelete">
+              <DeleteIcon />
+            </btn-confirm>
           </t-space>
         </t-loading>
       </t-form-item>
