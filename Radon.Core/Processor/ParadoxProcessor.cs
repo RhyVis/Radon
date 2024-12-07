@@ -39,6 +39,12 @@ public class ParadoxProcessor(TextStorageRepository repo) : IParadoxProcessor
         return parser.GetEventItems();
     }
 
+    public List<PdxLangEventItem> ParseEvent(Stream inputStream)
+    {
+        var parser = PdxLangParser.Create(inputStream);
+        return parser.GetEventItems();
+    }
+
     public List<PdxLangEventItem> ParseEventFromTextStorage(long textStorageId)
     {
         var content = repo.Select

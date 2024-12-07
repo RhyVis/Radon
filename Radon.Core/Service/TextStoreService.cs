@@ -10,18 +10,12 @@ namespace Radon.Core.Service;
 [ServiceTransient]
 public class TextStoreService(TextStorageRepository repo) : ITextStoreService
 {
-    public TextStoreRes HandleTextStoreQuery(TextStoreReq req)
+    public TextStoreRes Query(long id)
     {
-        return TextStoreRes.FromEntity(Query(req.Data.Id));
+        return TextStoreRes.FromEntity(QueryData(id));
     }
 
-    public StateRes HandleTextStoreUpdate(TextStoreReq req)
-    {
-        Update(req.Data.Id, req.Data.Text, req.Data.Note);
-        return new StateRes();
-    }
-
-    public UnsetRes GetAll()
+    public UnsetRes QueryAll()
     {
         var brief = repo.Select.ToList(e => new
         {
@@ -31,7 +25,19 @@ public class TextStoreService(TextStorageRepository repo) : ITextStoreService
         return new UnsetRes(brief);
     }
 
-    private EntryTextStorage Query(long id)
+    public StateRes Update(TextStoreReq req)
+    {
+        UpdateData(req.Data.Id, req.Data.Text, req.Data.Note);
+        return new StateRes();
+    }
+
+    public StateRes Delete(long id)
+    {
+        repo.Delete(id);
+        return new StateRes();
+    }
+
+    private EntryTextStorage QueryData(long id)
     {
         return repo.Get(id)
                ?? new EntryTextStorage
@@ -42,7 +48,7 @@ public class TextStoreService(TextStorageRepository repo) : ITextStoreService
                };
     }
 
-    private void Update(long id, string text, string note)
+    private void UpdateData(long id, string text, string note)
     {
         var entity = repo.Get(id);
         if (entity is not null)

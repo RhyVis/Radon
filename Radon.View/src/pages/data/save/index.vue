@@ -1,10 +1,15 @@
 <script lang="ts" setup>
-import { apiGet, apiPost, apiPutState } from "@/lib/common/apiMethods";
-import type { SaveBrief, SaveEntry } from "@/pages/data/save/scripts/define.ts";
+import type { SaveEntry } from "@/pages/data/save/scripts/define.ts";
+import {
+  textStoreDelete,
+  textStoreQuery,
+  textStoreQueryAll,
+  textStoreUpdate,
+} from "@/pages/data/save/scripts/function.ts";
 import { useSaveStore } from "@/pages/data/save/scripts/store";
 import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { DownloadIcon, FileDownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
+import { DeleteIcon, DownloadIcon, FileDownloadIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin, type TableProps, Tag } from "tdesign-vue-next";
 import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
@@ -18,15 +23,14 @@ const allColumns = ref<TableProps["columns"]>([
     colKey: "id",
     title: "ID",
     width: 75,
-    cell: (h, props) => h(Tag, { type: "primary" }, props.row.id),
+    cell: (h, props) => h(Tag, { type: "primary", class: ["r-no-select"] }, props.row.id),
   },
   {
     colKey: "note",
     title: t("col.note"),
   },
 ]);
-
-const baseEl = document.getElementById("base-content");
+const optEl = document.getElementById("text-store-opt-area");
 
 const handleStore = async () => {
   if (get(qText).length === 0) {
@@ -38,7 +42,7 @@ const handleStore = async () => {
   void MessagePlugin.warning(t("msg.warning"));
 
   try {
-    const b = await apiPutState("/api/text-store", store.query, { timeout: 30000 });
+    const b = await textStoreUpdate(store.query);
     if (b) {
       await MessagePlugin.success(t("msg.store"));
     } else {
@@ -51,11 +55,11 @@ const handleStore = async () => {
     set(loading, false);
   }
 };
-const handleSelect = async () => {
+const handleQuery = async () => {
   set(loading, true);
   void MessagePlugin.warning(t("msg.warning"));
   try {
-    const { data, code } = await apiPost<SaveEntry>("/api/text-store", store.query, { timeout: 30000 });
+    const { data, code } = await textStoreQuery(get(id));
 
     if (code < 0) {
       void MessagePlugin.warning(t("msg.selectNothing"));
@@ -78,11 +82,11 @@ const handleSelect = async () => {
     set(loading, false);
   }
 };
-const handleSelectAll = async () => {
+const handleQueryAll = async () => {
   set(loading, true);
   void MessagePlugin.warning(t("msg.warning"));
   try {
-    const { data, code } = await apiGet<SaveBrief[]>("/api/text-store", { timeout: 120000 });
+    const { data, code } = await textStoreQueryAll();
 
     if (code < 0) {
       void MessagePlugin.warning(t("msg.selectNothing"));
@@ -101,8 +105,36 @@ const handleSelectAll = async () => {
     set(loading, false);
   }
 };
+const handleDelete = async () => {
+  set(loading, true);
+  void MessagePlugin.warning(t("msg.warning"));
+  try {
+    const b = await textStoreDelete(get(id));
+    if (b) {
+      await MessagePlugin.success(t("msg.delete"));
+    } else {
+      await MessagePlugin.error(t("msg.deleteFail"));
+    }
+
+    const { data, code } = await textStoreQueryAll();
+
+    if (code < 0) {
+      void MessagePlugin.warning(t("msg.selectNothing"));
+      set(loading, false);
+      return;
+    }
+
+    data.sort((a, b) => a.id - b.id);
+    set(all, data);
+  } catch (e) {
+    console.error(e);
+    await MessagePlugin.error(t("msg.deleteFail"));
+  } finally {
+    set(loading, false);
+  }
+};
 const moveToActions = () => {
-  if (baseEl) baseEl.scrollIntoView({ behavior: "smooth" });
+  if (optEl) optEl.scrollIntoView({ behavior: "smooth" });
 };
 </script>
 
@@ -125,18 +157,37 @@ const moveToActions = () => {
       <t-form-item label="ID">
         <t-input-number v-model="id" :auto-width="true" :min="0" size="small" />
       </t-form-item>
-      <t-form-item :label="t('form.operation')">
+      <t-form-item id="text-store-opt-area" :label="t('form.operation')">
         <t-loading :loading="loading" size="small">
           <t-space :size="12">
             <t-button shape="rectangle" theme="primary" @click="handleStore">
               <UploadIcon />
             </t-button>
-            <t-button shape="rectangle" theme="primary" @click="handleSelect">
+            <t-button shape="rectangle" theme="primary" @click="handleQuery">
               <DownloadIcon />
             </t-button>
-            <t-button shape="rectangle" theme="warning" @click="handleSelectAll">
+            <t-button shape="rectangle" theme="warning" @click="handleQueryAll">
               <FileDownloadIcon />
             </t-button>
+            <template v-if="all.length > 0">
+              <t-popconfirm
+                :cancel-btn="{
+                  content: t('common.no'),
+                  theme: 'default',
+                }"
+                :confirm-btn="{
+                  content: t('common.yes'),
+                  theme: 'danger',
+                }"
+                :content="t('common.confirm')"
+                theme="danger"
+                @confirm="handleDelete"
+              >
+                <t-button shape="rectangle" theme="danger">
+                  <DeleteIcon />
+                </t-button>
+              </t-popconfirm>
+            </template>
           </t-space>
         </t-loading>
       </t-form-item>
@@ -163,7 +214,7 @@ form:
   note: "Store Note"
   read: "Read Content"
   readNote: "Read Note"
-  operation: "Data Operation"
+  operation: "Operation"
   tool: "Tool"
 col:
   text: "Text"
@@ -173,9 +224,11 @@ msg:
   id: "ID cannot be less than 0"
   store: "Store Success"
   storeFail: "Store Fail"
-  select: "Select Success"
-  selectFail: "Select Fail"
-  selectNothing: "Select Nothing"
+  select: "Query Success"
+  selectFail: "Query Fail"
+  selectNothing: "Query Nothing"
+  delete: "Delete Success"
+  deleteFail: "Delete Fail"
   warning: "This may take a while, please wait patiently."
 </i18n>
 
@@ -197,8 +250,10 @@ msg:
   id: "ID不可小于0"
   store: "存储成功"
   storeFail: "存储失败"
-  select: "选择成功"
-  selectFail: "选择失败"
-  selectNothing: "选择无内容"
+  select: "查询成功"
+  selectFail: "查询失败"
+  selectNothing: "查询无内容"
+  delete: "删除成功"
+  deleteFail: "删除失败"
   warning: "这可能需要一段时间，请耐心等待。"
 </i18n>

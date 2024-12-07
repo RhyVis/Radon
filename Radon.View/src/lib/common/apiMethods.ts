@@ -9,14 +9,15 @@ class Req {
   code: number;
   meta: string;
   data: ReqData;
-  constructor(data: string | object | undefined) {
+
+  constructor(data: ReqData | undefined) {
     this.code = 0;
     this.meta = "";
     this.data = data ?? {};
   }
 }
 
-type ReqData = string | object;
+type ReqData = string | number | object | unknown;
 
 /**
  * @description Refer to ApiResBase defined in core

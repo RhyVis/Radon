@@ -52,10 +52,12 @@ const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
 const [menuReplaceAddVisible, setMenuReplaceAddVisible] = useToggle(false);
 const [idFetchLoading, setIdFetchLoading] = useToggle(false);
+const [fileUploading, setFileUploading] = useToggle(false);
 const { initialized, replacer, addReplacerKey, addReplacerValue, requestTextStorageId } = storeToRefs(store);
 const { authPassed } = storeToRefs(global);
 const { t } = useI18n();
 const dark = useDark();
+const parseOption = ref("tree");
 const treeVal = ref<TreeNodeValue[]>([]);
 const treeSel = computed(() => {
   const val = treeVal.value[0];
@@ -133,19 +135,44 @@ const requestItemById = async () => {
 };
 const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> => {
   try {
-    const { data } = await apiPostWithFile<PdxLangItem[]>(
-      "/api/pdx/parse/lang",
-      new Blob([file.raw!], { type: file.type }),
-    );
+    setFileUploading(true);
+    switch (get(parseOption)) {
+      case "tree": {
+        const { data } = await apiPostWithFile<PdxLangItem[]>(
+          "/api/pdx/parse/lang",
+          new Blob([file.raw!], { type: file.type }),
+        );
 
-    parse(data);
-    set(eventResult, []);
+        parse(data);
+        set(eventResult, []);
+
+        break;
+      }
+      case "event": {
+        const { data } = await apiPostWithFile<PdxLangEventItem[]>(
+          "/api/pdx/parse/event",
+          new Blob([file.raw!], { type: file.type }),
+        );
+
+        set(eventResult, data);
+        set(resultTree, []);
+
+        break;
+      }
+      default: {
+        void MessagePlugin.warning("Not Implemented");
+        break;
+      }
+    }
+
     setMenuUploadVisible(false);
 
     return { status: "success", response: { success: true } };
   } catch (e) {
     console.error(e);
     return { status: "fail", error: "x", response: {} };
+  } finally {
+    setFileUploading(false);
   }
 };
 const handleStickyTool = (context: { e: MouseEvent; item: TdStickyItemProps }) => {
@@ -379,6 +406,11 @@ onMounted(() => {
     <t-dialog v-model:visible="menuUploadVisible" :footer="false" :header="t('upload.title')" width="85%">
       <div class="w-full">
         <t-space v-if="!idFetchLoading" align="baseline" direction="vertical">
+          <t-title level="h6">{{ t("upload.s1") }}</t-title>
+          <t-radio-group v-model="parseOption" variant="default-filled">
+            <t-radio-button label="树" value="tree" />
+            <t-radio-button label="事件" value="event" />
+          </t-radio-group>
           <t-upload
             :placeholder="t('upload.placeholder')"
             :request-method="requestMethod"
@@ -390,8 +422,9 @@ onMounted(() => {
             </t-button>
           </t-upload>
         </t-space>
-        <template v-if="authPassed">
+        <template v-if="authPassed && !fileUploading">
           <t-divider v-if="!idFetchLoading" />
+          <t-title level="h6">{{ t("upload.s2") }}</t-title>
           <t-form label-align="top">
             <t-form-item label="ID">
               <t-input v-model="requestTextStorageId" :auto-width="true" />
@@ -508,7 +541,9 @@ empty:
   title: No Content
   description: Click the upload button on the top right to parse the content
 upload:
-  title: Upload
+  title: Upload to Parse
+  s1: File Upload
+  s2: Database
   placeholder: Paradox Yaml Lang
   tips: Support YAML, do not upload the file repeatedly, your browser can't handle it
   dbTree: Parse Tree from Database
@@ -533,7 +568,9 @@ empty:
   title: 无内容
   description: 点击右上角上传按钮解析内容
 upload:
-  title: 上传
+  title: 上传解析源
+  s1: 文件上传
+  s2: 数据库
   placeholder: Paradox Yaml Lang
   tips: 支持 YAML，不要重复上传文件，你的浏览器受不了
   dbTree: 从数据库解析树

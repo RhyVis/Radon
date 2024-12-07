@@ -4,6 +4,9 @@
     description: "基于 Vue 3.0 的 Web 应用",
   },
   common: {
+    yes: "是",
+    no: "否",
+    confirm: "确认操作吗？",
     fetchError: "获取数据失败",
     serverError: "服务器错误",
     networkError: "网络错误",

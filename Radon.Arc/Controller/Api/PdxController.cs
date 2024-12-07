@@ -15,11 +15,9 @@ namespace Radon.Arc.Controller.Api;
 public class PdxController(IParadoxProcessor processor, IPdxService service, IMemoryCache cache) : ControllerBase
 {
     [HttpGet("test")]
-    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
-    public IActionResult GetTest()
+    public IActionResult Test()
     {
-        var test = PdxLangParser.Create(["00_TESTER.LINE_EOF_O:0 \"Testing §rParser§! Item\""]);
-        return Ok(new UnsetRes(test.GetParsedItems()));
+        return Ok(PlainNumberRes.Of(0));
     }
 
     [HttpPost("parse/lang")]
@@ -37,6 +35,31 @@ public class PdxController(IParadoxProcessor processor, IPdxService service, IMe
 
         using var stream = file.OpenReadStream();
         var ls = processor.ParseLang(stream);
+
+        return Ok(new UnsetRes(ls));
+    }
+
+    [HttpPost("parse/event")]
+    [ProducesResponseType<UnsetRes>(StatusCodes.Status200OK)]
+    public IActionResult ParseEvent([FromForm] IFormFile? file)
+    {
+        if (file is null || file.Length is 0)
+        {
+            var dummy = new List<PdxLangEventItem>
+            {
+                new()
+                {
+                    Key = "dummy",
+                    Name = "dummy",
+                    Desc = "dummy",
+                    Options = []
+                }
+            };
+            return Ok(new UnsetRes(dummy));
+        }
+
+        using var stream = file.OpenReadStream();
+        var ls = processor.ParseEvent(stream);
 
         return Ok(new UnsetRes(ls));
     }

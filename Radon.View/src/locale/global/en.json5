@@ -4,6 +4,9 @@
     description: "A Vue 3.0 based web application",
   },
   common: {
+    yes: "Yes",
+    no: "No",
+    confirm: "Confirm operation?",
     fetchError: "Failed to fetch data",
     serverError: "Server Error",
     networkError: "Network Error",

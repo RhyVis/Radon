@@ -12,5 +12,7 @@ public interface IParadoxProcessor
 
     List<PdxLangEventItem> ParseEvent(string paradoxYaml);
 
+    List<PdxLangEventItem> ParseEvent(Stream inputStream);
+
     List<PdxLangEventItem> ParseEventFromTextStorage(long textStorageId);
 }
