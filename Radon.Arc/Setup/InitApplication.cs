@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.FileProviders;
+using NLog;
 using Radon.Arc.Middleware;
 using Radon.Common.Core.DI;
 using Radon.Common.Core.Extension;
@@ -19,7 +20,15 @@ public static class InitApplication
 
         app.UseMiddleware<ExceptionFilterMiddleware>();
         app.UseMiddleware<CacheControlMiddleware>();
+
         app.UseStaticFiles();
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider =
+                new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "appStatic")),
+            RequestPath = new PathString("/static")
+        });
+
         app.UseRouting();
         app.MapControllers();
 

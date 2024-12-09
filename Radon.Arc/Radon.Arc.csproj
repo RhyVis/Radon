@@ -14,8 +14,8 @@
 
     <ItemGroup>
         <None Remove="Properties\launchSettings.json"/>
-        <None Update="appResource\.gitkeep">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <None Update="appStatic\.gitkeep">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 

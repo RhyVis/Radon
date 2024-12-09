@@ -58,10 +58,11 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{html,wasm,js,css,ico,png,jpg,svg,ttf,otf,woff,woff2}"],
         navigateFallback: "index.html",
-        navigateFallbackDenylist: [/^\/api\//, /^\/dev_local/],
+        navigateFallbackDenylist: [/^\/api\//, /^\/dev_local/, /^\/static/],
         runtimeCaching: [
           { urlPattern: /^\/api\//, handler: "NetworkOnly" },
           { urlPattern: /^\/dev_local/, handler: "NetworkOnly" },
+          { urlPattern: /^\/static/, handler: "StaleWhileRevalidate" },
           {
             urlPattern: /\.(?:ttf|otf|woff|woff2)$/,
             handler: "StaleWhileRevalidate",
