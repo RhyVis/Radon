@@ -33,15 +33,17 @@ const icon = computed(() => {
 <template>
   <div :id="id" class="r-ls-div">
     <t-loading :delay="100" :loading="!completed" size="small">
-      <t-tag :theme="theme" size="small" variant="light">
-        <template #icon>
-          <t-icon :name="icon" />
-        </template>
-        <span class="r-no-select">{{ tag }}</span>
-        <template v-if="hasError">
-          <RefreshIcon @click="restore" />
-        </template>
-      </t-tag>
+      <t-space :size="4">
+        <t-tag :theme="theme" variant="light">
+          <template #icon>
+            <t-icon :name="icon" />
+          </template>
+          <span class="r-no-select">{{ tag }}</span>
+        </t-tag>
+        <t-button v-if="hasError" size="small" theme="danger" variant="dashed" @click="restore">
+          <RefreshIcon />
+        </t-button>
+      </t-space>
     </t-loading>
   </div>
 </template>

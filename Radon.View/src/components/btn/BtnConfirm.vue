@@ -19,7 +19,10 @@ const {
   placement?: PopconfirmProps["placement"];
   showArrow?: PopconfirmProps["showArrow"];
 }>();
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits<{
+  confirm: [];
+  cancel: [];
+}>();
 </script>
 
 <template>
