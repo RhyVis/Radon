@@ -31,7 +31,7 @@ const icon = computed(() => {
 </script>
 
 <template>
-  <div :id="id" class="r-ls-div">
+  <div :id="id" class="w-fit">
     <t-loading :delay="100" :loading="!completed" size="small">
       <t-space :size="4">
         <t-tag :theme="theme" variant="light">
@@ -47,9 +47,3 @@ const icon = computed(() => {
     </t-loading>
   </div>
 </template>
-
-<style scoped>
-.r-ls-div {
-  width: fit-content;
-}
-</style>
