@@ -108,6 +108,7 @@ const requestEventById = async () => {
     setIdFetchLoading(true);
     const d = await getPdxLangParsedEventItemById(get(requestTextStorageId));
     set(eventResult, d);
+    set(eventSelId, 0);
     set(resultTree, []);
     setMenuUploadVisible(false);
   } catch (e) {
@@ -155,6 +156,7 @@ const requestMethod = async (file: UploadFile): Promise<RequestMethodResponse> =
         );
 
         set(eventResult, data);
+        set(eventSelId, 0);
         set(resultTree, []);
 
         break;
@@ -304,7 +306,7 @@ onMounted(() => {
             </t-space>
           </t-space>
           <template #actions>
-            <span class="r-no-select">{{ eventSelId }}</span>
+            <span class="r-no-select font-mono">{{ eventSelId }}</span>
           </template>
         </t-card>
       </t-space>
