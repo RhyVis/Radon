@@ -1,5 +1,5 @@
 ﻿import { apiGet } from "@/lib/common/apiMethods.ts";
-import type { PdxLangEventItem, PdxLangItem, PdxReplacerEntry } from "@/pages/util/pdx-parser/scripts/define.ts";
+import type { PdxLangEventItem, PdxLangItem, PdxReplacerEntry } from "@/pages/with/pdx-parser/scripts/define.ts";
 import type { TreeProps } from "tdesign-vue-next";
 
 export const getPdxLangParsedItemById = async (id: number) => {

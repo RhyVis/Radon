@@ -176,17 +176,6 @@ export const utilRecords: RouteRecordRaw[] = [
       tKey: "route.util.base64",
     },
   },
-  {
-    path: "/pdx",
-    name: "PDX Parser",
-    component: () => import("@/pages/util/pdx-parser/index.vue"),
-    meta: {
-      title: "PDX Parser",
-      icon: "ruler",
-      tKey: "route.util.pdxParser",
-      online: true,
-    },
-  },
 ];
 
 export const markdownRecords: RouteRecordRaw[] = [
@@ -234,6 +223,29 @@ export const markdownRecords: RouteRecordRaw[] = [
             },
           },
         ],
+      },
+    ],
+  },
+];
+
+export const pdxParserRecords: RouteRecordRaw[] = [
+  {
+    path: "/pdx-parser",
+    children: [
+      {
+        path: "",
+        name: "PdxParser",
+        component: () => import("@/pages/with/pdx-parser/index.vue"),
+      },
+      {
+        path: "lang-tree",
+        name: "LangTree",
+        component: () => import("@/pages/with/pdx-parser/lang-tree/index.vue"),
+      },
+      {
+        path: "lang-event",
+        name: "LangEvent",
+        component: () => import("@/pages/with/pdx-parser/lang-event/index.vue"),
       },
     ],
   },

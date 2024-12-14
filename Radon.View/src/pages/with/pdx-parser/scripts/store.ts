@@ -1,28 +1,28 @@
-﻿import { apiGetStr, apiPutState } from "@/lib/common/apiMethods";
+﻿import { apiGetStr, apiPutState } from "@/lib/common/apiMethods.ts";
 import i18n from "@/locale";
-import type { PdxReplacerEntry } from "@/pages/util/pdx-parser/scripts/define";
+import type { PdxReplacerEntry } from "@/pages/with/pdx-parser/scripts/define.ts";
 import { defineStore } from "pinia";
 import { MessagePlugin } from "tdesign-vue-next";
 
 const { t } = i18n.global;
 
 interface PdxStore {
-  initialized: boolean;
   replacer: PdxReplacerEntry;
   addReplacerKey: string;
   addReplacerValue: string;
   requestTextStorageId: number;
+  eventSelectId: number;
 }
 
 export const usePdxStore = defineStore("pdx-parser", {
   state: (): PdxStore => ({
-    initialized: false,
     replacer: {
       DEFAULT: "默认",
     },
     addReplacerKey: "",
     addReplacerValue: "",
     requestTextStorageId: 0,
+    eventSelectId: 0,
   }),
   actions: {
     updateReplacer() {

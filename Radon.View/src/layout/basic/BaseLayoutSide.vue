@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import ProjectIcon from "@/assets/icon.svg";
 import SideMenuGroup from "@/layout/particial/SideMenuGroup.vue";
 import { dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { useGlobalStore } from "@/store/global";
 import { set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { CloseIcon, File1Icon, FileUnknownIcon, HomeIcon } from "tdesign-icons-vue-next";
+import { CloseIcon, CollectionIcon, File1Icon, FileUnknownIcon, HomeIcon } from "tdesign-icons-vue-next";
 import type { MenuRoute } from "tdesign-vue-next";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -20,16 +20,16 @@ onMounted(handleClose);
 
 <template>
   <t-drawer
-    class="r-ct-sd r-drawer-no-padding"
     v-model:visible="asideVisible"
+    :footer="false"
+    class="r-ct-sd r-drawer-no-padding"
     placement="left"
     size="232px"
-    :footer="false"
   >
-    <t-menu class="r-ct-sd-ht" v-model="menuActive" :expand-mutex="true">
+    <t-menu v-model="menuActive" :expand-mutex="true" class="r-ct-sd-ht">
       <!-- Head -->
       <template #logo>
-        <t-image class="r-ct-icon" shape="round" :src="ProjectIcon" alt="Radon" />
+        <t-image :src="ProjectIcon" alt="Radon" class="r-ct-icon" shape="round" />
         <span class="r-ct-sd-tt">Radon</span>
       </template>
       <t-menu-item :to="'/' as MenuRoute" value="home" @click="handleClose">
@@ -47,15 +47,22 @@ onMounted(handleClose);
       </t-menu-item>
 
       <!--Data-->
-      <SideMenuGroup name="Data" icon-name="data-base" name-key="route.data.title" :records="dataRecords" />
+      <SideMenuGroup :records="dataRecords" icon-name="data-base" name="Data" name-key="route.data.title" />
       <!--Myst-->
-      <SideMenuGroup name="Myst" icon-name="relation" name-key="route.myst.title" :records="mystRecords" />
+      <SideMenuGroup :records="mystRecords" icon-name="relation" name="Myst" name-key="route.myst.title" />
       <!--Draw-->
-      <SideMenuGroup name="Draw" icon-name="pen-brush" name-key="route.draw.title" :records="drawRecords" />
+      <SideMenuGroup :records="drawRecords" icon-name="pen-brush" name="Draw" name-key="route.draw.title" />
       <!--Math-->
-      <SideMenuGroup name="Math" icon-name="numbers-0-1" name-key="route.math.title" :records="mathRecords" />
+      <SideMenuGroup :records="mathRecords" icon-name="numbers-0-1" name="Math" name-key="route.math.title" />
       <!--Util-->
-      <SideMenuGroup name="Util" icon-name="tools" name-key="route.util.title" :records="utilRecords" />
+      <SideMenuGroup :records="utilRecords" icon-name="tools" name="Util" name-key="route.util.title">
+        <t-menu-item :to="'/pdx-parser' as MenuRoute" value="pdx-parser" @click="handleClose">
+          <template #icon>
+            <CollectionIcon />
+          </template>
+          <span>{{ t("route.util.pdxParser") }}</span>
+        </t-menu-item>
+      </SideMenuGroup>
 
       <t-submenu value="extra">
         <template #icon>
@@ -79,7 +86,7 @@ onMounted(handleClose);
       </t-submenu>
 
       <template #operations>
-        <t-button theme="default" shape="circle" variant="outline" @click="handleClose">
+        <t-button shape="circle" theme="default" variant="outline" @click="handleClose">
           <CloseIcon />
         </t-button>
       </template>
@@ -87,7 +94,7 @@ onMounted(handleClose);
   </t-drawer>
 </template>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 @import "@/assets/style/mixin";
 
 :global(.r-drawer-no-padding .t-drawer__body) {
@@ -98,10 +105,12 @@ onMounted(handleClose);
   .r-ct-sd-ht {
     height: 100vh;
   }
+
   .r-ct-icon {
     width: 30px;
     height: 30px;
   }
+
   .r-ct-sd-tt {
     font-size: larger;
     font-weight: bold;

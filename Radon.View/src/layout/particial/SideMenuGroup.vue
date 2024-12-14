@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+﻿<script lang="ts" setup>
 import SideMenuEntry from "@/layout/particial/SideMenuEntry.vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -23,7 +23,8 @@ const display = computed(() => (nameKey ? t(nameKey) : name));
     <template #title>
       <span>{{ display }}</span>
     </template>
-    <SideMenuEntry v-for="(record, index) in records" :record="record" :key="index" />
+    <SideMenuEntry v-for="(record, index) in records" :key="index" :record="record" />
+    <slot />
   </t-submenu>
 </template>
 

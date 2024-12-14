@@ -7,6 +7,7 @@ import {
   markdownRecords,
   mathRecords,
   mystRecords,
+  pdxParserRecords,
   utilRecords,
 } from "@/router/records";
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
@@ -24,6 +25,7 @@ const records: RouteRecordRaw[] = [
 
   // Complex
   ...markdownRecords,
+  ...pdxParserRecords,
 
   // Simple
   ...baseRecords,
@@ -32,7 +34,7 @@ const records: RouteRecordRaw[] = [
   ...drawRecords,
   ...mathRecords,
   ...utilRecords,
-  
+
   // Err Handle
   {
     path: "/error",
