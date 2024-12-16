@@ -1,5 +1,6 @@
 ﻿<script lang="ts" setup>
 import SideMenuEntry from "@/layout/particial/SideMenuEntry.vue";
+import SideMenuSub from "@/layout/particial/SideMenuSub.vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { RouteRecordRaw } from "vue-router";
@@ -12,20 +13,16 @@ const { name, nameKey, iconName, records } = defineProps<{
 }>();
 
 const { t } = useI18n();
+const value = computed(() => name.replace(/\s+/g, "").toLowerCase());
 const display = computed(() => (nameKey ? t(nameKey) : name));
 </script>
 
 <template>
-  <t-submenu :value="name.trim().toLowerCase()">
-    <template #icon>
-      <t-icon :name="iconName" />
-    </template>
+  <SideMenuSub :icon="iconName" :value="value">
     <template #title>
       <span>{{ display }}</span>
     </template>
     <SideMenuEntry v-for="(record, index) in records" :key="index" :record="record" />
     <slot />
-  </t-submenu>
+  </SideMenuSub>
 </template>
-
-<style scoped></style>
