@@ -34,7 +34,7 @@ export const buildPdxLangTree = (data: PdxLangItem[]) => {
   return root;
 };
 
-export const sepTextContent = (raw: string) => raw.replace(/(\\n)+|(\n)+/gi, "%!%").split("%!%");
+export const sepTextContent = (raw: string) => raw.replace(/(\\n)+|(\n)+/g, "%!%").split("%!%");
 
 export const renderPdxColor = (raw: string, replacer: PdxReplacerEntry, dark: boolean) => {
   const darkStr = dark ? "-dark" : "";
@@ -42,8 +42,8 @@ export const renderPdxColor = (raw: string, replacer: PdxReplacerEntry, dark: bo
     .replace(/\\"/g, '"')
     .replace(/§([beghlmprstwy])/gi, (_, p1) => `<span class='r-pdx-c${darkStr}-${p1.toLowerCase()}'>`)
     .replace(/§!/g, "</span>")
-    .replace(/\$(\w+)\$/gi, (_, key) => `<span style="font-weight: bold">${replacer[key] ?? "(" + key + ")"}</span>`)
-    .replace(/\[(.+?)]/gi, (_, key) => `<span>${replacer[key] ?? "[" + key + "]"}</span>`);
+    .replace(/\$(\w+)\$/g, (_, key) => `<span style="font-weight: bold">${replacer[key] ?? "(" + key + ")"}</span>`)
+    .replace(/\[(.+?)]/g, (_, key) => `<span>${replacer[key] ?? "[" + key + "]"}</span>`);
 };
 
 export const replacePdxAlias = (raw: string, replacer: PdxReplacerEntry) => {
@@ -51,6 +51,6 @@ export const replacePdxAlias = (raw: string, replacer: PdxReplacerEntry) => {
     .replace(/\\"/g, '"')
     .replace(/§([beghlmprstwy])/gi, "")
     .replace(/§!/g, "")
-    .replace(/\$(\w+)\$/gi, (_, key) => `${replacer[key] ?? "(" + key + ")"}`)
-    .replace(/\[(.+?)]/gi, (_, key) => `${replacer[key] ?? "[" + key + "]"}`);
+    .replace(/\$(\w+)\$/g, (_, key) => `${replacer[key] ?? "(" + key + ")"}`)
+    .replace(/\[(.+?)]/g, (_, key) => `${replacer[key] ?? "[" + key + "]"}`);
 };

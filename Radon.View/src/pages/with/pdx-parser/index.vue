@@ -4,9 +4,9 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 const { t } = useI18n();
-const router = useRouter();
-const toTree = () => router.push("pdx-parser/lang-tree");
-const toEvent = () => router.push("pdx-parser/lang-event");
+const { push } = useRouter();
+const toTree = () => push("pdx-parser/lang-tree");
+const toEvent = () => push("pdx-parser/lang-event");
 </script>
 
 <template>

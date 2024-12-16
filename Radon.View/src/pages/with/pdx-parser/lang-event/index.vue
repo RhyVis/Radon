@@ -14,13 +14,13 @@ import { HomeIcon, InfoCircleIcon, Move1Icon, RefreshIcon, UploadIcon } from "td
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-const eventDrawerVisible = ref(false);
+const { t } = useI18n();
+const { eventSelectId } = storeToRefs(usePdxStore());
 const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
 const [stickyToolOnLeft, setStickyToolOnLeft] = useToggle(false);
-const { eventSelectId } = storeToRefs(usePdxStore());
-const { t } = useI18n();
 
+const eventDrawerVisible = ref(false);
 const eventResult = ref<PdxLangEventItem[]>([]);
 const eventSel = computed(() => {
   const findNonEmptyName = (id: number): string => {
@@ -36,14 +36,14 @@ const eventSel = computed(() => {
     name: event?.name.length > 0 ? event.name : findNonEmptyName(id - 1),
   };
 });
-const eventMode = computed(() => eventResult.value.length > 0);
+const eventExist = computed(() => eventResult.value.length > 0);
 
 const { textRender, textAlias } = usePdxTextRender();
 </script>
 
 <template>
   <content-layout :title="t('title')">
-    <div v-if="eventMode" class="mb-20 w-full">
+    <div v-if="eventExist" class="mb-20 w-full">
       <t-space class="w-full" direction="vertical">
         <t-card
           v-if="eventSel"
@@ -70,7 +70,7 @@ const { textRender, textAlias } = usePdxTextRender();
               >
                 <t-tooltip :content="opt.tooltip.length > 0 ? opt.tooltip : undefined">
                   <t-space v-if="!opt.showResp" :size="4" class="text-center">
-                    <InfoCircleIcon v-if="opt.resp.length > 0" size="16px" style="transform: translateY(-1px)" />
+                    <InfoCircleIcon v-if="opt.resp.length > 0" class="-translate-y-px" size="16px" />
                     <t-text>{{ textAlias(opt.name) }}</t-text>
                   </t-space>
                   <div
@@ -136,14 +136,14 @@ const { textRender, textAlias } = usePdxTextRender();
 </template>
 
 <i18n locale="en">
-title: PDX Parser
+title: PDX Event Parser
 empty:
   title: No Content
   description: Click the upload button on the top right to parse the content
 </i18n>
 
 <i18n locale="zh-CN">
-title: PDX 解析器
+title: PDX 事件解析器
 empty:
   title: 无内容
   description: 点击右上角上传按钮解析内容

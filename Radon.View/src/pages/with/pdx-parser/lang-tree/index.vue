@@ -16,10 +16,12 @@ const { t } = useI18n();
 const [treeDrawerVisible, setTreeDrawerVisible] = useToggle(false);
 const [menuUploadVisible, setMenuUploadVisible] = useToggle(false);
 const [menuReplaceVisible, setMenuReplaceVisible] = useToggle(false);
+
 const narrow = useNarrow();
-const treeVal = ref<TreeNodeValue[]>([]);
+const treeResult = shallowRef<TreeProps["data"]>([]);
+const treeActive = ref<TreeNodeValue[]>([]);
 const treeSel = computed(() => {
-  const val = treeVal.value[0];
+  const val = treeActive.value[0];
   if (val) {
     return sepTextContent(val.toString());
   } else {
@@ -28,15 +30,14 @@ const treeSel = computed(() => {
 });
 const sideWidth = computed(() => (get(narrow) ? "0" : "245px"));
 
-const treeResult = shallowRef<TreeProps["data"]>([]);
-const treeMode = computed(() => treeResult.value?.length ?? -1 > 0);
+const treeExist = computed(() => treeResult.value?.length ?? -1 > 0);
 
 const { textRender } = usePdxTextRender();
 </script>
 
 <template>
   <content-layout :title="t('title')">
-    <div v-if="treeMode" class="r-pdx-container">
+    <div v-if="treeExist" class="r-pdx-container">
       <t-layout class="r-pdx-layout">
         <t-content>
           <t-card class="r-pdx-card">
@@ -48,7 +49,7 @@ const { textRender } = usePdxTextRender();
         <t-aside :width="sideWidth">
           <t-card :header-bordered="true" title="Tree">
             <t-tree
-              v-model:actived="treeVal"
+              v-model:actived="treeActive"
               :activable="true"
               :data="treeResult"
               :hover="true"
@@ -83,7 +84,7 @@ const { textRender } = usePdxTextRender();
     </template>
 
     <!-- Tree Drawer (Only when narrow) -->
-    <PpDrawerTree v-model:visible="treeDrawerVisible" :result-tree="treeResult" :tree-val="treeVal" />
+    <PpDrawerTree v-model:visible="treeDrawerVisible" :result-tree="treeResult" :tree-val="treeActive" />
 
     <!-- Upload Dialog -->
     <PdxParserUploadDialog
@@ -123,14 +124,14 @@ const { textRender } = usePdxTextRender();
 </style>
 
 <i18n locale="en">
-title: PDX Parser
+title: PDX Tree Parser
 empty:
   title: No Content
   description: Click the upload button on the top right to parse the content
 </i18n>
 
 <i18n locale="zh-CN">
-title: PDX 解析器
+title: PDX 树解析器
 empty:
   title: 无内容
   description: 点击右上角上传按钮解析内容
