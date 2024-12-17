@@ -1,4 +1,5 @@
 ﻿using FreeSql.DataAnnotations;
+using JetBrains.Annotations;
 using Radon.Data.Entity;
 
 namespace Radon.Core.Data.Entity;
@@ -23,18 +24,6 @@ public class MdIndex : BaseEntity
     [Column(ServerTime = DateTimeKind.Utc)]
     public DateTime UpdateTime { get; set; }
 
-    public MdIndexDto ToDto()
-    {
-        return new MdIndexDto
-        {
-            Path = Path,
-            Name = Name,
-            Desc = Desc,
-            CreateTime = CreateTime,
-            UpdateTime = UpdateTime
-        };
-    }
-
     public MdIndexFullDto ToFullDto()
     {
         return new MdIndexFullDto
@@ -49,6 +38,7 @@ public class MdIndex : BaseEntity
     }
 }
 
+[UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
 public class MdIndexDto
 {
     public Guid Path { get; set; }
@@ -58,6 +48,7 @@ public class MdIndexDto
     public DateTime UpdateTime { get; set; }
 }
 
+[UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
 public class MdIndexFullDto : MdIndexDto
 {
     public string Content { get; set; } = string.Empty;

@@ -62,7 +62,7 @@ public class MarkdownService(MdIndexRepository repo) : IMarkdownService
 
     public List<MdIndexDto> ListIndex()
     {
-        return repo.Select.ToList().Select(x => x.ToDto()).ToList();
+        return repo.Select.ToList<MdIndexDto>();
     }
 
     private (string, string, string) PathRead(string path)
