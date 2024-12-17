@@ -6,16 +6,16 @@ import { useRouteParams } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { storeToRefs } from "pinia";
-import { ArrowLeftIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { useNarrow } from "@/composable/useNarrow.ts";
+import ArchiveBackPage from "@/pages/with/archive/comps/ArchiveBackPage.vue";
 
 const { t } = useI18n();
-const router = useRouter();
+const { push } = useRouter();
 const dark = useDark();
 const path = useRouteParams("p");
 const name = ref("");
@@ -24,19 +24,28 @@ const content = ref("");
 const { localeStandard } = storeToRefs(useGlobalStore());
 const [updating, setUpdating] = useToggle(false);
 const [changed, setChanged] = useToggle(false);
+const [loading, setLoading] = useToggle(false);
 const theme = computed(() => (get(dark) ? "dark" : "light"));
 const tooNarrow = useNarrow();
 
 const updateContent = async (path: string) => {
-  const check = await checkMdRecord(path);
-  if (check.name.length === 0) {
+  setLoading(true);
+  try {
+    const check = await checkMdRecord(path);
+    if (check.name.length === 0) {
+      void MessagePlugin.error(t("msg.noSuchRecord"));
+      await push("/archive");
+    } else {
+      set(name, check.name);
+      set(desc, check.desc);
+      set(content, check.content);
+      useTitle(check.name);
+    }
+  } catch {
     void MessagePlugin.error(t("msg.noSuchRecord"));
-    await router.push("/archive");
-  } else {
-    set(name, check.name);
-    set(desc, check.desc);
-    set(content, check.content);
-    useTitle(check.name);
+    await push("/archive");
+  } finally {
+    setLoading(false);
   }
 };
 const handleUpdate = () => {
@@ -118,7 +127,7 @@ watch(
 <template>
   <content-layout :subtitle="desc" :title="name">
     <div>
-      <div v-if="content.length === 0" class="mt-6">
+      <div class="mt-6" v-if="loading">
         <t-empty :title="t('common.loading')" />
       </div>
       <MdEditor
@@ -137,9 +146,7 @@ watch(
     </div>
 
     <template #actions>
-      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="router.push('/archive')">
-        <ArrowLeftIcon />
-      </t-button>
+      <ArchiveBackPage />
     </template>
   </content-layout>
 </template>
@@ -157,6 +164,7 @@ watch(
 </style>
 
 <i18n locale="en">
+noContent: No content
 msg:
   updateSuccess: Update success
   updateFailed: Update failed
@@ -165,6 +173,7 @@ msg:
 </i18n>
 
 <i18n locale="zh-CN">
+noContent: 无内容
 msg:
   updateSuccess: 更新成功
   updateFailed: 更新失败

@@ -8,14 +8,13 @@ import { useGlobalStore } from "@/store/global";
 import { set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { CloseIcon } from "tdesign-icons-vue-next";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const { push } = useRouter();
-const { asideVisible, authShow } = storeToRefs(useGlobalStore());
-const menuActive = ref("home");
+const { sideVisible, sideValue, authShow } = storeToRefs(useGlobalStore());
 const handleClose = (url?: string) => {
-  set(asideVisible, false);
+  set(sideVisible, false);
   if (url) push(url);
 };
 
@@ -24,13 +23,13 @@ onMounted(handleClose);
 
 <template>
   <t-drawer
-    v-model:visible="asideVisible"
+    v-model:visible="sideVisible"
     :footer="false"
     class="r-ct-sd r-drawer-no-padding"
     placement="left"
     size="232px"
   >
-    <t-menu v-model="menuActive" :expand-mutex="true" class="r-ct-sd-ht">
+    <t-menu v-model="sideValue" :expand-mutex="true" class="r-ct-sd-ht">
       <!-- Head -->
       <template #logo>
         <t-image :src="ProjectIcon" alt="Radon" class="r-ct-icon" shape="round" />

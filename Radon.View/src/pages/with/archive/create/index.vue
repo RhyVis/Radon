@@ -6,22 +6,22 @@ import { useRouteQuery } from "@vueuse/router";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { storeToRefs } from "pinia";
-import { ArrowLeftIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import NotificationPlugin from "tdesign-vue-next/es/notification/plugin";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { useNarrow } from "@/composable/useNarrow.ts";
+import ArchiveBackPage from "@/pages/with/archive/comps/ArchiveBackPage.vue";
 
 const dark = useDark();
-const router = useRouter();
 const createName = useRouteQuery("name");
 const createDesc = useRouteQuery("desc");
 const content = ref("");
 const [updating, setUpdating] = useToggle(false);
 const [complete, setComplete] = useToggle(false);
 const { localeStandard } = storeToRefs(useGlobalStore());
+const { push } = useRouter();
 const { t } = useI18n();
 const theme = computed(() => (get(dark) ? "dark" : "light"));
 const tooNarrow = useNarrow();
@@ -35,7 +35,7 @@ const handleCreate = async () => {
   if (path.length > 0) {
     setComplete(true);
     void MessagePlugin.success(t("msg.success"));
-    await router.push(`/archive/${path}/edit`);
+    await push(`/archive/${path}/edit`);
   } else {
     void MessagePlugin.error(t("msg.failed"));
   }
@@ -93,7 +93,7 @@ onMounted(() => {
   ) {
     MessagePlugin.warning(t("msg.invalidCreate"));
     setComplete(true);
-    router.push("/archive");
+    push("/archive");
   } else {
     useTitle(get(createName) as string);
   }
@@ -115,9 +115,7 @@ onMounted(() => {
     />
 
     <template #actions>
-      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="router.push('/archive')">
-        <ArrowLeftIcon />
-      </t-button>
+      <ArchiveBackPage />
     </template>
   </content-layout>
 </template>

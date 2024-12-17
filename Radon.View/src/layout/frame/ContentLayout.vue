@@ -1,9 +1,6 @@
-<script setup lang="ts">
-import { HomeIcon } from "tdesign-icons-vue-next";
+<script lang="ts" setup>
+import BtnHome from "@/components/btn/BtnHome.vue";
 import type { TdCardProps } from "tdesign-vue-next";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
 
 defineProps<{
   title?: string | TdCardProps["title"];
@@ -13,13 +10,13 @@ defineProps<{
 </script>
 
 <template>
-  <div class="mt-0.5 mb-1">
+  <div class="mb-1 mt-0.5">
     <t-card
-      class="w-full content-center m-auto"
-      :title="title"
-      :subtitle="subtitle"
-      :loading="loading"
       :header-bordered="true"
+      :loading="loading"
+      :subtitle="subtitle"
+      :title="title"
+      class="m-auto w-full content-center"
     >
       <slot />
       <template #footer>
@@ -28,9 +25,7 @@ defineProps<{
       <template #actions>
         <t-space :size="4">
           <slot name="actions">
-            <t-button class="r-no-select" variant="text" theme="primary" shape="circle" @click="router.push('/')">
-              <HomeIcon />
-            </t-button>
+            <BtnHome />
           </slot>
         </t-space>
       </template>

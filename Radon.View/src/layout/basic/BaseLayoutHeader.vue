@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import ProjectIcon from "@/assets/icon.svg";
 import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { useGlobalStore } from "@/store/global";
@@ -8,22 +8,22 @@ import { MenuFoldIcon, MenuUnfoldIcon, MoonIcon, SunnyIcon, UserIcon } from "tde
 import { computed, inject } from "vue";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-const { asideVisible, authPassed } = storeToRefs(useGlobalStore());
-const dev = computed(() => import.meta.env.DEV);
+const { push } = useRouter();
+const { sideVisible, authPassed } = storeToRefs(useGlobalStore());
+const dev = computed(() => import.meta.env.DEV ?? false);
 const dark = inject(darkModeKey)!;
 const toggleDark = useToggle(dark);
-const toggleAside = useToggle(asideVisible);
+const toggleSide = useToggle(sideVisible);
 
-const handleAside = () => toggleAside();
-const handleAuth = () => router.push("/auth");
+const handleSide = () => toggleSide();
+const handleAuth = () => push("/auth");
 </script>
 
 <template>
   <t-head-menu class="r-ct-hd-icon-margin">
     <template #logo>
-      <div class="r-no-select" @click="handleAside">
-        <t-image shape="round" :src="ProjectIcon" alt="Radon" style="width: 30px; height: 30px" />
+      <div class="r-no-select" @click="handleSide">
+        <t-image :src="ProjectIcon" alt="Radon" shape="round" style="width: 30px; height: 30px" />
       </div>
     </template>
     <t-divider layout="vertical" />
@@ -41,22 +41,22 @@ const handleAuth = () => router.push("/auth");
       </t-space>
     </div>
     <template #operations>
-      <t-space class="r-ct-hd-operations" :size="6">
+      <t-space :size="6" class="r-ct-hd-operations">
         <!-- Auth -->
-        <t-button v-if="authPassed" theme="default" variant="outline" shape="circle" @click="handleAuth">
+        <t-button v-if="authPassed" shape="circle" theme="default" variant="outline" @click="handleAuth">
           <UserIcon />
         </t-button>
         <!-- Locale -->
         <sel-locale />
         <!-- Dark -->
-        <t-button theme="default" variant="outline" shape="circle" @click="toggleDark()">
+        <t-button shape="circle" theme="default" variant="outline" @click="toggleDark()">
           <MoonIcon v-if="dark" />
           <SunnyIcon v-else />
         </t-button>
         <!-- Sidebar -->
-        <t-button theme="default" variant="outline" shape="circle" @click="handleAside">
+        <t-button shape="circle" theme="default" variant="outline" @click="handleSide">
           <template #icon>
-            <MenuUnfoldIcon v-if="asideVisible" />
+            <MenuUnfoldIcon v-if="sideVisible" />
             <MenuFoldIcon v-else />
           </template>
         </t-button>
@@ -65,26 +65,31 @@ const handleAuth = () => router.push("/auth");
   </t-head-menu>
 </template>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 @import "@/assets/style/mixin";
 
 .r-ct-hd-icon-margin :deep(.t-menu__logo) {
   margin-right: 6px;
 }
+
 .r-ct-hd-content {
   margin: 0;
   .r-no-select();
+
   .r-ct-hd-content-tt1 {
     .r-pub-font-chain();
     font-weight: bold;
   }
+
   .r-ct-hd-content-tt {
     font-size: smaller;
   }
+
   .r-ct-hd-content-dev {
     font-size: x-small;
   }
 }
+
 .r-ct-hd-operations {
   margin-right: 4px;
 }

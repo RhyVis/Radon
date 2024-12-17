@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import BtnHome from "@/components/btn/BtnHome.vue";
 import { apiPost, apiPutNumber } from "@/lib/common/apiMethods";
 import { codeTypes, spamColumns, SpamType, spamTypes, type TextEntry } from "@/pages/data/spam/scripts/define";
 import { useSpamStore } from "@/pages/data/spam/scripts/store";
@@ -7,7 +8,6 @@ import { get, set, useClipboard, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import {
   CloseIcon,
-  HomeIcon,
   LoudspeakerIcon,
   PlayCircleStrokeAddIcon,
   RefreshIcon,
@@ -19,8 +19,8 @@ import { MessagePlugin } from "tdesign-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-const global = useGlobalStore();
 const store = useSpamStore();
+const { authPassed } = storeToRefs(useGlobalStore());
 const { qType, qDict, qSize, qIds, aType, aText, activeTab } = storeToRefs(store);
 const { copy } = useClipboard();
 const { t } = useI18n();
@@ -275,16 +275,6 @@ watch(
         size="small"
       />
     </div>
-    <template #actions>
-      <t-button v-if="global.authPassed" shape="circle" theme="primary" variant="text" @click="setAppendDialog(true)">
-        <ToolsIcon />
-      </t-button>
-      <RouterLink to="/">
-        <t-button shape="circle" theme="primary" variant="text">
-          <HomeIcon />
-        </t-button>
-      </RouterLink>
-    </template>
     <t-dialog v-model:visible="appendDialog" header="追加内容" width="75%" @close="store.clearAppendQuery()">
       <t-form label-align="top">
         <t-form-item label="类型">
@@ -309,6 +299,12 @@ watch(
         </t-space>
       </template>
     </t-dialog>
+    <template #actions>
+      <t-button v-if="authPassed" shape="circle" theme="primary" variant="text" @click="setAppendDialog(true)">
+        <ToolsIcon />
+      </t-button>
+      <BtnHome />
+    </template>
   </content-layout>
 </template>
 

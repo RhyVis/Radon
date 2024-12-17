@@ -22,13 +22,13 @@ const {
 
 const { t } = useI18n();
 const { push } = useRouter();
-const { authPassed, asideVisible } = storeToRefs(useGlobalStore());
+const { authPassed, sideVisible } = storeToRefs(useGlobalStore());
 
 const canShowRecord = computed(() => !(auth && !get(authPassed)));
 const display = computed(() => (titleKey ? t(titleKey) : value));
 
 const handleClick = () => {
-  set(asideVisible, false);
+  set(sideVisible, false);
   push(to);
 };
 </script>

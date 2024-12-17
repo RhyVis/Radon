@@ -1,47 +1,49 @@
 ﻿<script lang="ts" setup>
 import { useKeyUpdate } from "@/composable/useKeyUpdate.ts";
 import { useNarrow } from "@/composable/useNarrow.ts";
+import ArchiveBackPage from "@/pages/with/archive/comps/ArchiveBackPage.vue";
 import { getMdRecord } from "@/pages/with/archive/define.ts";
 import { useGlobalStore } from "@/store/global.ts";
-import { get, set, useDark, useTitle } from "@vueuse/core";
-import { useRouteParams, useRouteQuery } from "@vueuse/router";
+import { get, set, useDark, useTitle, useToggle } from "@vueuse/core";
+import { useRouteParams } from "@vueuse/router";
 import { MdCatalog, MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { storeToRefs } from "pinia";
-import { ArrowLeftIcon } from "tdesign-icons-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 const { t } = useI18n();
-const router = useRouter();
+const { push } = useRouter();
 const dark = useDark();
 const path = useRouteParams("p");
-const other = useRouteQuery("other");
 
 const { localeStandard } = storeToRefs(useGlobalStore());
 const { key, updateKey } = useKeyUpdate();
+const [loading, setLoading] = useToggle(false);
 const name = ref("");
 const desc = ref("");
 const content = ref("");
 const narrow = useNarrow();
 const sideWidth = computed(() => (get(narrow) ? "0" : "168px"));
 const theme = computed(() => (get(dark) ? "dark" : "light"));
+const noContent = computed(() => content.value.length === 0);
 const scrollEl = document.getElementById("base-content") ?? document.documentElement;
 
-const handleBack = () => {
-  if (other.value) {
-    history.back();
-  } else {
-    router.push("/archive");
-  }
-};
 const updateContent = async (path: string) => {
-  const record = await getMdRecord(path);
-  set(name, record.name);
-  set(desc, record.desc);
-  set(content, record.content);
-  useTitle(record.name);
+  setLoading(true);
+  try {
+    const record = await getMdRecord(path);
+    set(name, record.name);
+    set(desc, record.desc);
+    set(content, record.content);
+    useTitle(record.name);
+  } catch (e) {
+    console.error(e);
+    await push("/archive");
+  } finally {
+    setLoading(false);
+  }
 };
 
 watch(
@@ -68,21 +70,24 @@ watch(
 
 <template>
   <content-layout id="md-read-container" :subtitle="desc" :title="name">
-    <div class="mt-6" v-if="content.length === 0">
+    <div v-if="loading" class="mt-6">
       <t-empty :title="t('common.loading')" />
+    </div>
+    <div v-else-if="noContent" class="mt-6">
+      <t-empty :title="t('noContent')" />
     </div>
     <div v-else>
       <t-layout class="r-md-container">
         <MdPreview
-          class="r-md-preview"
           id="preview-only"
           :language="localeStandard"
           :model-value="content"
           :theme="theme"
+          class="r-md-preview"
           codeTheme="github"
           previewTheme="cyanosis"
         />
-        <t-aside :width="sideWidth" :key="key">
+        <t-aside :key="key" :width="sideWidth">
           <t-affix :offset-bottom="60" :offset-top="160" container="#base-content">
             <MdCatalog v-if="!narrow" :scrollElement="scrollEl" :theme="theme" editorId="preview-only" />
           </t-affix>
@@ -91,9 +96,7 @@ watch(
     </div>
 
     <template #actions>
-      <t-button class="r-no-select" shape="circle" theme="primary" variant="text" @click="handleBack">
-        <ArrowLeftIcon />
-      </t-button>
+      <ArchiveBackPage />
     </template>
   </content-layout>
 </template>
@@ -107,3 +110,11 @@ watch(
   }
 }
 </style>
+
+<i18n locale="en">
+noContent: No content
+</i18n>
+
+<i18n locale="zh-CN">
+noContent: 无内容
+</i18n>

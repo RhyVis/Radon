@@ -12,6 +12,7 @@ declare module 'vue' {
     BtnClear: typeof import('./src/components/btn/BtnClear.vue')['default']
     BtnConfirm: typeof import('./src/components/btn/BtnConfirm.vue')['default']
     BtnCopy: typeof import('./src/components/btn/BtnCopy.vue')['default']
+    BtnHome: typeof import('./src/components/btn/BtnHome.vue')['default']
     BtnRead: typeof import('./src/components/btn/BtnRead.vue')['default']
     ContentLayout: typeof import('./src/layout/frame/ContentLayout.vue')['default']
     LoaderStatus: typeof import('./src/components/utility/LoaderStatus.vue')['default']

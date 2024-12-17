@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 
 type SimpleSelOpt = {
@@ -25,13 +25,18 @@ const {
 <template>
   <t-select
     v-model="model"
-    :placeholder="placeholder ?? t('placeholder')"
     :auto-width="autoWidth"
     :loading="loading"
     :loading-text="t('loading')"
+    :placeholder="placeholder ?? t('placeholder')"
     @change="emit('update', model)"
   >
-    <t-option v-for="option in options" :key="option.value" :value="option.value" :label="option.label" />
+    <t-option
+      v-for="(option, index) in options"
+      :key="index"
+      :label="option.label ?? option.value"
+      :value="option.value"
+    />
   </t-select>
 </template>
 

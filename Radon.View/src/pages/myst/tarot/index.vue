@@ -25,6 +25,7 @@ const deckFull = computed(() => get(dInfoMap)[qDeck.value]?.full ?? false);
 const deckMax = computed(() => (get(deckFull) && get(qFull) ? 78 : 22));
 const deckFullTooltip = computed(() => (get(deckFull) ? t("form.fullTT") : t("form.fullTT2")));
 const resetAble = computed(() => get(qSize) > 1);
+const resultExist = computed(() => results.value.length > 0);
 
 const handleSelect = () => {
   if (!deckFull.value) set(qFull, false);
@@ -53,7 +54,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <content-layout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :subtitle="t('st')" :title="t('tt')">
     <t-form @submit="handleDraw">
       <t-tabs v-model:value="activeTab">
         <t-tab-panel :label="t('tabs.simple')" value="simple">
@@ -70,7 +71,7 @@ onMounted(() => {
             <t-form-item :label="t('form.size')">
               <t-space :size="8">
                 <t-input-number v-model="qSize" :max="deckMax" :min="1" />
-                <t-button v-if="resetAble" shape="circle" variant="outline" theme="default" @click="handleResetCount">
+                <t-button v-if="resetAble" shape="circle" theme="default" variant="outline" @click="handleResetCount">
                   <RollbackIcon />
                 </t-button>
               </t-space>
@@ -80,14 +81,14 @@ onMounted(() => {
       </t-tabs>
       <div class="mt-4">
         <t-form-item :label="t('form.draw')">
-          <t-button shape="round" :loading="loading" type="submit">
+          <t-button :loading="loading" shape="round" type="submit">
             <CardIcon v-if="!loading" />
           </t-button>
         </t-form-item>
       </div>
     </t-form>
     <!-- Result Area -->
-    <div v-if="results.length > 0" :key="key">
+    <div v-if="resultExist" :key="key">
       <t-divider />
       <t-row :gutter="[8, 8]">
         <t-col v-for="(card, index) in results" :key="index" :lg="3" :md="4" :sm="6" :xl="3" :xs="12" :xxl="3">
@@ -127,12 +128,12 @@ tt: "塔罗牌"
 st: "模拟可能比自己切牌更顺畅"
 tabs:
   simple: "简单操作"
-form: 
+form:
   deck: 卡组
   full: 完整卡组
   fullTT: "完整卡组包括小阿卡纳"
   fullTT2: "此卡组仅包括大阿卡纳"
-  hintTT: "在下方展示所有抽到牌的提示" 
+  hintTT: "在下方展示所有抽到牌的提示"
   hint: 提示
   size: 数量
   draw: 抽牌

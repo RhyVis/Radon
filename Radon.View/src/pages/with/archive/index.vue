@@ -1,13 +1,14 @@
-﻿<script setup lang="ts">
+﻿<script lang="ts" setup>
+import BtnHome from "@/components/btn/BtnHome.vue";
 import { useNarrow } from "@/composable/useNarrow.ts";
 import { deleteMdRecord, getMdIndex, type MdIndexDto } from "@/pages/with/archive/define.ts";
 import { useMdStore } from "@/pages/with/archive/store.ts";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { AddCircleIcon, DeleteIcon, EditIcon, HomeIcon, SearchIcon } from "tdesign-icons-vue-next";
+import { AddCircleIcon, DeleteIcon, EditIcon, SearchIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
-import { computed, onMounted, reactive, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
@@ -20,8 +21,6 @@ const [loading, setLoading] = useToggle(true);
 const [create, setCreate] = useToggle(false);
 const narrow = useNarrow();
 const createRequest = reactive({ name: "", desc: "" });
-const popupVisible = ref(false);
-const delBtnTheme = computed(() => (popupVisible.value ? "danger" : "primary"));
 
 const date = (entry: MdIndexDto) =>
   get(narrow)
@@ -51,45 +50,36 @@ onMounted(() => (indexList.value.length === 0 ? updateIndex() : setLoading(false
 </script>
 
 <template>
-  <content-layout :title="t('tt')" :subtitle="t('st')">
-    <div class="mt-6" v-if="loading">
+  <content-layout :subtitle="t('st')" :title="t('tt')">
+    <div v-if="loading" class="mt-6">
       <t-empty :title="t('common.loading')" />
     </div>
-    <div class="mt-6" v-else-if="indexList.length === 0">
+    <div v-else-if="indexList.length === 0" class="mt-6">
       <t-empty :title="t('common.noContent')" />
     </div>
     <t-card v-else>
       <t-list :stripe="true" size="small">
         <t-list-item v-for="(entry, index) in indexList" :key="index">
-          <t-list-item-meta :title="entry.name" :description="entry.desc" />
+          <t-list-item-meta :description="entry.desc" :title="entry.name" />
           <span class="r-entry-time-display">{{ date(entry) }}</span>
           <template #action>
             <t-space :size="6">
-              <t-button theme="primary" variant="text" size="small" shape="circle" @click="handleToRead(entry.path)">
+              <t-button shape="circle" size="small" theme="primary" variant="text" @click="handleToRead(entry.path)">
                 <SearchIcon />
               </t-button>
               <template v-if="authPassed">
-                <t-button theme="primary" variant="text" size="small" shape="circle" @click="handleToWrite(entry.path)">
+                <t-button shape="circle" size="small" theme="primary" variant="text" @click="handleToWrite(entry.path)">
                   <EditIcon />
                 </t-button>
-                <t-popconfirm
-                  v-model:visible="popupVisible"
-                  theme="warning"
+                <btn-confirm
+                  shape="circle"
+                  size="small"
+                  theme="danger"
+                  variant="text"
                   @confirm="handleDelete(entry.path)"
-                  :content="t('popup.content')"
-                  :cancel-btn="{
-                    content: t('popup.cancel'),
-                    theme: 'default',
-                  }"
-                  :confirm-btn="{
-                    content: t('popup.confirm'),
-                    theme: 'danger',
-                  }"
                 >
-                  <t-button :theme="delBtnTheme" variant="text" size="small" shape="circle">
-                    <DeleteIcon />
-                  </t-button>
-                </t-popconfirm>
+                  <DeleteIcon />
+                </btn-confirm>
               </template>
             </t-space>
           </template>
@@ -111,16 +101,12 @@ onMounted(() => (indexList.value.length === 0 ? updateIndex() : setLoading(false
       </t-form-item>
     </t-form>
     <template #actions>
-      <t-tooltip v-if="authPassed" placement="bottom" :content="t('create.tt')">
-        <t-button variant="text" theme="primary" shape="circle" @click="setCreate()">
+      <t-tooltip v-if="authPassed" :content="t('create.tt')" placement="bottom">
+        <t-button shape="circle" theme="primary" variant="text" @click="setCreate()">
           <AddCircleIcon />
         </t-button>
       </t-tooltip>
-      <RouterLink to="/">
-        <t-button variant="text" theme="primary" shape="circle">
-          <HomeIcon />
-        </t-button>
-      </RouterLink>
+      <BtnHome />
     </template>
   </content-layout>
 </template>
@@ -140,10 +126,6 @@ msg:
   delSuccess: "Successfully deleted"
   delFailed: "Failed to delete"
   updateIndexFailed: "Failed to update index"
-popup:
-  confirm: "Yes"
-  cancel: "No"
-  content: "Will you really delete it?"
 create:
   tt: "Create New Entry"
   name: "Name"
@@ -159,10 +141,6 @@ msg:
   delSuccess: "删除成功"
   delFailed: "删除失败"
   updateIndexFailed: "更新索引失败"
-popup:
-  confirm: "是"
-  cancel: "否"
-  content: "真的要删除吗？"
 create:
   tt: "新建条目"
   name: "名称"

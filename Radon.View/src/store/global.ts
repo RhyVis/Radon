@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 
 export type GlobalStore = {
-  asideVisible: boolean;
+  sideVisible: boolean;
+  sideValue: string;
   authShow: boolean;
   authPassed: boolean;
   fontLoaded: boolean;
@@ -11,7 +12,8 @@ export type GlobalStore = {
 
 export const useGlobalStore = defineStore("global", {
   state: (): GlobalStore => ({
-    asideVisible: false,
+    sideVisible: false,
+    sideValue: "home",
     authShow: false,
     authPassed: false,
     fontLoaded: false,

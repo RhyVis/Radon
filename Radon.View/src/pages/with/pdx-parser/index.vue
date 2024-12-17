@@ -16,12 +16,12 @@ const toEvent = () => push("pdx-parser/lang-event");
       <t-space class="w-full text-center" direction="vertical">
         <t-divider />
         <t-tag>{{ t("btn.tree") }}</t-tag>
-        <t-button shape="square" @click="toTree">
+        <t-button shape="square" size="large" @click="toTree">
           <TransformIcon />
         </t-button>
         <t-divider />
         <t-tag>{{ t("btn.event") }}</t-tag>
-        <t-button shape="square" @click="toEvent">
+        <t-button shape="square" size="large" @click="toEvent">
           <TransformIcon />
         </t-button>
         <t-divider />

@@ -1,4 +1,5 @@
 ﻿<script lang="ts" setup>
+import BtnHome from "@/components/btn/BtnHome.vue";
 import { useNarrow } from "@/composable/useNarrow.ts";
 import PpDrawerTree from "@/pages/with/pdx-parser/comp/PpDrawerTree.vue";
 import PpReplacer from "@/pages/with/pdx-parser/comp/PpReplacer.vue";
@@ -7,7 +8,7 @@ import { usePdxTextRender } from "@/pages/with/pdx-parser/comp/usePdxTextRender.
 import "@/pages/with/pdx-parser/pdx-color.css";
 import { sepTextContent } from "@/pages/with/pdx-parser/scripts/function.ts";
 import { get, useToggle } from "@vueuse/core";
-import { HomeIcon, ListIcon, RefreshIcon, UploadIcon } from "tdesign-icons-vue-next";
+import { ListIcon, RefreshIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { Content as TContent, type TreeNodeValue, type TreeProps } from "tdesign-vue-next";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
@@ -76,11 +77,7 @@ const { textRender } = usePdxTextRender();
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuUploadVisible()">
         <UploadIcon />
       </t-button>
-      <RouterLink to="/">
-        <t-button shape="circle" theme="primary" variant="text">
-          <HomeIcon />
-        </t-button>
-      </RouterLink>
+      <BtnHome />
     </template>
 
     <!-- Tree Drawer (Only when narrow) -->

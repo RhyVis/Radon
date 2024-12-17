@@ -1,4 +1,5 @@
 ﻿<script lang="ts" setup>
+import BtnHome from "@/components/btn/BtnHome.vue";
 import PpDrawerEvent from "@/pages/with/pdx-parser/comp/PpDrawerEvent.vue";
 import PpReplacer from "@/pages/with/pdx-parser/comp/PpReplacer.vue";
 import PpStickyTool from "@/pages/with/pdx-parser/comp/PpStickyTool.vue";
@@ -10,7 +11,7 @@ import { sepTextContent } from "@/pages/with/pdx-parser/scripts/function.ts";
 import { usePdxStore } from "@/pages/with/pdx-parser/scripts/store.ts";
 import { useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { HomeIcon, InfoCircleIcon, Move1Icon, RefreshIcon, UploadIcon } from "tdesign-icons-vue-next";
+import { InfoCircleIcon, Move1Icon, RefreshIcon, UploadIcon } from "tdesign-icons-vue-next";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -104,11 +105,7 @@ const { textRender, textAlias } = usePdxTextRender();
       <t-button shape="circle" theme="primary" variant="text" @click="setMenuUploadVisible()">
         <UploadIcon />
       </t-button>
-      <RouterLink to="/">
-        <t-button shape="circle" theme="primary" variant="text">
-          <HomeIcon />
-        </t-button>
-      </RouterLink>
+      <BtnHome />
     </template>
 
     <!-- Sticky Tool -->
