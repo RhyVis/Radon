@@ -7,6 +7,7 @@ public class MdIndexRepository(IFreeSql fsql) : BaseRepository<MdIndex, Guid>(fs
 {
     public MdIndex? FindByPath(string path)
     {
-        return Select.Where(x => x.Path == Guid.Parse(path)).First();
+        var guid = Guid.Parse(path);
+        return Select.Where(x => x.Path == guid).ToOne();
     }
 }
