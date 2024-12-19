@@ -96,6 +96,7 @@
       reverse: "Reverse",
       base64: "Base64",
       pdxParser: "PDX Parser",
+      youAreRight: "You Are Right",
     },
     extras: "Extras",
     credits: "Credits",

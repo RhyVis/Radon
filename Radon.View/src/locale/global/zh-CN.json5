@@ -96,6 +96,7 @@
       reverse: "文本反转",
       base64: "Base64 编码",
       pdxParser: "PDX 解析器",
+      youAreRight: "你说得对",
     },
     extras: "额外",
     credits: "Credits",

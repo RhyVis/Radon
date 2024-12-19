@@ -176,6 +176,16 @@ export const utilRecords: RouteRecordRaw[] = [
       tKey: "route.util.base64",
     },
   },
+  {
+    path: "/you-are-right",
+    name: "You Are Right",
+    component: () => import("@/pages/util/you-are-right/index.vue"),
+    meta: {
+      title: "You Are Right",
+      icon: "filter-2",
+      tKey: "route.util.youAreRight",
+    },
+  },
 ];
 
 export const markdownRecords: RouteRecordRaw[] = [
