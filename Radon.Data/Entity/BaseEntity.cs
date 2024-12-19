@@ -6,9 +6,7 @@ namespace Radon.Data.Entity;
 ///     Base entity for all entities, including nothing.
 /// </summary>
 [Table(DisableSyncStructure = true)]
-public abstract class BaseEntity
-{
-}
+public abstract class BaseEntity;
 
 /// <summary>
 ///     Base entity for all entities with an identity for ID field also as Primary Key.
