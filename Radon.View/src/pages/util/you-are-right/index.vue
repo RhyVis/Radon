@@ -22,7 +22,7 @@ const gTravel = ref("旅行");
 const gFriends = ref("同伴");
 const gEnemies = ref("强敌");
 const gFamily = ref("亲人");
-const gTruth = ref("真相");
+const gTruth = ref("原神");
 
 const youAreRight = computed(
   () =>
@@ -77,10 +77,13 @@ const youAreRight = computed(
                 <t-input v-model="gFamily" label="Family" placeholder="亲人" />
               </t-col>
               <t-col :sm="4" :xs="6">
-                <t-input v-model="gTruth" label="Truth" placeholder="真相" />
+                <t-input v-model="gTruth" label="Truth" placeholder="原神" />
               </t-col>
             </t-row>
           </t-form>
+          <template #footer>
+            <BtnCopy :value="youAreRight" />
+          </template>
         </t-card>
       </div>
     </div>
