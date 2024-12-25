@@ -68,6 +68,7 @@ public static class InitService
             .Build();
         Logger.Debug("Sync Database Structure");
         fsql.CodeFirst.SyncStructure();
+        fsql.UseJsonMap();
         services.AddSingleton(fsql);
 
         Logger.Debug("Register Repository");

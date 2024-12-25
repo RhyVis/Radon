@@ -5,8 +5,8 @@ namespace Radon.Core.Util;
 
 public static class PassportExtension
 {
-    public static PlainTextRes OfRes(this Passport passport)
+    public static UnsetRes OfRes(this Passport passport)
     {
-        return PlainTextRes.Of(passport.Token);
+        return new UnsetRes(passport);
     }
 }

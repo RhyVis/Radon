@@ -91,8 +91,9 @@ public class JwtService(IRedisClient cli) : IJwtService
             expr,
             conf.SigningCredentials
         );
-        var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenStr = new JwtSecurityTokenHandler().WriteToken(token) ??
+                       throw new CredentialRejectionException("Token generation failed");
 
-        return new Passport(tokenStr, user.Id);
+        return new Passport(tokenStr, user.Id, user.Extra.MapToPassportExtra());
     }
 }

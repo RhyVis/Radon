@@ -4,7 +4,7 @@ using Radon.Data.Entity;
 namespace Radon.Data.Repository;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
-public class BaseRepository<TE, TK>(IFreeSql fsql) : FreeSql.BaseRepository<TE, TK>(fsql, null)
+public class BaseRepository<TE, TK>(IFreeSql fsql) : FreeSql.BaseRepository<TE, TK>(fsql)
     where TE : BaseEntity
     where TK : struct
 {

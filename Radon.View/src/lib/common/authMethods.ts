@@ -1,6 +1,9 @@
 ﻿import axiosInstance from "@/lib/common/apiHttp";
+import i18n from "@/locale";
 import { MessagePlugin } from "tdesign-vue-next";
-import { apiPost, apiPostStr } from "./apiMethods";
+import { apiPost } from "./apiMethods";
+
+const { t } = i18n.global;
 
 type UsernamePair = {
   username: string;
@@ -8,14 +11,61 @@ type UsernamePair = {
 };
 
 /**
+ * Passport contains the token and user ID, with extra information.
+ */
+type Passport = {
+  // Token used to interact with the server.
+  token: string;
+  // User ID
+  userId: number;
+  // Extra information
+  extra: PassportExtra;
+};
+
+type PassportExtra = {
+  // Image upload token
+  imageToken: string;
+  [key: string]: unknown;
+};
+
+const STORAGE_PASSPORT_KEY = "radon_passport";
+const STORAGE_TOKEN_KEY = "radon_token";
+
+/**
+ * Get the token stored in localStorage.
+ */
+export function updateTokenInfo(passport?: Passport) {
+  if (passport == null) {
+    localStorage.removeItem(STORAGE_PASSPORT_KEY);
+    localStorage.removeItem(STORAGE_TOKEN_KEY);
+  } else {
+    localStorage.setItem(STORAGE_PASSPORT_KEY, JSON.stringify(passport));
+    localStorage.setItem(STORAGE_TOKEN_KEY, passport.token);
+  }
+}
+
+export function getAuthToken(): string | null {
+  return localStorage.getItem(STORAGE_TOKEN_KEY);
+}
+
+export function getAuthPassport(): Passport | null {
+  const passport = localStorage.getItem(STORAGE_PASSPORT_KEY);
+  if (passport != null && passport.length > 0) {
+    return JSON.parse(passport) as Passport;
+  } else {
+    return null;
+  }
+}
+
+/**
  * Login with the given username and password, token is stored in localStorage.
  * @param pair The username and password pair.
  */
-async function authLogin(pair: UsernamePair): Promise<boolean> {
+export async function authLogin(pair: UsernamePair): Promise<boolean> {
   try {
-    const { status, data } = await apiPostStr("/api/auth/login", pair);
+    const { status, data } = await apiPost<Passport>("/api/auth/login", pair);
     if (status.responseCode === 200) {
-      localStorage.setItem("token", data);
+      updateTokenInfo(data);
       return true;
     } else {
       return false;
@@ -29,10 +79,10 @@ async function authLogin(pair: UsernamePair): Promise<boolean> {
 /**
  * Logout, clear the token stored in localStorage.
  */
-async function authLogout() {
+export async function authLogout(): Promise<boolean> {
   try {
     const response = await apiPost("/api/auth/logout");
-    localStorage.removeItem("token");
+    updateTokenInfo();
     return response.status.responseCode === 204;
   } catch (e) {
     console.warn(e);
@@ -43,10 +93,10 @@ async function authLogout() {
 /**
  * Validate the token stored in localStorage.
  */
-async function authValidate(): Promise<boolean> {
-  const token = localStorage.getItem("token");
-  if (token == null || token.length === 0) {
-    await MessagePlugin.warning("令牌不存在");
+export async function authValidate(): Promise<boolean> {
+  const token = getAuthToken();
+  if (token == null || token.length === 0 || token.trim().length === 0) {
+    await MessagePlugin.warning(t("auth.tokenNotExists"));
     return false;
   }
   try {
@@ -61,7 +111,7 @@ async function authValidate(): Promise<boolean> {
 /**
  * Validate the token stored in localStorage, if it is valid, refresh it.
  */
-async function authValidateWithRefresh(): Promise<boolean> {
+export async function authValidateWithRefresh(): Promise<boolean> {
   if (await authValidate()) {
     return authRefresh().then(() => true);
   } else {
@@ -72,11 +122,11 @@ async function authValidateWithRefresh(): Promise<boolean> {
 /**
  * Refresh the token stored in localStorage.
  */
-async function authRefresh(): Promise<boolean> {
+export async function authRefresh(): Promise<boolean> {
   try {
-    const { data } = await apiPostStr("/api/auth/refresh");
-    if (data != null && data.length > 0) {
-      localStorage.setItem("token", data);
+    const { data } = await apiPost<Passport>("/api/auth/refresh");
+    if (data != null) {
+      updateTokenInfo(data);
       return true;
     } else {
       return false;
@@ -86,5 +136,3 @@ async function authRefresh(): Promise<boolean> {
     return false;
   }
 }
-
-export { authLogin, authLogout, authRefresh, authValidate, authValidateWithRefresh };

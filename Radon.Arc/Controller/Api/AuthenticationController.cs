@@ -11,14 +11,14 @@ namespace Radon.Arc.Controller.Api;
 [Authorize]
 [ApiController]
 [Route("api/auth")]
-public class AuthenticationController(IUsernameAuthService service) : ControllerBase
+public class AuthenticationController(IUsernameAuthService authService, IUserService userService) : ControllerBase
 {
     [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType<PlainTextRes>(StatusCodes.Status200OK)]
     public IActionResult Login(UsernameReq req)
     {
-        var p = service.Authenticate(req.Data.Username, req.Data.Password);
+        var p = authService.Authenticate(req.Data.Username, req.Data.Password);
         return Ok(p.OfRes());
     }
 
@@ -27,7 +27,7 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
     public IActionResult Logout()
     {
         var userId = HttpContext.GetAuthenticatedUserId();
-        service.LogoutById(userId);
+        authService.LogoutById(userId);
 
         return NoContent();
     }
@@ -36,7 +36,7 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult Register(UsernameReq req)
     {
-        service.Register(req.Data.Username, req.Data.Password);
+        authService.Register(req.Data.Username, req.Data.Password);
         return NoContent();
     }
 
@@ -53,7 +53,16 @@ public class AuthenticationController(IUsernameAuthService service) : Controller
     {
         var token = HttpContext.GetAuthenticatedToken();
         var userId = HttpContext.GetAuthenticatedUserId();
-        var p = service.Refresh(token, userId);
+        var p = authService.Refresh(token, userId);
         return Ok(p.OfRes());
+    }
+
+    [HttpPost("append/image-token")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult AppendImageToken(PlainTextReq req)
+    {
+        var userId = HttpContext.GetAuthenticatedUserId();
+        userService.AppendImageToken(userId, req.Data);
+        return NoContent();
     }
 }
