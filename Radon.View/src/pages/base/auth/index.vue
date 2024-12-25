@@ -1,14 +1,21 @@
-<script setup lang="tsx">
-import { authLogin, authRefresh, authValidate } from "@/lib/common/authMethods";
-import { ArrowUpDown2Icon, Fingerprint2Icon, LoginIcon, LogoutIcon } from "tdesign-icons-vue-next";
+<script lang="tsx" setup>
+import {
+  authLogin,
+  authLogout,
+  authRefresh,
+  authValidate,
+  getAuthPassport,
+  getAuthToken,
+} from "@/lib/common/authMethods";
+import { ArrowUpDown2Icon, Fingerprint2Icon, ImageAddIcon, LoginIcon, LogoutIcon } from "tdesign-icons-vue-next";
 import { MessagePlugin } from "tdesign-vue-next";
 import { useGlobalStore } from "@/store/global";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { reactive, ref, computed } from "vue";
-import { authLogout } from "@/lib/common/authMethods";
-import { set, useToggle } from "@vueuse/core";
+import { computed, onMounted, reactive, ref } from "vue";
+import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
+import { apiPostNoContent } from "@/lib/common/apiMethods.ts";
 
 const { t } = useI18n();
 const { authPassed } = storeToRefs(useGlobalStore());
@@ -17,11 +24,9 @@ const query = reactive({
   username: "",
   password: "",
 });
+const imageTokenInput = ref("");
 
-const storageToken = computed({
-  get: () => localStorage.getItem("token") || "",
-  set: (v: string) => localStorage.setItem("token", v),
-});
+const storageToken = computed(() => getAuthToken() || "");
 const [loading, setLoading] = useToggle(false);
 const tokenValidSign = ref(0);
 const tokenValidDisplay = computed(() => {
@@ -93,10 +98,28 @@ const handleRefreshToken = async () => {
   }
   setTimeout(() => location.reload(), 2000);
 };
+
+const handleAppendImageToken = async () => {
+  if (get(imageTokenInput).length === 0) {
+    await MessagePlugin.warning(t("msg.noEmpty"));
+  } else {
+    await apiPostNoContent("/api/auth/append/image-token", get(imageTokenInput));
+    await MessagePlugin.success(t("msg.imageTokenAppend"));
+  }
+};
+
+onMounted(() => {
+  if (get(authPassed)) {
+    const imageToken = getAuthPassport()?.extra.imageToken;
+    if (imageToken) {
+      set(imageTokenInput, imageToken);
+    }
+  }
+});
 </script>
 
 <template>
-  <content-layout :title="t('tt')" :subtitle="t('st')">
+  <content-layout :subtitle="t('st')" :title="t('tt')">
     <t-form @submit="handleLogin">
       <t-form-item :label="t('input.username')">
         <t-input v-model="query.username" />
@@ -105,13 +128,13 @@ const handleRefreshToken = async () => {
         <t-input v-model="query.password" type="password" />
       </t-form-item>
       <t-form-item :label="t('input.login')">
-        <t-button shape="round" theme="primary" type="submit" :loading="loading">
+        <t-button :loading="loading" shape="round" theme="primary" type="submit">
           <LoginIcon v-if="!loading" />
         </t-button>
       </t-form-item>
       <template v-if="authPassed">
         <t-form-item :label="t('input.logout')">
-          <t-button shape="round" theme="warning" @click="handleLogout" :loading="loading">
+          <t-button :loading="loading" shape="round" theme="warning" @click="handleLogout">
             <LogoutIcon v-if="!loading" />
           </t-button>
         </t-form-item>
@@ -127,11 +150,20 @@ const handleRefreshToken = async () => {
           </t-button>
         </t-form-item>
         <t-form-item :label="t('input.showToken')">
-          <t-popup :content="storageToken" trigger="click" :destroy-on-close="true">
+          <t-popup :content="storageToken" :destroy-on-close="true" trigger="click">
             <t-button shape="round" theme="default">
               <Fingerprint2Icon />
             </t-button>
           </t-popup>
+        </t-form-item>
+        <t-divider />
+        <t-form-item :label="t('input.imageToken')">
+          <t-space>
+            <t-input v-model="imageTokenInput" />
+            <t-button shape="round" theme="default" @click="handleAppendImageToken">
+              <ImageAddIcon />
+            </t-button>
+          </t-space>
         </t-form-item>
       </template>
     </t-form>
@@ -150,6 +182,7 @@ input:
   refreshToken: Refresh Token
   showToken: Show Token
   clearToken: Clear Token
+  imageToken: Image Token
 msg:
   noEmpty: Do not leave input empty
   loginSuccess: Login Success
@@ -162,6 +195,7 @@ msg:
   refreshTokenFailed: Refresh Token Failed
   tokenCleared: Token Cleared
   tokenConfirm: Confirm Clear Token?
+  imageTokenAppend: Image Token Appended
 </i18n>
 
 <i18n locale="zh-CN">
@@ -176,6 +210,7 @@ input:
   refreshToken: 刷新令牌
   showToken: 显示令牌
   clearToken: 清空令牌
+  imageToken: 图片令牌
 msg:
   noEmpty: 请不要留空
   loginSuccess: 登陆成功
@@ -188,4 +223,5 @@ msg:
   refreshTokenFailed: 刷新令牌失败
   tokenCleared: 令牌已清空
   tokenConfirm: 确认清空令牌吗
+  imageTokenAppend: 图片令牌已添加
 </i18n>

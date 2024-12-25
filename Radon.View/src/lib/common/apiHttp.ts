@@ -1,4 +1,5 @@
 import type { ErrResponse } from "@/lib/common/apiMethods";
+import { getAuthToken } from "@/lib/common/authMethods.ts";
 import i18n from "@/locale";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
@@ -9,7 +10,7 @@ const { t } = i18n.global;
 const respMsg = (resp: AxiosResponse) => {
   const k = `common.statusCode.${resp.status}`;
   const rr = t(k);
-  return rr === k ? resp.statusText || "Unknown Server Error" : rr;
+  return rr === k ? resp.statusText || t("common.unknownServerError") : rr;
 };
 
 const axiosInstance = axios.create();
@@ -21,7 +22,7 @@ axiosInstance.defaults.headers.post["Content-Type"] = "application/json";
 axiosInstance.interceptors.request.use(
   // eslint-disable-next-line
   (config: AxiosRequestConfig): any => {
-    config.headers!["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
+    config.headers!["Authorization"] = `Bearer ${getAuthToken()}`;
     return config;
   },
   (error: AxiosError) => {

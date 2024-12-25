@@ -5,14 +5,15 @@ import SideMenuGroup from "@/layout/particial/SideMenuGroup.vue";
 import SideMenuSub from "@/layout/particial/SideMenuSub.vue";
 import { dataRecords, drawRecords, mathRecords, mystRecords, utilRecords } from "@/router/records";
 import { useGlobalStore } from "@/store/global";
-import { set } from "@vueuse/core";
+import { get, set } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { CloseIcon } from "tdesign-icons-vue-next";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const { push } = useRouter();
-const { sideVisible, sideValue, authShow } = storeToRefs(useGlobalStore());
+const { sideVisible, sideValue, authShow, authPassed } = storeToRefs(useGlobalStore());
+const authPageVisible = computed(() => get(authShow) || get(authPassed));
 const handleClose = (url?: string) => {
   set(sideVisible, false);
   if (url) push(url);
@@ -60,7 +61,7 @@ onMounted(handleClose);
 
       <SideMenuSub icon="file-unknown" title-key="route.extras" value="extras">
         <SideMenuEntryPrimitive icon="undertake-delivery" title-key="route.credits" to="/credits" value="credits" />
-        <SideMenuEntryPrimitive v-if="authShow" icon="lock-on" title-key="route.auth" to="/auth" value="auth" />
+        <SideMenuEntryPrimitive v-if="authPageVisible" icon="lock-on" title-key="route.auth" to="/auth" value="auth" />
       </SideMenuSub>
 
       <template #operations>

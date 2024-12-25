@@ -227,7 +227,7 @@ export const markdownRecords: RouteRecordRaw[] = [
             // Edit
             path: "edit",
             name: "MarkdownEditor",
-            component: () => import("@/pages/with/archive/write/index.vue"),
+            component: () => import("@/pages/with/archive/edit/index.vue"),
             meta: {
               title: "Markdown Editor",
             },

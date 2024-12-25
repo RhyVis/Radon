@@ -154,6 +154,13 @@ export async function apiPostWithFile<T>(url: string, blob: Blob): Promise<ApiRe
   return responseData as ApiResponse<T>;
 }
 
+export async function apiPostNoContent(url: string, data?: ReqData, config?: AxiosRequestConfig): Promise<void> {
+  const r = await apiPost(url, data, config);
+  if (r.status.responseCode !== 204) {
+    throw new Error("Unexpected response code");
+  }
+}
+
 /**
  * Put Method
  * @param url
