@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { createMdRecord } from "@/pages/with/archive/define.ts";
+import { createMdRecord } from "@/pages/with/archive/scripts/function";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, useDark, useTitle, useToggle } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
@@ -13,6 +13,8 @@ import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { useNarrow } from "@/composable/useNarrow.ts";
 import ArchiveBackPage from "@/pages/with/archive/comps/ArchiveBackPage.vue";
+import type { MdUploadImageCallback } from "@/pages/with/archive/scripts/define.ts";
+import { apiUploadImageList } from "@/lib/common/apiUploadImage.ts";
 
 const dark = useDark();
 const createName = useRouteQuery("name");
@@ -38,6 +40,19 @@ const handleCreate = async () => {
     await push(`/archive/${path}/edit`);
   } else {
     void MessagePlugin.error(t("msg.failed"));
+  }
+};
+const handleUploadImage: MdUploadImageCallback = async (files, callback) => {
+  setUpdating(true);
+  try {
+    const actionResult = await apiUploadImageList(files);
+    callback(actionResult.map(item => item.url));
+  } catch (e) {
+    void MessagePlugin.error(t("msg.imageUploadFailed"));
+    console.error(e);
+    callback([]);
+  } finally {
+    setUpdating(false);
   }
 };
 
@@ -109,9 +124,9 @@ onMounted(() => {
       :readOnly="updating"
       :theme="theme"
       codeTheme="github"
-      noUploadImg
       previewTheme="cyanosis"
       @onSave="handleCreate()"
+      @onUploadImg="handleUploadImage"
     />
 
     <template #actions>

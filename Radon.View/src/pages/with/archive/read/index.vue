@@ -2,7 +2,7 @@
 import { useKeyUpdate } from "@/composable/useKeyUpdate.ts";
 import { useNarrow } from "@/composable/useNarrow.ts";
 import ArchiveBackPage from "@/pages/with/archive/comps/ArchiveBackPage.vue";
-import { getMdRecord } from "@/pages/with/archive/define.ts";
+import { getMdRecord } from "@/pages/with/archive/scripts/function.ts";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useDark, useTitle, useToggle } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";

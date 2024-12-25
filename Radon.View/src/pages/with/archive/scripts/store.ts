@@ -1,4 +1,4 @@
-﻿import type { MdIndexDto } from "@/pages/with/archive/define.ts";
+﻿import type { MdIndexDto } from "@/pages/with/archive/scripts/define.ts";
 import { defineStore } from "pinia";
 
 export type MdState = {

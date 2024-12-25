@@ -1,5 +1,5 @@
 ﻿<script lang="tsx" setup>
-import { checkMdRecord, updateMdRecord } from "@/pages/with/archive/define.ts";
+import { checkMdRecord, updateMdRecord } from "@/pages/with/archive/scripts/function";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useDark, useTitle, useToggle } from "@vueuse/core";
 import { useRouteParams } from "@vueuse/router";
@@ -13,6 +13,8 @@ import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { useNarrow } from "@/composable/useNarrow.ts";
 import ArchiveBackPage from "@/pages/with/archive/comps/ArchiveBackPage.vue";
+import { apiUploadImageList } from "@/lib/common/apiUploadImage.ts";
+import type { MdUploadImageCallback } from "@/pages/with/archive/scripts/define.ts";
 
 const { t } = useI18n();
 const { push } = useRouter();
@@ -61,6 +63,19 @@ const handleUpdate = () => {
       setUpdating(false);
       setChanged(false);
     });
+};
+const handleUploadImage: MdUploadImageCallback = async (files, callback) => {
+  setUpdating(true);
+  try {
+    const actionResult = await apiUploadImageList(files);
+    callback(actionResult.map(item => item.url));
+  } catch (e) {
+    void MessagePlugin.error(t("msg.imageUploadFailed"));
+    console.error(e);
+    callback([]);
+  } finally {
+    setUpdating(false);
+  }
 };
 
 onBeforeRouteLeave(async () => {
@@ -127,7 +142,7 @@ watch(
 <template>
   <content-layout :subtitle="desc" :title="name">
     <div>
-      <div class="mt-6" v-if="loading">
+      <div v-if="loading" class="mt-6">
         <t-empty :title="t('common.loading')" />
       </div>
       <MdEditor
@@ -138,10 +153,10 @@ watch(
         :readOnly="updating"
         :theme="theme"
         codeTheme="github"
-        noUploadImg
         previewTheme="cyanosis"
         @onChange="setChanged(true)"
         @onSave="handleUpdate()"
+        @onUploadImg="handleUploadImage"
       />
     </div>
 
@@ -170,6 +185,7 @@ msg:
   updateFailed: Update failed
   noSuchRecord: No such record
   updateInProgress: Update in progress
+  imageUploadFailed: Image upload failed
 </i18n>
 
 <i18n locale="zh-CN">
@@ -179,4 +195,5 @@ msg:
   updateFailed: 更新失败
   noSuchRecord: 无此记录
   updateInProgress: 更新进行中
+  imageUploadFailed: 图片上传失败
 </i18n>

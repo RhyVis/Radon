@@ -1,20 +1,5 @@
 ﻿import { apiDeleteNoContent, apiGet, apiPostStr, apiPut } from "@/lib/common/apiMethods.ts";
-
-export type MdIndexDto = {
-  path: string;
-  name: string;
-  desc: string;
-  createTime: string;
-  updateTime: string;
-};
-
-export type MdIndex = MdIndexDto & { content: string };
-
-export type MdRecord = {
-  name: string;
-  desc: string;
-  content: string;
-};
+import type { MdIndex, MdIndexDto, MdRecord } from "@/pages/with/archive/scripts/define.ts";
 
 export const getMdIndex = async (): Promise<MdIndexDto[]> => {
   const index = await apiGet<MdIndexDto[]>("/api/archive/index", { timeout: 20000 });

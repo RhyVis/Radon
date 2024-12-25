@@ -1,8 +1,9 @@
 ﻿<script lang="ts" setup>
 import BtnHome from "@/components/btn/BtnHome.vue";
 import { useNarrow } from "@/composable/useNarrow.ts";
-import { deleteMdRecord, getMdIndex, type MdIndexDto } from "@/pages/with/archive/define.ts";
-import { useMdStore } from "@/pages/with/archive/store.ts";
+import { type MdIndexDto } from "@/pages/with/archive/scripts/define";
+import { deleteMdRecord, getMdIndex } from "@/pages/with/archive/scripts/function";
+import { useMdStore } from "@/pages/with/archive/scripts/store.ts";
 import { useGlobalStore } from "@/store/global.ts";
 import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
