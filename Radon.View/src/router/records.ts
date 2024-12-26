@@ -200,6 +200,7 @@ export const markdownRecords: RouteRecordRaw[] = [
         component: () => import("@/pages/with/archive/index.vue"),
         meta: {
           title: "Archive",
+          online: true,
         },
       },
       {
@@ -209,6 +210,7 @@ export const markdownRecords: RouteRecordRaw[] = [
         component: () => import("@/pages/with/archive/create/index.vue"),
         meta: {
           title: "Markdown Creator",
+          online: true,
         },
       },
       {
@@ -221,6 +223,7 @@ export const markdownRecords: RouteRecordRaw[] = [
             component: () => import("@/pages/with/archive/read/index.vue"),
             meta: {
               title: "Markdown Reader",
+              online: true,
             },
           },
           {
@@ -230,6 +233,7 @@ export const markdownRecords: RouteRecordRaw[] = [
             component: () => import("@/pages/with/archive/edit/index.vue"),
             meta: {
               title: "Markdown Editor",
+              online: true,
             },
           },
         ],
@@ -246,16 +250,28 @@ export const pdxParserRecords: RouteRecordRaw[] = [
         path: "",
         name: "PdxParser",
         component: () => import("@/pages/with/pdx-parser/index.vue"),
+        meta: {
+          title: "PDX Parser",
+          online: true,
+        },
       },
       {
         path: "lang-tree",
         name: "LangTree",
         component: () => import("@/pages/with/pdx-parser/lang-tree/index.vue"),
+        meta: {
+          title: "Lang Tree",
+          online: true,
+        },
       },
       {
         path: "lang-event",
         name: "LangEvent",
         component: () => import("@/pages/with/pdx-parser/lang-event/index.vue"),
+        meta: {
+          title: "Lang Event",
+          online: true,
+        },
       },
     ],
   },

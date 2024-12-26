@@ -1,10 +1,10 @@
 ﻿<script lang="ts" setup>
 import BtnHome from "@/components/btn/BtnHome.vue";
-import PpDrawerEvent from "@/pages/with/pdx-parser/comp/PpDrawerEvent.vue";
-import PpReplacer from "@/pages/with/pdx-parser/comp/PpReplacer.vue";
-import PpStickyTool from "@/pages/with/pdx-parser/comp/PpStickyTool.vue";
-import PdxParserUploadDialog from "@/pages/with/pdx-parser/comp/PpUploadDialog.vue";
-import { usePdxTextRender } from "@/pages/with/pdx-parser/comp/usePdxTextRender.ts";
+import PpDrawerEvent from "@/pages/with/pdx-parser/comps/PpDrawerEvent.vue";
+import PpReplacer from "@/pages/with/pdx-parser/comps/PpReplacer.vue";
+import PpStickyTool from "@/pages/with/pdx-parser/comps/PpStickyTool.vue";
+import PdxParserUploadDialog from "@/pages/with/pdx-parser/comps/PpUploadDialog.vue";
+import { usePdxTextRender } from "@/pages/with/pdx-parser/comps/usePdxTextRender.ts";
 import "@/pages/with/pdx-parser/pdx-color.css";
 import type { PdxLangEventItem } from "@/pages/with/pdx-parser/scripts/define.ts";
 import { sepTextContent } from "@/pages/with/pdx-parser/scripts/function.ts";
@@ -44,24 +44,24 @@ const { textRender, textAlias } = usePdxTextRender();
 
 <template>
   <content-layout :title="t('title')">
-    <div v-if="eventExist" class="mb-20 w-full">
+    <div class="mb-20 w-full" v-if="eventExist">
       <t-space class="w-full" direction="vertical">
         <t-card
+          class="w-full"
           v-if="eventSel"
           :id="`pdx-event-${eventSelectId}`"
           :key="eventSelectId"
           :header-bordered="true"
           :title="textAlias(eventSel.name)"
-          class="w-full"
         >
           <t-space class="w-full" direction="vertical">
-            <div v-for="(line, lineKey) in sepTextContent(eventSel.desc)" :key="lineKey" v-html="textRender(line)" />
+            <div v-for="(line, lineKey) in sepTextContent(eventSel.desc)" v-html="textRender(line)" :key="lineKey" />
             <t-space class="m-auto w-full" direction="vertical">
               <t-card
+                class="r-no-select m-auto w-full"
                 v-for="(opt, optKey) in eventSel.options"
                 :key="optKey"
                 :title="opt.showResp ? textAlias(opt.name) : undefined"
-                class="r-no-select m-auto w-full"
                 size="small"
                 @click="
                   () => {
@@ -70,15 +70,15 @@ const { textRender, textAlias } = usePdxTextRender();
                 "
               >
                 <t-tooltip :content="opt.tooltip.length > 0 ? opt.tooltip : undefined">
-                  <t-space v-if="!opt.showResp" :size="4" class="text-center">
-                    <InfoCircleIcon v-if="opt.resp.length > 0" class="-translate-y-px" size="16px" />
+                  <t-space class="text-center" v-if="!opt.showResp" :size="4">
+                    <InfoCircleIcon class="-translate-y-px" v-if="opt.resp.length > 0" size="16px" />
                     <t-text>{{ textAlias(opt.name) }}</t-text>
                   </t-space>
                   <div
                     v-for="(respLine, respKey) in sepTextContent(opt.resp)"
                     v-else
-                    :key="respKey"
                     v-html="textRender(respLine)"
+                    :key="respKey"
                   />
                 </t-tooltip>
               </t-card>
@@ -90,7 +90,7 @@ const { textRender, textAlias } = usePdxTextRender();
         </t-card>
       </t-space>
     </div>
-    <div v-else class="mt-6">
+    <div class="mt-6" v-else>
       <t-empty :description="t('empty.description')" :title="t('empty.title')" />
     </div>
 

@@ -1,10 +1,10 @@
 ﻿<script lang="ts" setup>
 import BtnHome from "@/components/btn/BtnHome.vue";
 import { useNarrow } from "@/composable/useNarrow.ts";
-import PpDrawerTree from "@/pages/with/pdx-parser/comp/PpDrawerTree.vue";
-import PpReplacer from "@/pages/with/pdx-parser/comp/PpReplacer.vue";
-import PdxParserUploadDialog from "@/pages/with/pdx-parser/comp/PpUploadDialog.vue";
-import { usePdxTextRender } from "@/pages/with/pdx-parser/comp/usePdxTextRender.ts";
+import PpDrawerTree from "@/pages/with/pdx-parser/comps/PpDrawerTree.vue";
+import PpReplacer from "@/pages/with/pdx-parser/comps/PpReplacer.vue";
+import PdxParserUploadDialog from "@/pages/with/pdx-parser/comps/PpUploadDialog.vue";
+import { usePdxTextRender } from "@/pages/with/pdx-parser/comps/usePdxTextRender.ts";
 import "@/pages/with/pdx-parser/pdx-color.css";
 import { sepTextContent } from "@/pages/with/pdx-parser/scripts/function.ts";
 import { get, useToggle } from "@vueuse/core";
@@ -38,31 +38,31 @@ const { textRender } = usePdxTextRender();
 
 <template>
   <content-layout :title="t('title')">
-    <div v-if="treeExist" class="r-pdx-container">
+    <div class="r-pdx-container" v-if="treeExist">
       <t-layout class="r-pdx-layout">
         <t-content>
           <t-card class="r-pdx-card">
             <t-space class="break-words" direction="vertical">
-              <div v-for="(item, index) in treeSel" :key="index" v-html="textRender(item)" />
+              <div v-for="(item, index) in treeSel" v-html="textRender(item)" :key="index" />
             </t-space>
           </t-card>
         </t-content>
         <t-aside :width="sideWidth">
           <t-card :header-bordered="true" title="Tree">
             <t-tree
+              class="r-pdx-tree"
               v-model:actived="treeActive"
               :activable="true"
               :data="treeResult"
               :hover="true"
               :line="true"
               :transition="true"
-              class="r-pdx-tree"
             />
           </t-card>
         </t-aside>
       </t-layout>
     </div>
-    <div v-else class="mt-6">
+    <div class="mt-6" v-else>
       <t-empty :description="t('empty.description')" :title="t('empty.title')" />
     </div>
 
