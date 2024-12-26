@@ -47,39 +47,60 @@ export const useVersionStore = defineStore("version", {
     badState: state => state.fetchState < 0,
   },
   actions: {
-    async init() {
+    init() {
       if (!get(useOnline())) {
         this.fetchState = FetchState.NOT_ONLINE;
         return;
       }
 
-      await getClientCompileTimeRemote()
-        .then(time => (this.cCompileTimeR = time))
-        .then(() => {
-          if (this.cCompileTimeL != this.cCompileTimeR) {
-            this.fetchState = FetchState.NEED_UPDATE;
-          } else {
-            this.fetchState = FetchState.SUCCESS;
-          }
-        })
-        .catch(e => {
-          console.error(e);
-          this.fetchState = FetchState.ERROR;
-        });
-      await getClientVersionRemote()
-        .then(version => (this.cVersionR = version))
-        .catch(e => {
-          console.error(e);
-          this.fetchState = FetchState.ERROR;
-        });
-      await getServerVersion()
-        .then(version => (this.sVersion = version))
-        .catch(e => {
-          console.error(e);
-          this.fetchState = FetchState.ERROR;
-        });
+      const cliCompileTime = () =>
+        new Promise<void>(resolve =>
+          getClientCompileTimeRemote()
+            .then(time => (this.cCompileTimeR = time))
+            .then(() => {
+              if (this.cCompileTimeL != this.cCompileTimeR) {
+                this.fetchState = FetchState.NEED_UPDATE;
+              } else {
+                this.fetchState = FetchState.SUCCESS;
+              }
+              resolve();
+            })
+            .catch(e => {
+              console.error(e);
+              this.fetchState = FetchState.ERROR;
+              resolve();
+            }),
+        );
+      const cliVersion = () =>
+        new Promise<void>(resolve =>
+          getClientVersionRemote()
+            .then(version => {
+              this.cVersionR = version;
+              resolve();
+            })
+            .catch(e => {
+              console.error(e);
+              this.fetchState = FetchState.ERROR;
+              resolve();
+            }),
+        );
+      const serverVersion = () =>
+        new Promise<void>(resolve =>
+          getServerVersion()
+            .then(version => {
+              this.sVersion = version;
+              resolve();
+            })
+            .catch(e => {
+              console.error(e);
+              this.fetchState = FetchState.ERROR;
+              resolve();
+            }),
+        );
 
-      this.initialized = true;
+      Promise.all([cliCompileTime(), cliVersion(), serverVersion()]).then(() => {
+        this.initialized = true;
+      });
     },
   },
 });
