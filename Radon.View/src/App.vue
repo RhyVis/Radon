@@ -41,6 +41,7 @@ const dark = useDark({
   },
 });
 const { idle } = useIdle();
+
 const tEmptyConfig: GlobalConfigProvider = {};
 const tLangConfig = computed(() => (get(locale) === "zh-CN" ? zhConfig : enConfig));
 const tGlobalConfig = computed(() => merge(tEmptyConfig, tLangConfig));
@@ -116,7 +117,7 @@ watch(
 
 <template>
   <t-config-provider :global-config="tGlobalConfig">
-    <base-layout class="r-app-base-layout">
+    <BaseLayout class="r-app-base-layout">
       <template #left>
         <ContentSide />
       </template>
@@ -126,7 +127,7 @@ watch(
       <template #default>
         <prompt-update />
         <RouterView v-slot="{ Component }">
-          <Transition name="route" mode="out-in">
+          <Transition mode="out-in" name="route">
             <Component :is="Component" />
           </Transition>
         </RouterView>
@@ -134,11 +135,11 @@ watch(
       <template #footer>
         <ContentFooter />
       </template>
-    </base-layout>
+    </BaseLayout>
   </t-config-provider>
 </template>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 .r-app-base-layout {
   height: 100vh;
 }
@@ -146,9 +147,11 @@ watch(
 .route-enter-active {
   transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
 }
+
 .route-leave-active {
   transition: all 0.16s cubic-bezier(1, 0.5, 0.8, 1);
 }
+
 .route-enter-from,
 .route-leave-to {
   transform: translateX(-20px);
