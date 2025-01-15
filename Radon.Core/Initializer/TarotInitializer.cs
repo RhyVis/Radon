@@ -12,7 +12,8 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
     private readonly Dictionary<string, TarotDeck> _deckDict = new();
     private readonly Dictionary<string, TarotDeckInfo> _deckInfoDict = new();
     private readonly Dictionary<string, bool> _deckMainOnlyDict = new();
-    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public async Task<object> InitAsync()
     {
@@ -61,7 +62,7 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
                     _deckMainOnlyDict[mapping.Key] = true;
                 }
 
-                _logger.Debug($"Init deck {deck.Name} with {deck.Deck.Count} cards");
+                Logger.Debug($"Init deck {deck.Name} with {deck.Deck.Count} cards");
                 return 0;
             });
 
@@ -73,13 +74,13 @@ public class TarotInitializer(IHttpClientFactory httpClientFactory) : IInitializ
                 _deckInfoDict.OrderBy(p => p.Key).ToDictionary()
             );
 
-            _logger.Info($"Successfully initialized {_deckDict.Count} decks");
+            Logger.Info($"Successfully initialized {_deckDict.Count} decks");
 
             return await Task.FromResult(0);
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Failed to initialize TarotInitializer");
+            Logger.Error(e, "Failed to initialize TarotInitializer");
 
             return await Task.FromResult(-1);
         }
@@ -121,7 +122,7 @@ public static class TarotData
     public static bool IsMainOnly(string deckName)
     {
         if (!_initialized) throw new InvalidOperationException("TarotConfig not initialized");
-        return _deckMainOnlyDict[deckName];
+        return _deckMainOnlyDict.TryGetValue(deckName, out var mainOnly) && mainOnly;
     }
 
     public static Dictionary<string, TarotDeckInfo> GetDeckInfoDict()

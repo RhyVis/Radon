@@ -9,8 +9,8 @@ namespace Radon.Core.Initializer;
 
 public class DictInitializer : IInitializer
 {
-    private const string PATH = "Radon.Core.Resources.Dict.";
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private const string DictPathPrefix = "Radon.Core.Resources.Dict.";
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private Dictionary<string, string> _dictEmojiHan = new();
 
     private Dictionary<string, string[]> _dictHanEmoji = new();
@@ -23,19 +23,19 @@ public class DictInitializer : IInitializer
         try
         {
             _dictHanEmoji = DeserializeResource<Dictionary<string, string[]>>(
-                PATH + "DictHanEmoji.json"
+                DictPathPrefix + "DictHanEmoji.json"
             );
             _dictEmojiHan = DeserializeResource<Dictionary<string, string>>(
-                PATH + "DictEmojiHan.json"
+                DictPathPrefix + "DictEmojiHan.json"
             );
             _dictHanSpark = DeserializeResource<Dictionary<string, string>>(
-                PATH + "DictHanSpark.json"
+                DictPathPrefix + "DictHanSpark.json"
             );
             _dictSparkHan = DeserializeResource<Dictionary<string, string>>(
-                PATH + "DictSparkHan.json"
+                DictPathPrefix + "DictSparkHan.json"
             );
             _dictUnicode = DeserializeResource<Dictionary<string, string>>(
-                PATH + "DictUnicodeDiff.json"
+                DictPathPrefix + "DictUnicodeDiff.json"
             );
 
             DictData.SetupAll(
@@ -46,7 +46,7 @@ public class DictInitializer : IInitializer
                 _dictUnicode
             );
 
-            _logger.Info("DictData successfully initialized.");
+            Logger.Info("DictData successfully initialized.");
 
             return await Task.FromResult(0);
         }
@@ -79,6 +79,9 @@ public static class DictData
 
     private static bool _isInitialized;
 
+    private const string DictNotInitialized = "Dict not initialized";
+    private static readonly Random RandInstance = new();
+
     public static void SetupAll(
         Dictionary<string, string[]> dictHanEmoji,
         Dictionary<string, string> dictEmojiHan,
@@ -98,46 +101,33 @@ public static class DictData
 
     public static string GetHanEmoji(string han)
     {
-        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
-
-        _dictHanEmoji.TryGetValue(han, out var result);
-
-        return result?[new Random().Next(result.Length)] ?? han;
+        if (!_isInitialized) throw new InvalidOperationException(DictNotInitialized);
+        return _dictHanEmoji.TryGetValue(han, out var result) ? result[RandInstance.Next(result.Length)] : han;
     }
 
     public static string GetEmojiHan(string emoji)
     {
-        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
-
-        _dictEmojiHan.TryGetValue(emoji, out var result);
-
-        return result ?? emoji;
+        return GetSingleValue(_dictEmojiHan, emoji);
     }
 
     public static string GetHanSpark(string han)
     {
-        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
-
-        _dictHanSpark.TryGetValue(han, out var result);
-
-        return result ?? han;
+        return GetSingleValue(_dictHanSpark, han);
     }
 
     public static string GetSparkHan(string spark)
     {
-        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
-
-        _dictSparkHan.TryGetValue(spark, out var result);
-
-        return result ?? spark;
+        return GetSingleValue(_dictSparkHan, spark);
     }
 
     public static string GetUnicodeDiff(string unicode)
     {
-        if (!_isInitialized) throw new InvalidOperationException("Dict not initialized");
+        return GetSingleValue(_dictUnicode, unicode);
+    }
 
-        _dictUnicode.TryGetValue(unicode, out var result);
-
-        return result ?? unicode;
+    private static string GetSingleValue(Dictionary<string, string> dict, string key)
+    {
+        if (!_isInitialized) throw new InvalidOperationException(DictNotInitialized);
+        return dict.TryGetValue(key, out var result) ? result : key;
     }
 }
