@@ -13,8 +13,8 @@ public class TextStoreRes : BaseApiRes<TextStoreRes.ResData>
         {
             Code =
                 entity.Id < 0
-                    ? ResponseCodeType.NOT_FOUND.ToInt()
-                    : ResponseCodeType.SUCCESS.ToInt(),
+                    ? ResponseCodeType.NotFound.ToInt()
+                    : ResponseCodeType.Success.ToInt(),
             Data = new ResData
             {
                 Id = entity.Id,

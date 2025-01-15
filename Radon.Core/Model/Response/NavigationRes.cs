@@ -11,12 +11,12 @@ public class NavigationRes : BaseApiRes<EntryNavigation[]>
     {
         if (data.Length == 0)
         {
-            Code = ResponseCodeType.NOT_FOUND.ToInt();
+            Code = ResponseCodeType.NotFound.ToInt();
             Msg = "No navigation data found.";
         }
         else
         {
-            Code = ResponseCodeType.SUCCESS.ToInt();
+            Code = ResponseCodeType.Success.ToInt();
             Msg = $"Navigation data found with {data.Length}.";
         }
 

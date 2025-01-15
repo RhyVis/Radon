@@ -12,7 +12,7 @@ public class PlainTextRes : BaseApiRes<string>
     }
 
     private PlainTextRes(string msg, string data)
-        : base(ResponseCodeType.SUCCESS.ToInt(), msg, data)
+        : base(ResponseCodeType.Success.ToInt(), msg, data)
     {
     }
 

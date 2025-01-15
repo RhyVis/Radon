@@ -12,8 +12,8 @@ public abstract class BaseApiRes<D>()
     protected BaseApiRes(D data)
         : this()
     {
-        Code = ResponseCodeType.SUCCESS.ToInt();
-        Msg = ResponseCodeType.SUCCESS.ToString();
+        Code = ResponseCodeType.Success.ToInt();
+        Msg = ResponseCodeType.Success.ToString();
         Data = data;
     }
 

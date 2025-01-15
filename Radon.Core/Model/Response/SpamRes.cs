@@ -10,15 +10,15 @@ public partial class SpamRes : BaseApiRes<List<SpamRes.SpamResData>>
 {
     private SpamRes(SpamEntity e)
     {
-        Code = ResponseCodeType.SUCCESS.ToInt();
-        Msg = ResponseCodeType.SUCCESS.ToString();
+        Code = ResponseCodeType.Success.ToInt();
+        Msg = ResponseCodeType.Success.ToString();
         Data = [SpamResData.FromEntity(e)];
     }
 
     private SpamRes(IEnumerable<SpamEntity> entities)
     {
-        Code = ResponseCodeType.SUCCESS.ToInt();
-        Msg = ResponseCodeType.SUCCESS.ToString();
+        Code = ResponseCodeType.Success.ToInt();
+        Msg = ResponseCodeType.Success.ToString();
         Data = entities.Select(SpamResData.FromEntity).ToList();
     }
 
