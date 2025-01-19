@@ -26,6 +26,15 @@ public class SpamService(
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+    private enum SpamAppendCode
+    {
+        EntityNull = -1,
+        Empty = -2,
+        Exception = -6,
+        Duplicate = -8,
+        Unrecognized = -10,
+    }
+
     public SpamRes Fetch(SpamFetchReq req)
     {
         var size = req.Data.Size;
@@ -108,19 +117,19 @@ public class SpamService(
                 case SpamType.N:
                 {
                     Logger.Warn("Empty spam appending type");
-                    return -2;
+                    return SpamAppendCode.Empty.ToInt();
                 }
                 default:
                 {
                     Logger.Warn("Unrecognized spam appending type");
-                    return -10;
+                    return SpamAppendCode.Unrecognized.ToInt();
                 }
             }
         }
         catch (Exception e)
         {
             Logger.Error(e, $"Failed to append spam for type {type}");
-            return -6;
+            return SpamAppendCode.Exception.ToInt();
         }
     }
 
@@ -131,11 +140,11 @@ public class SpamService(
         if (repo.CheckIfDuplicate(text))
         {
             Logger.Warn($"Duplicate spam for type {typeof(TEntity)} with {text}");
-            return -8;
+            return SpamAppendCode.Duplicate.ToInt();
         }
 
         var e = repo.Insert(new TEntity { Text = text });
-        return e?.Id ?? -1;
+        return e?.Id ?? SpamAppendCode.EntityNull.ToInt();
     }
 
     private SpamRes HandleTransform<T>(T? entity, DictType type)
