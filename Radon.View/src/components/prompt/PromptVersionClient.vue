@@ -1,13 +1,14 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { FetchState, useVersionStore } from "@/store/version.ts";
-import { get } from "@vueuse/core";
+import { get, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const version = useVersionStore();
 const { t } = useI18n();
-const { fetchState, cAssembleTimeL, cAssembleTimeR } = storeToRefs(version);
+const { fetchState, cCompileTimeL, cAssembleTimeL, cAssembleTimeR } = storeToRefs(version);
+const [sw, setSw] = useToggle(true);
 
 const tagTheme = computed(() => {
   switch (fetchState.value) {
@@ -50,6 +51,7 @@ const tagValue = computed(() => {
       return prefix + t("display.wait");
   }
 });
+const tagTimeValue = computed(() => t("clientCompile") + new Date(get(cCompileTimeL)).toLocaleString());
 </script>
 
 <template>
@@ -57,12 +59,30 @@ const tagValue = computed(() => {
     <template #icon>
       <t-icon :name="tagIcon" />
     </template>
-    <span class="r-no-select">{{ tagValue }}</span>
+    <span class="r-no-select" @click="setSw()">
+      <Transition mode="out-in">
+        <span v-if="sw">{{ tagValue }}</span>
+        <span v-else>{{ tagTimeValue }}</span>
+      </Transition>
+    </span>
   </t-tag>
 </template>
 
+<style lang="less" scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.24s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
+
 <i18n lang="yaml" locale="en">
 clientVersion: "Client Version: "
+clientCompile: "Client Compile Time: "
 display:
   error: "Error"
   wait: "Waiting"
@@ -75,6 +95,7 @@ msg:
 
 <i18n lang="yaml" locale="zh-CN">
 clientVersion: "客户端版本: "
+clientCompile: "客户端编译时间: "
 display:
   error: "错误"
   wait: "等待中"
