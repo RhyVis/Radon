@@ -19,7 +19,7 @@ const style = computed(() => ({
 
 <template>
   <content-layout title="404">
-    <div class="text-center mt-2">
+    <div class="mt-2 text-center">
       <t-space direction="vertical" :size="24">
         <t-text class="r-no-select font-bold">{{ t("st") }}</t-text>
         <t-text class="font-bold" v-if="!online">{{ t("offline") }}</t-text>

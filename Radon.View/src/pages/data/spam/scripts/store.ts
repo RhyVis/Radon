@@ -21,10 +21,6 @@ type QueryPrecise = {
   dict: string;
   ids: number[];
 };
-type QueryAppend = {
-  type: SpamType;
-  text: string;
-};
 
 export const useSpamStore = defineStore("spam", {
   state: (): SpamStore => ({
@@ -49,12 +45,6 @@ export const useSpamStore = defineStore("spam", {
         type: state.qType,
         dict: state.qDict,
         ids: state.qIds.map(id => Number(id)),
-      };
-    },
-    queryAppend(state): QueryAppend {
-      return {
-        type: state.aType,
-        text: state.aText,
       };
     },
   },

@@ -12,11 +12,11 @@ defineProps<{
 <template>
   <div class="mb-1 mt-0.5">
     <t-card
+      class="m-auto w-full content-center"
       :header-bordered="true"
       :loading="loading"
       :subtitle="subtitle"
       :title="title"
-      class="m-auto w-full content-center"
     >
       <slot />
       <template #footer>

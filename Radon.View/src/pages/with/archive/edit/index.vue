@@ -142,7 +142,7 @@ watch(
 <template>
   <content-layout :subtitle="desc" :title="name">
     <div>
-      <div v-if="loading" class="mt-6">
+      <div class="mt-6" v-if="loading">
         <t-empty :title="t('common.loading')" />
       </div>
       <MdEditor

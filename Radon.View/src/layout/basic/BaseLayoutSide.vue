@@ -24,16 +24,16 @@ onMounted(handleClose);
 
 <template>
   <t-drawer
+    class="r-ct-sd r-drawer-no-padding"
     v-model:visible="sideVisible"
     :footer="false"
-    class="r-ct-sd r-drawer-no-padding"
     placement="left"
     size="232px"
   >
-    <t-menu v-model="sideValue" :expand-mutex="true" class="r-ct-sd-ht">
+    <t-menu class="r-ct-sd-ht" v-model="sideValue" :expand-mutex="true">
       <!-- Head -->
       <template #logo>
-        <t-image :src="ProjectIcon" alt="Radon" class="r-ct-icon" shape="round" />
+        <t-image class="r-ct-icon" :src="ProjectIcon" alt="Radon" shape="round" />
         <span class="r-ct-sd-tt">Radon</span>
       </template>
 

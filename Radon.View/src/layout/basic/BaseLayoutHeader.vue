@@ -41,7 +41,7 @@ const handleAuth = () => push("/auth");
       </t-space>
     </div>
     <template #operations>
-      <t-space :size="6" class="r-ct-hd-operations">
+      <t-space class="r-ct-hd-operations" :size="6">
         <!-- Auth -->
         <t-button v-if="authPassed" shape="circle" theme="default" variant="outline" @click="handleAuth">
           <UserIcon />

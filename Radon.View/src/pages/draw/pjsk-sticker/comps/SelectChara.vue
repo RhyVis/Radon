@@ -28,10 +28,10 @@ const handleSelect = (index: number) => {
       <t-col v-for="(chara, index) in charaList" :key="index" :span="4">
         <span class="r-chara-select-option" @click="handleSelect(index)">
           <t-image
+            class="r-chara-select-inner-img"
             :lazy="true"
             :loading="renderIcon"
             :src="assembleSrc(chara.img, resEndpoint)"
-            class="r-chara-select-inner-img"
             fit="contain"
             style="height: 115px; width: 115px"
           />

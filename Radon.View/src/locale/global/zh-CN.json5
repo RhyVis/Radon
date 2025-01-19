@@ -25,7 +25,7 @@
       "502": "错误网关",
       "503": "服务不可用",
       "504": "网关超时",
-    }
+    },
   },
   message: {
     authInvalid: "认证失败",
@@ -41,7 +41,7 @@
       copyFail: "无法将图像复制到剪贴板",
       downloadSuccess: "图像已下载",
       downloadFail: "无法下载图像",
-    }
+    },
   },
   auth: {
     message: {
@@ -52,7 +52,7 @@
       tokenInvalid: {
         title: "登录失败",
         content: "令牌无效",
-      }
+      },
     },
     tokenNotExists: "令牌不存在",
   },
@@ -104,5 +104,5 @@
     credits: "致谢",
     settings: "设置",
     auth: "登陆",
-  }
+  },
 }

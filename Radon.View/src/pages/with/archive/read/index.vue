@@ -70,20 +70,20 @@ watch(
 
 <template>
   <content-layout id="md-read-container" :subtitle="desc" :title="name">
-    <div v-if="loading" class="mt-6">
+    <div class="mt-6" v-if="loading">
       <t-empty :title="t('common.loading')" />
     </div>
-    <div v-else-if="noContent" class="mt-6">
+    <div class="mt-6" v-else-if="noContent">
       <t-empty :title="t('noContent')" />
     </div>
     <div v-else>
       <t-layout class="r-md-container">
         <MdPreview
+          class="r-md-preview"
           id="preview-only"
           :language="localeStandard"
           :model-value="content"
           :theme="theme"
-          class="r-md-preview"
           codeTheme="github"
           previewTheme="cyanosis"
         />

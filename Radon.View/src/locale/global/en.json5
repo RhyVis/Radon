@@ -25,7 +25,7 @@
       "502": "Bad Gateway",
       "503": "Service Unavailable",
       "504": "Gateway Timeout",
-    }
+    },
   },
   message: {
     authInvalid: "Authentication failed",
@@ -41,7 +41,7 @@
       copyFail: "Failed to copy image to clipboard",
       downloadSuccess: "Image downloaded",
       downloadFail: "Failed to download image",
-    }
+    },
   },
   auth: {
     message: {
@@ -52,7 +52,7 @@
       tokenInvalid: {
         title: "Login Failed",
         content: "Token is invalid",
-      }
+      },
     },
     tokenNotExists: "Token does not exist",
   },
@@ -104,5 +104,5 @@
     credits: "Credits",
     settings: "Settings",
     auth: "Auth",
-  }
+  },
 }

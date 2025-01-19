@@ -1,6 +1,6 @@
 <template>
   <div class="r-ct-ft-override mb-1 mt-2 justify-center text-center">
-    <span class="font-mono r-ct-ft-font">©2024 Rhynia. Some rights reserved.</span>
+    <span class="r-ct-ft-font font-mono">©2024 Rhynia. Some rights reserved.</span>
   </div>
 </template>
 

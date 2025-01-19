@@ -26,8 +26,8 @@ const query = reactive({
 });
 const imageTokenInput = ref("");
 
-const storageToken = computed(() => getAuthToken() || "");
 const [loading, setLoading] = useToggle(false);
+const storageToken = computed(() => getAuthToken() || "");
 const tokenValidSign = ref(0);
 const tokenValidDisplay = computed(() => {
   switch (tokenValidSign.value) {

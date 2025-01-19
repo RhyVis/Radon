@@ -27,4 +27,4 @@ export const useArcaeaStickerStore = defineStore("arcaea-sticker", {
   persist: {
     pick: ["charaId", "useCommercialFonts"],
   },
-})
+});

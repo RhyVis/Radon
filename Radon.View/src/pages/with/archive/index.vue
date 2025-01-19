@@ -52,10 +52,10 @@ onMounted(() => (indexList.value.length === 0 ? updateIndex() : setLoading(false
 
 <template>
   <content-layout :subtitle="t('st')" :title="t('tt')">
-    <div v-if="loading" class="mt-6">
+    <div class="mt-6" v-if="loading">
       <t-empty :title="t('common.loading')" />
     </div>
-    <div v-else-if="indexList.length === 0" class="mt-6">
+    <div class="mt-6" v-else-if="indexList.length === 0">
       <t-empty :title="t('common.noContent')" />
     </div>
     <t-card v-else>

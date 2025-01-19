@@ -25,14 +25,19 @@ type ReqData = string | number | object | unknown;
 export type ApiResponse<T> = ApiResponseData<T> & ApiResponseStatus;
 
 export type ApiResponseData<T> = {
+  /** Service Resp Code */
   code: number;
+  /** Service Resp Message */
   msg: string;
+  /** Service Inner Data */
   data: T;
 };
 
 export type ApiResponseStatus = {
   status: {
+    /** Server Code */
     responseCode: number;
+    /** Server String Rep */
     responseText: string;
   };
 };
