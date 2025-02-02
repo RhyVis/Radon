@@ -16,9 +16,11 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { get, set, useToggle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { apiPostNoContent } from "@/lib/common/apiMethods.ts";
+import { useSettingStore } from "@/store/settings.ts";
 
 const { t } = useI18n();
 const { authPassed } = storeToRefs(useGlobalStore());
+const { showLoginMessage } = storeToRefs(useSettingStore());
 const router = useRouter();
 const query = reactive({
   username: "",
@@ -165,6 +167,9 @@ onMounted(() => {
             </t-button>
           </t-space>
         </t-form-item>
+        <t-form-item :label="t('input.showLoginMessage')">
+          <t-switch v-model="showLoginMessage" />
+        </t-form-item>
       </template>
     </t-form>
   </content-layout>
@@ -183,6 +188,7 @@ input:
   showToken: Show Token
   clearToken: Clear Token
   imageToken: Image Token
+  showLoginMessage: Show Login Message
 msg:
   noEmpty: Do not leave input empty
   loginSuccess: Login Success
@@ -211,6 +217,7 @@ input:
   showToken: 显示令牌
   clearToken: 清空令牌
   imageToken: 图片令牌
+  showLoginMessage: 显示登陆消息
 msg:
   noEmpty: 请不要留空
   loginSuccess: 登陆成功

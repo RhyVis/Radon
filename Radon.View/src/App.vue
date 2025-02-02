@@ -9,6 +9,7 @@ import { darkModeKey } from "@/lib/symbol/sharedSymbols";
 import { getFontLoaders } from "@/lib/util/fontLoader";
 import { changeMetaColorDark } from "@/lib/util/themeUtil";
 import { useGlobalStore } from "@/store/global";
+import { useSettingStore } from "@/store/settings.ts";
 import { useVersionStore } from "@/store/version.ts";
 import { get, set, syncRef, useDark, useIdle, useTitle } from "@vueuse/core";
 import { merge } from "lodash";
@@ -27,6 +28,7 @@ const router = useRouter();
 const i18n = useI18n();
 const { t } = i18n;
 const { locale, authPassed } = storeToRefs(global);
+const { showLoginMessage } = storeToRefs(useSettingStore());
 
 const fontLoader = useLoader(getFontLoaders(), "FontLoader");
 const dark = useDark({
@@ -54,7 +56,7 @@ const tryLoadFonts = () => {
 const tryRefreshToken = () => {
   if (get(authPassed)) {
     authValidateWithRefresh().then(v => {
-      if (v) {
+      if (v && get(showLoginMessage)) {
         NotificationPlugin.success({
           title: t("auth.message.tokenValidAndRefreshed.title"),
           content: t("auth.message.tokenValidAndRefreshed.content"),
@@ -63,14 +65,15 @@ const tryRefreshToken = () => {
         });
       } else {
         set(authPassed, false);
-        NotificationPlugin.warning({
-          title: t("auth.message.tokenInvalid.title"),
-          content: t("auth.message.tokenInvalid.content"),
-          closeBtn: true,
-        });
         setTimeout(() => {
           router.push("/auth");
         }, 1420);
+        if (get(showLoginMessage))
+          NotificationPlugin.warning({
+            title: t("auth.message.tokenInvalid.title"),
+            content: t("auth.message.tokenInvalid.content"),
+            closeBtn: true,
+          });
       }
     });
   }
